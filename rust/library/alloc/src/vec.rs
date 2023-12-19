@@ -71,6 +71,7 @@ use core::slice::{self, SliceIndex};
 use crate::borrow::{Cow, ToOwned};
 use crate::boxed::Box;
 use crate::collections::TryReserveError;
+use crate::metasafe::MetaUpdate;
 use crate::raw_vec::RawVec;
 
 /// A contiguous growable array type, written `Vec<T>` but pronounced 'vector'.
@@ -300,6 +301,14 @@ use crate::raw_vec::RawVec;
 pub struct Vec<T> {
     buf: RawVec<T>,
     len: usize,
+}
+
+impl<T> MetaUpdate for Vec<T> {
+    fn synchronize(&self) {
+        if self.capacity() < self.len {
+            panic!("MetaSafe: Vec has len greater than capacity");
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

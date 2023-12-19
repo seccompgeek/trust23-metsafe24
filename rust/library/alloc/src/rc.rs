@@ -243,6 +243,7 @@
 
 #[cfg(not(test))]
 use crate::boxed::Box;
+use crate::metasafe::MetaUpdate;
 #[cfg(test)]
 use std::boxed::Box;
 
@@ -280,6 +281,12 @@ struct RcBox<T: ?Sized> {
     value: T,
 }
 
+impl<T: ?Sized> MetaUpdate for RcBox<T> {
+    fn synchronize(&self) {
+        //we shouldn't use RC after strong and weak are both 0
+    }
+}
+
 /// A single-threaded reference-counting pointer. 'Rc' stands for 'Reference
 /// Counted'.
 ///
@@ -295,6 +302,12 @@ struct RcBox<T: ?Sized> {
 pub struct Rc<T: ?Sized> {
     ptr: NonNull<RcBox<T>>,
     phantom: PhantomData<RcBox<T>>,
+}
+
+impl<T: ?Sized> MetaUpdate for Rc<T> {
+    fn synchronize(&self) {
+        // synchronize Rc
+    }
 }
 
 #[stable(feature = "rust1", since = "1.0.0")]

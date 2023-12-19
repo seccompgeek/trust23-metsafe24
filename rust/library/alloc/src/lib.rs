@@ -194,3 +194,7 @@ mod std {
 pub mod __export {
     pub use core::format_args;
 }
+
+
+#[unstable(feature = "metasafe", issue = "none")]
+pub mod metasafe;

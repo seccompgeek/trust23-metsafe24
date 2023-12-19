@@ -13,7 +13,7 @@ use core::hash::{Hash, Hasher};
 use core::hint;
 use core::intrinsics::abort;
 use core::iter;
-use core::marker::{PhantomData, Unpin, Unsize};
+use core::marker::{PhantomData, Unpin, Unsize, Sized};
 use core::mem::{self, align_of_val, size_of_val};
 use core::ops::{CoerceUnsized, Deref, DispatchFromDyn, Receiver};
 use core::pin::Pin;
@@ -25,6 +25,7 @@ use core::sync::atomic::Ordering::{Acquire, Relaxed, Release, SeqCst};
 use crate::alloc::{box_free, handle_alloc_error, AllocError, AllocRef, Global, Layout};
 use crate::borrow::{Cow, ToOwned};
 use crate::boxed::Box;
+use crate::metasafe::MetaUpdate;
 use crate::rc::is_dangling;
 use crate::string::String;
 use crate::vec::Vec;
@@ -225,6 +226,12 @@ pub struct Arc<T: ?Sized> {
     phantom: PhantomData<ArcInner<T>>,
 }
 
+impl<T: ?Sized> MetaUpdate for Arc<T> {
+    fn synchronize(&self) {
+        //synchronize for Arc
+    }
+}
+
 #[stable(feature = "rust1", since = "1.0.0")]
 unsafe impl<T: ?Sized + Sync + Send> Send for Arc<T> {}
 #[stable(feature = "rust1", since = "1.0.0")]
@@ -277,6 +284,12 @@ pub struct Weak<T: ?Sized> {
     ptr: NonNull<ArcInner<T>>,
 }
 
+impl<T: ?Sized> MetaUpdate for Weak<T> {
+    fn synchronize(&self) {
+        //synchronize Weak?
+    }
+}
+
 #[stable(feature = "arc_weak", since = "1.4.0")]
 unsafe impl<T: ?Sized + Sync + Send> Send for Weak<T> {}
 #[stable(feature = "arc_weak", since = "1.4.0")]
@@ -307,6 +320,12 @@ struct ArcInner<T: ?Sized> {
     weak: atomic::AtomicUsize,
 
     data: T,
+}
+
+impl<T: ?Sized> MetaUpdate for ArcInner<T> {
+    fn synchronize(&self) {
+        //ArcInner needs to be synchronized same way as Rc
+    }
 }
 
 unsafe impl<T: ?Sized + Sync + Send> Send for ArcInner<T> {}

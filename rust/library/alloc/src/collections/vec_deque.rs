@@ -21,6 +21,7 @@ use core::ptr::{self, NonNull};
 use core::slice;
 
 use crate::collections::TryReserveError;
+use crate::metasafe::MetaUpdate;
 use crate::raw_vec::RawVec;
 use crate::vec::Vec;
 
@@ -66,6 +67,15 @@ pub struct VecDeque<T> {
     tail: usize,
     head: usize,
     buf: RawVec<T>,
+}
+
+impl<T> MetaUpdate for VecDeque<T> {
+    fn synchronize(&self) {
+        if self.tail < self.head {
+            panic!("MetaSafe: VecDeque has tail less than head");
+        }
+        self.buf.synchronize();
+    }
 }
 
 /// PairSlices pairs up equal length slice parts of two deques

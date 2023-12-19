@@ -54,6 +54,7 @@ use core::str::{lossy, pattern::Pattern};
 use crate::borrow::{Cow, ToOwned};
 use crate::boxed::Box;
 use crate::collections::TryReserveError;
+use crate::metasafe::MetaUpdate;
 use crate::str::{self, from_boxed_utf8_unchecked, Chars, FromStr, Utf8Error};
 use crate::vec::Vec;
 
@@ -277,6 +278,12 @@ use crate::vec::Vec;
 #[stable(feature = "rust1", since = "1.0.0")]
 pub struct String {
     vec: Vec<u8>,
+}
+
+impl MetaUpdate for String {
+    fn synchronize(&self) {
+        self.vec.synchronize();
+    }
 }
 
 /// A possible error value when converting a `String` from a UTF-8 byte vector.

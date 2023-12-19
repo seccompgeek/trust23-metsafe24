@@ -22,6 +22,7 @@ use core::ptr::NonNull;
 
 use super::SpecExtend;
 use crate::boxed::Box;
+use crate::metasafe::MetaUpdate;
 
 #[cfg(test)]
 mod tests;
@@ -42,10 +43,22 @@ pub struct LinkedList<T> {
     marker: PhantomData<Box<Node<T>>>,
 }
 
+impl<T> MetaUpdate for LinkedList<T> {
+    fn synchronize(&self) {
+        // synchronize linkedlist
+    }
+}
+
 struct Node<T> {
     next: Option<NonNull<Node<T>>>,
     prev: Option<NonNull<Node<T>>>,
     element: T,
+}
+
+impl<T> MetaUpdate for Node<T> {
+    fn synchronize(&self) {
+        //synchronize a node
+    }
 }
 
 /// An iterator over the elements of a `LinkedList`.
@@ -58,6 +71,12 @@ pub struct Iter<'a, T: 'a> {
     tail: Option<NonNull<Node<T>>>,
     len: usize,
     marker: PhantomData<&'a Node<T>>,
+}
+
+impl<'a, T: 'a> MetaUpdate for Iter<'a, T> {
+    fn synchronize(&self) {
+        //synchronize Iter
+    }
 }
 
 #[stable(feature = "collection_debug", since = "1.17.0")]
@@ -88,6 +107,12 @@ pub struct IterMut<'a, T: 'a> {
     head: Option<NonNull<Node<T>>>,
     tail: Option<NonNull<Node<T>>>,
     len: usize,
+}
+
+impl<'a, T: 'a> MetaUpdate for IterMut<'a, T> {
+    fn synchronize(&self) {
+        // synchronize for IterMut.
+    }
 }
 
 #[stable(feature = "collection_debug", since = "1.17.0")]
@@ -1175,6 +1200,12 @@ pub struct Cursor<'a, T: 'a> {
     index: usize,
     current: Option<NonNull<Node<T>>>,
     list: &'a LinkedList<T>,
+}
+
+impl<'a, T: 'a> MetaUpdate for Cursor<'a, T> {
+    fn synchronize(&self) {
+        // the cursor should not go beyond length?
+    }
 }
 
 #[unstable(feature = "linked_list_cursors", issue = "58533")]

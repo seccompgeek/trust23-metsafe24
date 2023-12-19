@@ -150,6 +150,7 @@ use crate::borrow::Cow;
 use crate::raw_vec::RawVec;
 use crate::str::from_boxed_utf8_unchecked;
 use crate::vec::Vec;
+use crate::metasafe::MetaUpdate;
 
 /// A pointer type for heap allocation.
 ///
@@ -161,6 +162,12 @@ pub struct Box<
     T: ?Sized,
     #[unstable(feature = "allocator_api", issue = "32838")] A: AllocRef = Global,
 >(Unique<T>, A);
+
+impl<T: ?Sized, A> MetaUpdate for Box<T,A> {
+    fn synchronize(&self){
+        
+    }
+}
 
 impl<T> Box<T> {
     /// Allocates memory on the heap and then places `x` into it.

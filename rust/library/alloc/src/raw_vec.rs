@@ -12,6 +12,7 @@ use core::slice;
 use crate::alloc::{handle_alloc_error, AllocRef, Global, Layout};
 use crate::boxed::Box;
 use crate::collections::TryReserveError::{self, *};
+use crate::metasafe::MetaUpdate;
 
 #[cfg(test)]
 mod tests;
@@ -50,6 +51,13 @@ pub struct RawVec<T, A: AllocRef = Global> {
     ptr: Unique<T>,
     cap: usize,
     alloc: A,
+}
+
+impl<T, A: AllocRef> MetaUpdate for RawVec<T, A> {
+    /// synchronizes RawVec
+    fn synchronize(&self) {
+        
+    }
 }
 
 impl<T> RawVec<T, Global> {
