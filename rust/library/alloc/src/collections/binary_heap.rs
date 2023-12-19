@@ -1273,7 +1273,11 @@ pub struct Drain<'a, T: 'a> {
     iter: vec::Drain<'a, T>,
 }
 
-impl<'a, T: 'a> 
+impl<'a, T: 'a> MetaUpdate for Drain<'a, T: 'a> {
+    fn synchronize(&self) {
+        self.iter.synchronize();
+    }
+}
 
 #[stable(feature = "drain", since = "1.6.0")]
 impl<T> Iterator for Drain<'_, T> {
@@ -1318,6 +1322,12 @@ impl<T> FusedIterator for Drain<'_, T> {}
 #[derive(Debug)]
 pub struct DrainSorted<'a, T: Ord> {
     inner: &'a mut BinaryHeap<T>,
+}
+
+impl<'a, T: Ord> MetaUpdate for DrainSorted<'a, T> {
+    fn synchronize(&self) {
+        //synchronize inner
+    }
 }
 
 #[unstable(feature = "binary_heap_drain_sorted", issue = "59278")]

@@ -3097,6 +3097,12 @@ pub struct Drain<'a, T: 'a> {
     vec: NonNull<Vec<T>>,
 }
 
+impl<'a, T: 'a> MetaUpdate for Drain<'a, T> {
+    fn synchronize(&self) {
+        // perhaps we shouldn't have the tail_Start larger than the tail_len
+    }
+}
+
 #[stable(feature = "collection_debug", since = "1.17.0")]
 impl<T: fmt::Debug> fmt::Debug for Drain<'_, T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

@@ -2,6 +2,8 @@ use core::iter::FusedIterator;
 use core::ptr::{self, NonNull};
 use core::{fmt, mem};
 
+use alloc::metasafe::MetaUpdate;
+
 use super::{count, Iter, VecDeque};
 
 /// A draining iterator over the elements of a `VecDeque`.
@@ -16,6 +18,12 @@ pub struct Drain<'a, T: 'a> {
     pub(crate) after_head: usize,
     pub(crate) iter: Iter<'a, T>,
     pub(crate) deque: NonNull<VecDeque<T>>,
+}
+
+impl<'a, T: 'a> MetaUpdate for Drain<'a, T> {
+    fn synchronize(&self) {
+        //synchronize Drain
+    }
 }
 
 #[stable(feature = "collection_debug", since = "1.17.0")]
