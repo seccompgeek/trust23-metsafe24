@@ -1240,6 +1240,12 @@ pub struct CursorMut<'a, T: 'a> {
     list: &'a mut LinkedList<T>,
 }
 
+impl<'a, T: 'a> MetaUpdate for CursorMut<'a,T> {
+    fn synchronize(&self) {
+        //synchronize CursorMut
+    }
+}
+
 #[unstable(feature = "linked_list_cursors", issue = "58533")]
 impl<T: fmt::Debug> fmt::Debug for CursorMut<'_, T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -1618,6 +1624,12 @@ where
     pred: F,
     idx: usize,
     old_len: usize,
+}
+
+impl<'a, T: 'a, F: 'a> MetaUpdate for DrainFilter<'a,T,F> {
+    fn synchronize(&self) {
+        //synchronize drain
+    }
 }
 
 #[unstable(feature = "drain_filter", reason = "recently added", issue = "43244")]

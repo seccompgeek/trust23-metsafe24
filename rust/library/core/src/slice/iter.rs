@@ -3,6 +3,8 @@
 #[macro_use] // import iterator! and forward_iterator!
 mod macros;
 
+use alloc::metasafe::MetaUpdate;
+
 use crate::cmp;
 use crate::cmp::Ordering;
 use crate::fmt;
@@ -68,6 +70,12 @@ pub struct Iter<'a, T: 'a> {
     // ptr == end is a quick test for the Iterator being empty, that works
     // for both ZST and non-ZST.
     _marker: PhantomData<&'a T>,
+}
+
+impl<'a, T: 'a> MetaUpdate for Iter<'a, T> {
+    fn synchronize(&self) {
+        //synchronize
+    }
 }
 
 #[stable(feature = "core_impl_debug", since = "1.9.0")]

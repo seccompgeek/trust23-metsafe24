@@ -149,6 +149,7 @@ use core::mem::{self, swap, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
 use core::ptr;
 
+use crate::metasafe::MetaUpdate;
 use crate::slice;
 use crate::vec::{self, AsIntoIter, Vec};
 
@@ -248,6 +249,12 @@ pub struct BinaryHeap<T> {
     data: Vec<T>,
 }
 
+impl<T> MetaUpdate for BinaryHeap<T> {
+    fn synchronize(&self) {
+        self.data.synchronize()
+    }
+}
+
 /// Structure wrapping a mutable reference to the greatest item on a
 /// `BinaryHeap`.
 ///
@@ -259,6 +266,12 @@ pub struct BinaryHeap<T> {
 pub struct PeekMut<'a, T: 'a + Ord> {
     heap: &'a mut BinaryHeap<T>,
     sift: bool,
+}
+
+impl<'a, T: 'a + Ord> MetaUpdate for PeekMut<'a, T> {
+    fn synchronize(&self) {
+        
+    }
 }
 
 #[stable(feature = "collection_debug", since = "1.17.0")]
@@ -1001,6 +1014,12 @@ struct Hole<'a, T: 'a> {
     pos: usize,
 }
 
+impl<'a, T: 'a> MetaUpdate for Hole<'a, T> {
+    fn synchronize(&self) {
+        
+    }
+}
+
 impl<'a, T> Hole<'a, T> {
     /// Create a new `Hole` at index `pos`.
     ///
@@ -1073,6 +1092,12 @@ pub struct Iter<'a, T: 'a> {
     iter: slice::Iter<'a, T>,
 }
 
+impl<'a, T: 'a> MetaUpdate for Iter<'a, T> {
+    fn synchronize(&self) {
+        
+    }
+}
+
 #[stable(feature = "collection_debug", since = "1.17.0")]
 impl<T: fmt::Debug> fmt::Debug for Iter<'_, T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -1136,6 +1161,12 @@ impl<T> FusedIterator for Iter<'_, T> {}
 #[derive(Clone)]
 pub struct IntoIter<T> {
     iter: vec::IntoIter<T>,
+}
+
+impl<T> MetaUpdate for IntoIter<T> {
+    fn synchronize(&self) {
+        self.iter.synchronize();
+    }
 }
 
 #[stable(feature = "collection_debug", since = "1.17.0")]
@@ -1241,6 +1272,8 @@ unsafe impl<T: Ord> TrustedLen for IntoIterSorted<T> {}
 pub struct Drain<'a, T: 'a> {
     iter: vec::Drain<'a, T>,
 }
+
+impl<'a, T: 'a> 
 
 #[stable(feature = "drain", since = "1.6.0")]
 impl<T> Iterator for Drain<'_, T> {

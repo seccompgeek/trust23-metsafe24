@@ -2831,6 +2831,16 @@ pub struct IntoIter<T> {
     end: *const T,
 }
 
+impl<T> MetaUpdate for IntoIter<T> {
+    fn synchronize(&self) {
+        unsafe {
+            if self.end < self.ptr.add(self.cap) {
+                panic!("MetaSafe: Overflow, IntoIter has OOB")
+            }
+        }
+    }
+}
+
 #[stable(feature = "vec_intoiter_debug", since = "1.13.0")]
 impl<T: fmt::Debug> fmt::Debug for IntoIter<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
