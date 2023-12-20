@@ -1,3 +1,4 @@
+#!/bin/zsh
 echo "Setting up environment for SVF"
 
 

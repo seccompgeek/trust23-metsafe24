@@ -25,7 +25,7 @@ namespace SVF
     class DDAClient
     {
     public:
-        DDAClient(SVFModule* mod) : pag(nullptr), module(mod), curPtr(0), solveAll(true) {}
+        DDAClient(SVFModule* mod, bool metasafe) : pag(nullptr), module(mod), curPtr(0), solveAll(true), metasafe(metasafe) {}
 
         virtual ~DDAClient() {}
 
@@ -43,9 +43,18 @@ namespace SVF
                         bool isUnsafe = false;
                         if(node->isTopLevelPtr()){
                             if(const Instruction* inst = llvm::dyn_cast<Instruction>(val)){
-                                if(inst->getMetadata("MPK-Unsafe") != nullptr){
+                                if(inst->getMetadata("MPK-SmartPointer") != nullptr){
+                                    continue;
+                                }
+                                if( this->metasafe && inst->getMetadata("MPK-Unsafe") != nullptr){
                                     candidateQueries.insert(id);
                                     isUnsafe = true;
+                                }
+                            } else if (this->metasafe){ 
+                                if(const Argument* arg = llvm::dyn_cast<Argument>(val)){
+                                    if(inst->getMetadata("MPK-SmartPointer") != nullptr){
+                                        continue;
+                                    }
                                 }
                             }
                         }
@@ -118,6 +127,7 @@ namespace SVF
     private:
         OrderedNodeSet userInput;           ///< User input queries
         bool solveAll;				///< TRUE if all top level pointers are being queried
+        bool metasafe;
     };
 
 
@@ -130,7 +140,7 @@ namespace SVF
         typedef OrderedMap<NodeID,const CallBlockNode*> VTablePtrToCallSiteMap;
         VTablePtrToCallSiteMap vtableToCallSiteMap;
     public:
-        FunptrDDAClient(SVFModule* module) : DDAClient(module) {}
+        FunptrDDAClient(SVFModule* module) : DDAClient(module, false) {}
         ~FunptrDDAClient() {}
 
         /// Only collect function pointers as query candidates.
@@ -149,7 +159,7 @@ namespace SVF
     public:
         typedef OrderedSet<const PAGNode*> PAGNodeSet;
 
-        AliasDDAClient(SVFModule* module) : DDAClient(module) {}
+        AliasDDAClient(SVFModule* module) : DDAClient(module, false) {}
         ~AliasDDAClient() {}
 
         /// Only collect function pointers as query candidates.

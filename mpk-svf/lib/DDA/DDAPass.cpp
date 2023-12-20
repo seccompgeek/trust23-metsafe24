@@ -800,7 +800,7 @@ void DDAPass::selectClient(SVFModule* module)
             /// allow user specify queries
         else
         {
-            _client = new DDAClient(module);
+            _client = new DDAClient(module, Options::UserInputQuery == "metasafe");
             if (Options::UserInputQuery != "all")
             {
                 u32_t buf; // Have a buffer

@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/iybang/project/mpk-svf
+CMAKE_SOURCE_DIR = ../
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/iybang/project/mpk-svf
+CMAKE_BINARY_DIR = ../build/
 
 #=============================================================================
 # Targets provided globally by CMake.
