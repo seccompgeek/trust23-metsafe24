@@ -24,6 +24,8 @@ use rustc_target::abi::call::{ArgAbi, FnAbi, PassMode};
 use rustc_target::abi::{self, LayoutOf};
 use rustc_target::spec::abi::Abi;
 
+const EXEMPT_CRATES: &str = ["std", "core", "proc_macros", "alloc"];
+
 /// Used by `FunctionCx::codegen_terminator` for emitting common patterns
 /// e.g., creating a basic block, calling a function, etc.
 struct TerminatorCodegenHelper<'tcx> {
@@ -939,13 +941,16 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         debug!("codegen_block({:?}={:?})", bb, data);
 
         for statement in &data.statements {
-            let unsafety = match self.mir.source_scopes[statement.source_info.scope].is_unsafe {
-                true => true,
-                false => false,
-            };
+            // some crates are whitelisted.
+            let crate_name =  self.cx.tcx().crate_name(self.instance.def_id().krate).to_string().as_str();
+                if !EXEMPT_CRATES.contains(crate_name) {
+                let unsafety = match self.mir.source_scopes[statement.source_info.scope].is_unsafe {
+                    true => true,
+                    false => false,
+                };
 
-
-            bx.set_in_unsafe(unsafety);
+                bx.set_in_unsafe(unsafety);
+            }
 
             bx = self.codegen_statement(bx, statement);
         }

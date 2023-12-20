@@ -3084,6 +3084,8 @@ LLVMValueRef LLVMGetMetadata(LLVMValueRef Val, unsigned KindID);
 void LLVMSetMetadata(LLVMValueRef Val, unsigned KindID, LLVMValueRef Node);
 ///MPK-Unsafe
 void LLVMSetInUnsafeMetadata(LLVMValueRef Inst);
+///MPK-SmartPointer
+void LLVMSetSmartPointerMetadata(LLVMValueRef Inst);
 /**
  * Returns the metadata associated with an instruction value, but filters out
  * all the debug locations.

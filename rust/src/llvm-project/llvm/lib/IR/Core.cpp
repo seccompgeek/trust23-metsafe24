@@ -903,6 +903,12 @@ void LLVMSetInUnsafeMetadata(LLVMValueRef Inst){
     unwrap<Instruction>(Inst)->setMetadata("MPK-Unsafe", N);
 }
 
+void LLVMSetSmartPointerMetadata(LLVMValueRef Inst){
+  LLVMContext& C = unwrap<Instruction>(Inst)->getContext();
+  MDNode* N = MDNode::get(C, MDString::get(C, "Is smart pointer"));
+  unwrap<Instrunction>(Inst)->setMetadata("MPK-SmartPointer", N);
+}
+
 struct LLVMOpaqueValueMetadataEntry {
   unsigned Kind;
   LLVMMetadataRef Metadata;

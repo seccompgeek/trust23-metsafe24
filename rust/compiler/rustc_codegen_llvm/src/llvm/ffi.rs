@@ -966,6 +966,7 @@ extern "C" {
     pub fn LLVMReplaceAllUsesWith(OldVal: &'a Value, NewVal: &'a Value);
     pub fn LLVMSetMetadata(Val: &'a Value, KindID: c_uint, Node: &'a Value);
     pub fn LLVMSetInUnsafeMetadata(Val: &'a Value);
+    pub fn LLVMSetSmartPointerMetadata(Val: &'a Value);
 
     // Operations on constants of any type
     pub fn LLVMConstNull(Ty: &Type) -> &Value;

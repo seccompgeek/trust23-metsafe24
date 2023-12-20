@@ -706,7 +706,7 @@ impl<'a, 'tcx> Builder<'a, 'tcx> {
                     hir::UnsafeSource::UserProvided => true,
                     _ => false
                 }
-            }
+            },
             _ => false
         };
 
