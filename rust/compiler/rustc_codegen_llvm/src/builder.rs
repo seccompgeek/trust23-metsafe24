@@ -127,14 +127,14 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         bx
     }
 
-    fn set_in_unsafe(&mut self, unsafety: bool){
+    fn set_in_unsafe(&mut self, unsafety: bool) {
         self.in_unsafe = unsafety;
     }
 
     fn with_cx(cx: &'a CodegenCx<'ll, 'tcx>) -> Self {
         // Create a fresh builder from the crate context.
         let llbuilder = unsafe { llvm::LLVMCreateBuilderInContext(cx.llcx) };
-        Builder { llbuilder, cx,  in_unsafe:false }
+        Builder { llbuilder, cx, in_unsafe: false }
     }
 
     fn build_sibling_block(&self, name: &str) -> Self {
@@ -150,6 +150,12 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     fn position_at_end(&mut self, llbb: &'ll BasicBlock) {
         unsafe {
             llvm::LLVMPositionBuilderAtEnd(self.llbuilder, llbb);
+        }
+    }
+
+    fn mark_smart_pointer(&self, v: Self::Value) {
+        unsafe {
+            llvm::LLVMSetSmartPointerMetadata(v);
         }
     }
 
@@ -391,13 +397,18 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         val
     }
 
-    fn alloca(&mut self, ty: &'ll Type, align: Align) -> &'ll Value {
+    fn alloca(&mut self, ty: &'ll Type, align: Align, is_smart: bool) -> &'ll Value {
         let mut bx = Builder::with_cx(self.cx);
         bx.position_at_start(unsafe { llvm::LLVMGetFirstBasicBlock(self.llfn()) });
         let instr = bx.dynamic_alloca(ty, align);
         if self.in_unsafe {
             unsafe {
                 llvm::LLVMSetInUnsafeMetadata(instr);
+            }
+        }
+        if is_smart {
+            unsafe {
+                llvm::LLVMSetSmartPointerMetadata(instr);
             }
         }
         instr
@@ -1372,17 +1383,18 @@ impl Builder<'a, 'll, 'tcx> {
     }
 
     pub fn catch_ret(&mut self, funclet: &Funclet<'ll>, unwind: &'ll BasicBlock) -> &'ll Value {
-        let ret =
-            unsafe {
-                let instr = llvm::LLVMRustBuildCatchRet(self.llbuilder, funclet.cleanuppad(), unwind);
-                match instr {
-                    None => {}
-                    _ => if self.in_unsafe {
+        let ret = unsafe {
+            let instr = llvm::LLVMRustBuildCatchRet(self.llbuilder, funclet.cleanuppad(), unwind);
+            match instr {
+                None => {}
+                _ => {
+                    if self.in_unsafe {
                         LLVMSetInUnsafeMetadata(instr.unwrap());
                     }
                 }
-                instr
-            };
+            }
+            instr
+        };
         ret.expect("LLVM does not have support for catchret")
     }
 

@@ -65,11 +65,11 @@ impl ArgAttributesExt for ArgAttributes {
                 llvm::LLVMRustAddByValAttr(llfn, idx.as_uint(), ty.unwrap());
             }
             regular.for_each_kind(|attr| attr.apply_llfn(idx, llfn));
-            if regular.contains(ArgAttribute::MPKImmut){
+            if regular.contains(ArgAttribute::MPKImmut) {
                 llvm::Attribute::MPKImmut.apply_llfn(idx, llfn);
             }
 
-            if regular.contains(ArgAttribute::MPKUnsafe){
+            if regular.contains(ArgAttribute::MPKUnsafe) {
                 llvm::Attribute::MPKUnsafe.apply_llfn(idx, llfn);
             }
         }
@@ -102,11 +102,11 @@ impl ArgAttributesExt for ArgAttributes {
                 llvm::LLVMRustAddByValCallSiteAttr(callsite, idx.as_uint(), ty.unwrap());
             }
             regular.for_each_kind(|attr| attr.apply_callsite(idx, callsite));
-            if regular.contains(ArgAttribute::MPKImmut){
+            if regular.contains(ArgAttribute::MPKImmut) {
                 llvm::Attribute::MPKImmut.apply_callsite(idx, callsite);
             }
 
-            if  regular.contains(ArgAttribute::MPKUnsafe){
+            if regular.contains(ArgAttribute::MPKUnsafe) {
                 llvm::Attribute::MPKUnsafe.apply_callsite(idx, callsite);
             }
         }
@@ -242,7 +242,7 @@ impl ArgAbiExt<'ll, 'tcx> for ArgAbi<'tcx, Ty<'tcx>> {
                 // We instead thus allocate some scratch space...
                 let scratch_size = cast.size(bx);
                 let scratch_align = cast.align(bx);
-                let llscratch = bx.alloca(cast.llvm_type(bx), scratch_align);
+                let llscratch = bx.alloca(cast.llvm_type(bx), scratch_align, false);
                 bx.lifetime_start(llscratch, scratch_size);
 
                 // ... where we first store the value...

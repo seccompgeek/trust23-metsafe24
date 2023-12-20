@@ -50,7 +50,8 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         layout: TyAndLayout<'tcx>,
     ) -> Self {
         assert!(!layout.is_unsized(), "tried to statically allocate unsized place");
-        let tmp = bx.alloca(bx.cx().backend_type(layout), layout.align.abi);
+        let is_smart_pointer = bx.cx().tcx().is_smart_pointer(layout.ty);
+        let tmp = bx.alloca(bx.cx().backend_type(layout), layout.align.abi, is_smart_pointer);
         Self::new_sized(tmp, layout)
     }
 
@@ -91,6 +92,7 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         let field = self.layout.field(bx.cx(), ix);
         let offset = self.layout.fields.offset(ix);
         let effective_field_align = self.align.restrict_for_offset(offset);
+        let is_smart = bx.cx().tcx().is_smart_pointer(field.ty) || bx.cx().tcx().contains_smart_pointer(field.ty);
 
         let mut simple = || {
             let llval = match self.layout.abi {
@@ -121,9 +123,18 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
                 }
                 _ => bx.struct_gep(self.llval, bx.cx().backend_field_index(self.layout, ix)),
             };
+            let llval = if is_smart {
+                bx.mark_smart_pointer(llval);
+                let temp = bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)));
+                bx.mark_smart_pointer(temp);
+                temp
+            } else {
+                bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)))
+            };
+
             PlaceRef {
                 // HACK(eddyb): have to bitcast pointers until LLVM removes pointee types.
-                llval: bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field))),
+                llval,
                 llextra: if bx.cx().type_has_metadata(field.ty) { self.llextra } else { None },
                 layout: field,
                 align: effective_field_align,
@@ -198,9 +209,17 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         // Finally, cast back to the type expected.
         let ll_fty = bx.cx().backend_type(field);
         debug!("struct_field_ptr: Field type is {:?}", ll_fty);
+        let llval = if is_smart {
+            bx.mark_smart_pointer(byte_ptr);
+            let temp = bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty));
+            bx.mark_smart_pointer(temp);
+            temp
+        } else {
+            bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty))
+        };
 
         PlaceRef {
-            llval: bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty)),
+            llval,
             llextra: self.llextra,
             layout: field,
             align: effective_field_align,
@@ -387,8 +406,17 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
             layout.size
         };
 
+        let is_smart = bx.tcx().is_smart_pointer(layout.ty) || bx.tcx().contains_smart_pointer(layout.ty);
+        let llval = if is_smart {
+            let temp = bx.inbounds_gep(self.llval, &[bx.cx().const_usize(0), llindex]);
+            bx.mark_smart_pointer(temp);
+            temp
+        } else {
+            bx.inbounds_gep(self.llval, &[bx.cx().const_usize(0), llindex])
+        };
+
         PlaceRef {
-            llval: bx.inbounds_gep(self.llval, &[bx.cx().const_usize(0), llindex]),
+            llval, 
             llextra: None,
             layout,
             align: self.align.restrict_for_offset(offset),
@@ -403,9 +431,21 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         let mut downcast = *self;
         downcast.layout = self.layout.for_variant(bx.cx(), variant_index);
 
+        let is_smart = bx.tcx().is_smart_pointer(downcast.layout.ty) || bx.tcx().contains_smart_pointer(downcast.layout.ty);
+
         // Cast to the appropriate variant struct type.
         let variant_ty = bx.cx().backend_type(downcast.layout);
-        downcast.llval = bx.pointercast(downcast.llval, bx.cx().type_ptr_to(variant_ty));
+
+        // MetaSafe + TRust
+        let llval = if is_smart {
+            let temp = bx.pointercast(downcast.llval, bx.cx().type_ptr_to(variant_ty));
+            bx.mark_smart_pointer(temp);
+            temp
+        } else {
+            bx.pointercast(downcast.llval, bx.cx().type_ptr_to(variant_ty))
+        };
+
+        downcast.llval = llval;
 
         downcast
     }
@@ -501,6 +541,11 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                             subslice.llval,
                             bx.cx().type_ptr_to(bx.cx().backend_type(subslice.layout)),
                         );
+
+                        // MetaSafe + TRust
+                        if bx.tcx().is_smart_pointer(cg_base.layout.ty) || bx.tcx().contains_smart_pointer(cg_base.layout.ty) {
+                            bx.mark_smart_pointer(subslice.llval);
+                        }
 
                         subslice
                     }

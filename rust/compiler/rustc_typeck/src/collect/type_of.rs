@@ -353,49 +353,75 @@ pub(super) fn type_of(tcx: TyCtxt<'_>, def_id: DefId) -> Ty<'_> {
 }
 
 pub(super) fn is_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
+    let ty = ty.peel_refs();
+
     if ty.is_box() {
         return true;
     }
-    if !ty.is_adt() {
+    if !ty.is_adt() && !ty.is_array() && !ty.is_slice() {
         return false;
     }
-    
-    if let ty::Adt(def, args) = ty.kind() {
-        if let Some(metaupdate_trait) = tcx.metaupdate_trait(()) {
-            if tcx.type_implements_trait((
-                metaupdate_trait,
-                ty,
-                args.clone(),
-                tcx.param_env(def.did))
-            ) {
-                return true
+
+    match ty.kind() {
+        ty::Adt(def, args) => {
+            if let Some(metaupdate_trait) = tcx.metaupdate_trait(()) {
+                if tcx.type_implements_trait((
+                    metaupdate_trait,
+                    ty,
+                    args.clone(),
+                    tcx.param_env(def.did))
+                ) {
+                    return true
+                }
             }
+        },
+        ty::Array(inner, _) |
+        ty::Slice(inner) => {
+            return stack::ensure_sufficient_stack(||{
+                tcx.is_smart_pointer(*inner) 
+            });
+        },
+        _ => {
         }
     }
-
+    
     false
 }
 
 pub(super) fn contains_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
+
+    let ty = ty.peel_refs();
+
     if tcx.is_smart_pointer(ty) {
         return false;
     }
 
-    if !ty.is_adt() {
+    if !ty.is_adt() && !ty.is_array() && !ty.is_slice() {
         return false;
     }
 
-    if let ty::Adt(def, args) = ty.kind() {
-        if def.is_struct() {
-            for field in def.all_fields() {
-                let field_ty = field.ty(tcx, args);
-                let ret = stack::ensure_sufficient_stack(||{
-                    tcx.is_smart_pointer(field_ty) || tcx.contains_smart_pointer(field_ty)
-                });
-                if ret {
-                    return true;
+    match ty.kind() {
+        ty::Adt(def, args) => {
+            if def.is_struct() {
+                for field in def.all_fields() {
+                    let field_ty = field.ty(tcx, args);
+                    let ret = stack::ensure_sufficient_stack(||{
+                        tcx.is_smart_pointer(field_ty) || tcx.contains_smart_pointer(field_ty)
+                    });
+                    if ret {
+                        return true;
+                    }
                 }
             }
+        },
+        ty::Array(inner, _)|
+        ty::Slice(inner) => {
+            return stack::ensure_sufficient_stack(||{
+                tcx.contains_smart_pointer(*inner)
+            });
+        },
+        _ => {
+
         }
     }
 
@@ -403,18 +429,12 @@ pub(super) fn contains_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> b
 }
 
 pub(super) fn metaupdate_trait<'tcx>(tcx: TyCtxt<'tcx>, _key: ()) -> Option<DefId> {
-    let crates = tcx.all_crate_nums(LOCAL_CRATE);
-    for crate_num in crates {
-        if tcx.crate_name(*crate_num).to_string().eq("std") {
-            let traits = tcx.all_traits(*crate_num);
-            for t in traits {
-                if tcx.item_name(*t).to_string().eq("MetaUpdate") {
-                    return Some(*t);
-                }
-            }
+    let traits = tcx.all_traits(LOCAL_CRATE);
+    for t in traits {
+        if tcx.item_name(*t).to_string().eq("MetaUpdate") {
+            return Some(*t);
         }
     }
-
     None
 }
 

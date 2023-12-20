@@ -458,7 +458,7 @@ fn codegen_msvc_try(
         //
         // More information can be found in libstd's seh.rs implementation.
         let ptr_align = bx.tcx().data_layout.pointer_align.abi;
-        let slot = bx.alloca(bx.type_i8p(), ptr_align);
+        let slot = bx.alloca(bx.type_i8p(), ptr_align, false);
         bx.invoke(try_func, &[data], normal.llbb(), catchswitch.llbb(), None);
 
         normal.ret(bx.const_i32(0));
@@ -650,7 +650,7 @@ fn codegen_emcc_try(
         let ptr_align = bx.tcx().data_layout.pointer_align.abi;
         let i8_align = bx.tcx().data_layout.i8_align.abi;
         let catch_data =
-            catch.alloca(bx.type_struct(&[bx.type_i8p(), bx.type_bool()], false), ptr_align);
+            catch.alloca(bx.type_struct(&[bx.type_i8p(), bx.type_bool()], false), ptr_align,false);
         let catch_data_0 = catch.inbounds_gep(catch_data, &[bx.const_usize(0), bx.const_usize(0)]);
         catch.store(ptr, catch_data_0, ptr_align);
         let catch_data_1 = catch.inbounds_gep(catch_data, &[bx.const_usize(0), bx.const_usize(1)]);

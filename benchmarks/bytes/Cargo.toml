@@ -9,8 +9,8 @@ name = "bytes"
 version = "1.0.1"
 license = "MIT"
 authors = [
-    "Carl Lerche <me@carllerche.com>",
-    "Sean McArthur <sean@seanmonstar.com>",
+  "Carl Lerche <me@carllerche.com>",
+  "Sean McArthur <sean@seanmonstar.com>",
 ]
 description = "Types and traits for working with bytes"
 documentation = "https://docs.rs/bytes/1.0.1/bytes/"
@@ -29,10 +29,12 @@ name = "benchmarks"
 path = "./benches/lib.rs"
 
 [dependencies]
-serde = { version = "1.0.60", optional = true, default-features = false, features = ["alloc"] }
+serde = { version = "1.0.60", optional = true, default-features = false, features = [
+  "alloc",
+] }
 
 [dev-dependencies]
-serde_test = "1.0"
+serde_test = "1.0.124"
 
 [target.'cfg(loom)'.dev-dependencies]
 loom = "0.5"

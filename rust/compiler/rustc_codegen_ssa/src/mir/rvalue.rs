@@ -182,6 +182,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                 let operand = self.codegen_operand(&mut bx, source);
                 debug!("cast operand is {:?}", operand);
                 let cast = bx.cx().layout_of(self.monomorphize(&mir_cast_ty));
+                let is_smart = bx.tcx().is_smart_pointer(cast.ty) || bx.tcx().contains_smart_pointer(cast.ty);
 
                 let val = match *kind {
                     mir::CastKind::Pointer(PointerCast::ReifyFnPointer) => {
@@ -236,6 +237,9 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                                     lldata,
                                     bx.cx().scalar_pair_element_backend_type(cast, 0, true),
                                 );
+                                if is_smart {
+                                    bx.mark_smart_pointer(lldata);
+                                }
                                 OperandValue::Pair(lldata, llextra)
                             }
                             OperandValue::Immediate(lldata) => {
@@ -246,6 +250,9 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                                     operand.layout.ty,
                                     cast.ty,
                                 );
+                                if is_smart {
+                                    bx.mark_smart_pointer(lldata);
+                                }
                                 OperandValue::Pair(lldata, llextra)
                             }
                             OperandValue::Ref(..) => {
@@ -263,6 +270,10 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                                     data_ptr,
                                     bx.cx().scalar_pair_element_backend_type(cast, 0, true),
                                 );
+
+                                if is_smart {
+                                    bx.mark_smart_pointer(data_cast);
+                                }
                                 OperandValue::Pair(data_cast, meta)
                             } else {
                                 // cast to thin-ptr
@@ -270,6 +281,9 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                                 // pointer-cast of that pointer to desired pointer type.
                                 let llcast_ty = bx.cx().immediate_backend_type(cast);
                                 let llval = bx.pointercast(data_ptr, llcast_ty);
+                                if is_smart {
+                                    bx.mark_smart_pointer(llval);
+                                }
                                 OperandValue::Immediate(llval)
                             }
                         } else {
@@ -300,7 +314,10 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                                     let discr_val = bx.cx().const_uint_big(discr_t, discr.val);
                                     let discr_val =
                                         bx.intcast(discr_val, ll_t_out, discr.ty.is_signed());
-
+                                    
+                                    if is_smart {
+                                        bx.mark_smart_pointer(discr_val);
+                                    }
                                     return (
                                         bx,
                                         OperandRef {
@@ -392,6 +409,9 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                             }
                             _ => bug!("unsupported cast: {:?} to {:?}", operand.layout.ty, cast.ty),
                         };
+                        if is_smart {
+                            bx.mark_smart_pointer(newval);
+                        }
                         OperandValue::Immediate(newval)
                     }
                 };

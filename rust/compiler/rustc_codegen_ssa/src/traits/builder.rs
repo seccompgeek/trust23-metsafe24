@@ -107,6 +107,8 @@ pub trait BuilderMethods<'a, 'tcx>:
     fn neg(&mut self, v: Self::Value) -> Self::Value;
     fn fneg(&mut self, v: Self::Value) -> Self::Value;
     fn not(&mut self, v: Self::Value) -> Self::Value;
+    //MetaSafe + TRust: MK
+    fn mark_smart_pointer(&self, v: Self::Value);
 
     fn checked_binop(
         &mut self,
@@ -126,7 +128,7 @@ pub trait BuilderMethods<'a, 'tcx>:
     }
     fn to_immediate_scalar(&mut self, val: Self::Value, scalar: &Scalar) -> Self::Value;
 
-    fn alloca(&mut self, ty: Self::Type, align: Align) -> Self::Value;
+    fn alloca(&mut self, ty: Self::Type, align: Align, is_smart: bool) -> Self::Value;
     fn dynamic_alloca(&mut self, ty: Self::Type, align: Align) -> Self::Value;
     fn array_alloca(&mut self, ty: Self::Type, len: Self::Value, align: Align) -> Self::Value;
 
@@ -134,7 +136,7 @@ pub trait BuilderMethods<'a, 'tcx>:
     fn volatile_load(&mut self, ptr: Self::Value) -> Self::Value;
     fn atomic_load(&mut self, ptr: Self::Value, order: AtomicOrdering, size: Size) -> Self::Value;
     fn load_operand(&mut self, place: PlaceRef<'tcx, Self::Value>)
-    -> OperandRef<'tcx, Self::Value>;
+        -> OperandRef<'tcx, Self::Value>;
 
     /// Called for Rvalue::Repeat when the elem is neither a ZST nor optimizable using memset.
     fn write_operand_repeatedly(
