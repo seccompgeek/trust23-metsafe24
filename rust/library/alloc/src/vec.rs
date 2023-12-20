@@ -303,6 +303,7 @@ pub struct Vec<T> {
     len: usize,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T> MetaUpdate for Vec<T> {
     fn synchronize(&self) {
         if self.capacity() < self.len {
@@ -2831,6 +2832,7 @@ pub struct IntoIter<T> {
     end: *const T,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T> MetaUpdate for IntoIter<T> {
     fn synchronize(&self) {
         unsafe {
@@ -3097,6 +3099,7 @@ pub struct Drain<'a, T: 'a> {
     vec: NonNull<Vec<T>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for Drain<'a, T> {
     fn synchronize(&self) {
         // perhaps we shouldn't have the tail_Start larger than the tail_len

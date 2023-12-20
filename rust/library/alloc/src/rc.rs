@@ -304,6 +304,7 @@ pub struct Rc<T: ?Sized> {
     phantom: PhantomData<RcBox<T>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T: ?Sized> MetaUpdate for Rc<T> {
     fn synchronize(&self) {
         // synchronize Rc

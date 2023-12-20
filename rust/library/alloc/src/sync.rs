@@ -226,6 +226,7 @@ pub struct Arc<T: ?Sized> {
     phantom: PhantomData<ArcInner<T>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T: ?Sized> MetaUpdate for Arc<T> {
     fn synchronize(&self) {
         //synchronize for Arc
@@ -284,6 +285,7 @@ pub struct Weak<T: ?Sized> {
     ptr: NonNull<ArcInner<T>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T: ?Sized> MetaUpdate for Weak<T> {
     fn synchronize(&self) {
         //synchronize Weak?

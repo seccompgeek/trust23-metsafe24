@@ -163,7 +163,8 @@ pub struct Box<
     #[unstable(feature = "allocator_api", issue = "32838")] A: AllocRef = Global,
 >(Unique<T>, A);
 
-impl<T: ?Sized, A> MetaUpdate for Box<T,A> {
+#[unstable(feature = "metasafe", issue="none")]
+impl<T: ?Sized, A: AllocRef> MetaUpdate for Box<T,A> {
     fn synchronize(&self){
         
     }

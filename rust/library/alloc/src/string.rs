@@ -280,6 +280,7 @@ pub struct String {
     vec: Vec<u8>,
 }
 
+#[unstable(feature = "metasafe", issue = "none")]
 impl MetaUpdate for String {
     fn synchronize(&self) {
         self.vec.synchronize();

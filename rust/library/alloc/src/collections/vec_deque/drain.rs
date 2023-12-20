@@ -2,7 +2,7 @@ use core::iter::FusedIterator;
 use core::ptr::{self, NonNull};
 use core::{fmt, mem};
 
-use alloc::metasafe::MetaUpdate;
+use super::MetaUpdate;
 
 use super::{count, Iter, VecDeque};
 
@@ -20,6 +20,7 @@ pub struct Drain<'a, T: 'a> {
     pub(crate) deque: NonNull<VecDeque<T>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for Drain<'a, T> {
     fn synchronize(&self) {
         //synchronize Drain

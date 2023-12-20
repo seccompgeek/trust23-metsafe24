@@ -69,6 +69,7 @@ pub struct VecDeque<T> {
     buf: RawVec<T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T> MetaUpdate for VecDeque<T> {
     fn synchronize(&self) {
         if self.tail < self.head {

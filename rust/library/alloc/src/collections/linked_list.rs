@@ -43,6 +43,7 @@ pub struct LinkedList<T> {
     marker: PhantomData<Box<Node<T>>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T> MetaUpdate for LinkedList<T> {
     fn synchronize(&self) {
         // synchronize linkedlist
@@ -73,6 +74,7 @@ pub struct Iter<'a, T: 'a> {
     marker: PhantomData<&'a Node<T>>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for Iter<'a, T> {
     fn synchronize(&self) {
         //synchronize Iter
@@ -109,6 +111,7 @@ pub struct IterMut<'a, T: 'a> {
     len: usize,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for IterMut<'a, T> {
     fn synchronize(&self) {
         // synchronize for IterMut.
@@ -1202,6 +1205,7 @@ pub struct Cursor<'a, T: 'a> {
     list: &'a LinkedList<T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for Cursor<'a, T> {
     fn synchronize(&self) {
         // the cursor should not go beyond length?
@@ -1240,6 +1244,7 @@ pub struct CursorMut<'a, T: 'a> {
     list: &'a mut LinkedList<T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for CursorMut<'a,T> {
     fn synchronize(&self) {
         //synchronize CursorMut
@@ -1626,7 +1631,10 @@ where
     old_len: usize,
 }
 
-impl<'a, T: 'a, F: 'a> MetaUpdate for DrainFilter<'a,T,F> {
+#[unstable(feature = "metasafe", issue="none")]
+impl<'a, T: 'a, F: 'a> MetaUpdate for DrainFilter<'a,T,F>
+where F: FnMut(&mut T) -> bool
+{
     fn synchronize(&self) {
         //synchronize drain
     }

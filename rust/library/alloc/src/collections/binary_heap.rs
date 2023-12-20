@@ -249,6 +249,7 @@ pub struct BinaryHeap<T> {
     data: Vec<T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T> MetaUpdate for BinaryHeap<T> {
     fn synchronize(&self) {
         self.data.synchronize()
@@ -268,6 +269,7 @@ pub struct PeekMut<'a, T: 'a + Ord> {
     sift: bool,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a + Ord> MetaUpdate for PeekMut<'a, T> {
     fn synchronize(&self) {
         
@@ -1092,6 +1094,7 @@ pub struct Iter<'a, T: 'a> {
     iter: slice::Iter<'a, T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: 'a> MetaUpdate for Iter<'a, T> {
     fn synchronize(&self) {
         
@@ -1163,6 +1166,7 @@ pub struct IntoIter<T> {
     iter: vec::IntoIter<T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<T> MetaUpdate for IntoIter<T> {
     fn synchronize(&self) {
         self.iter.synchronize();
@@ -1273,7 +1277,8 @@ pub struct Drain<'a, T: 'a> {
     iter: vec::Drain<'a, T>,
 }
 
-impl<'a, T: 'a> MetaUpdate for Drain<'a, T: 'a> {
+#[unstable(feature = "metasafe", issue="none")]
+impl<'a, T: 'a> MetaUpdate for Drain<'a, T> {
     fn synchronize(&self) {
         self.iter.synchronize();
     }
@@ -1324,6 +1329,7 @@ pub struct DrainSorted<'a, T: Ord> {
     inner: &'a mut BinaryHeap<T>,
 }
 
+#[unstable(feature = "metasafe", issue="none")]
 impl<'a, T: Ord> MetaUpdate for DrainSorted<'a, T> {
     fn synchronize(&self) {
         //synchronize inner
