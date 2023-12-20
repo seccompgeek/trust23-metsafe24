@@ -367,3 +367,15 @@ impl<'tcx> Key for (DefId, Ty<'tcx>, SubstsRef<'tcx>, ty::ParamEnv<'tcx>) {
         DUMMY_SP
     }
 }
+
+impl Key for () {
+    type CacheSelector = DefaultCacheSelector;
+
+    fn default_span(&self, _tcx: TyCtxt<'_>) -> Span {
+        DUMMY_SP
+    }
+
+    fn query_crate(&self) -> CrateNum {
+        LOCAL_CRATE
+    }
+}

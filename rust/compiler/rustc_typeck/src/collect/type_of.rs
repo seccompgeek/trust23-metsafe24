@@ -11,8 +11,8 @@ use rustc_hir::Node;
 use rustc_middle::hir::map::Map;
 use rustc_middle::ty::subst::{GenericArgKind, InternalSubsts};
 use rustc_middle::ty::util::IntTypeExt;
-use rustc_middle::ty::{self, DefIdTree, Ty, TyCtxt, TypeFoldable, List};
-use rustc_span::source_map::LOCAL_CRATE;
+use rustc_middle::ty::{self, DefIdTree, Ty, TyCtxt, TypeFoldable};
+use crate::LOCAL_CRATE;
 use rustc_span::symbol::Ident;
 use rustc_span::{Span, DUMMY_SP};
 
@@ -352,7 +352,7 @@ pub(super) fn type_of(tcx: TyCtxt<'_>, def_id: DefId) -> Ty<'_> {
     }
 }
 
-pub(super) fn is_smart_pointer(tcx: TyCtxt<'_>, ty: Ty<'_>) -> bool {
+pub(super) fn is_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
     if ty.is_box() {
         return true;
     }
@@ -376,7 +376,7 @@ pub(super) fn is_smart_pointer(tcx: TyCtxt<'_>, ty: Ty<'_>) -> bool {
     false
 }
 
-pub(super) fn contains_smart_pointer(tcx: TyCtxt<'_>, ty: Ty<'_>) -> bool {
+pub(super) fn contains_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
     if tcx.is_smart_pointer(ty) {
         return false;
     }
@@ -402,7 +402,7 @@ pub(super) fn contains_smart_pointer(tcx: TyCtxt<'_>, ty: Ty<'_>) -> bool {
     return false;
 }
 
-pub(super) fn metaupdate_trait(tcx: TyCtxt<'_>, _key: ()) -> Option<DefId> {
+pub(super) fn metaupdate_trait<'tcx>(tcx: TyCtxt<'tcx>, _key: ()) -> Option<DefId> {
     let crates = tcx.all_crate_nums(LOCAL_CRATE);
     for crate_num in crates {
         if tcx.crate_name(*crate_num).to_string().eq("std") {
