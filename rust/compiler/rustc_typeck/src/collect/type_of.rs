@@ -1,5 +1,6 @@
 use crate::errors::AssocTypeOnInherentImpl;
 use rustc_data_structures::fx::FxHashSet;
+use rustc_data_structures::stack;
 use rustc_errors::{Applicability, ErrorReported, StashKey};
 use rustc_hir as hir;
 use rustc_hir::def::{DefKind, Res};
@@ -10,7 +11,8 @@ use rustc_hir::Node;
 use rustc_middle::hir::map::Map;
 use rustc_middle::ty::subst::{GenericArgKind, InternalSubsts};
 use rustc_middle::ty::util::IntTypeExt;
-use rustc_middle::ty::{self, DefIdTree, Ty, TyCtxt, TypeFoldable};
+use rustc_middle::ty::{self, DefIdTree, Ty, TyCtxt, TypeFoldable, List};
+use rustc_span::source_map::LOCAL_CRATE;
 use rustc_span::symbol::Ident;
 use rustc_span::{Span, DUMMY_SP};
 
@@ -348,6 +350,72 @@ pub(super) fn type_of(tcx: TyCtxt<'_>, def_id: DefId) -> Ty<'_> {
             bug!("unexpected sort of node in type_of_def_id(): {:?}", x);
         }
     }
+}
+
+pub(super) fn is_smart_pointer(tcx: TyCtxt<'_>, ty: Ty<'_>) -> bool {
+    if ty.is_box() {
+        return true;
+    }
+    if !ty.is_adt() {
+        return false;
+    }
+    
+    if let ty::Adt(def, args) = ty.kind() {
+        if let Some(metaupdate_trait) = tcx.metaupdate_trait(()) {
+            if tcx.type_implements_trait((
+                metaupdate_trait,
+                ty,
+                args.clone(),
+                tcx.param_env(def.did))
+            ) {
+                return true
+            }
+        }
+    }
+
+    false
+}
+
+pub(super) fn contains_smart_pointer(tcx: TyCtxt<'_>, ty: Ty<'_>) -> bool {
+    if tcx.is_smart_pointer(ty) {
+        return false;
+    }
+
+    if !ty.is_adt() {
+        return false;
+    }
+
+    if let ty::Adt(def, args) = ty.kind() {
+        if def.is_struct() {
+            for field in def.all_fields() {
+                let field_ty = field.ty(tcx, args);
+                let ret = stack::ensure_sufficient_stack(||{
+                    tcx.is_smart_pointer(field_ty) || tcx.contains_smart_pointer(field_ty)
+                });
+                if ret {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+pub(super) fn metaupdate_trait(tcx: TyCtxt<'_>, _key: ()) -> Option<DefId> {
+    let crates = tcx.all_crate_nums(LOCAL_CRATE);
+    for crate_num in crates {
+        if tcx.crate_name(*crate_num).to_string().eq("std") {
+            let traits = tcx.all_traits(*crate_num);
+            for t in traits {
+                if tcx.item_name(*t).to_string().eq("MetaUpdate") {
+                    return Some(*t);
+                }
+            }
+        }
+    }
+
+    None
 }
 
 fn find_opaque_ty_constraints(tcx: TyCtxt<'_>, def_id: LocalDefId) -> Ty<'_> {

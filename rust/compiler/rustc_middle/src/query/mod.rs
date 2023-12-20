@@ -118,6 +118,19 @@ rustc_queries! {
             cache_on_disk_if { key.is_local() }
         }
 
+        /// Whether a given type is a smart pointer.
+        query is_smart_pointer(key: Ty<'tcx>) -> bool {
+            desc {"Checking whether `{}` is a smart pointer", key.to_string()}
+        }
+
+        query contains_smart_pointer(key: Ty<'tcx>) -> bool {
+            desc {"Checking whether `{}` contains a smart pointer", key.to_string()}
+        }
+
+        query metaupdate_trait(key: ()) -> Option<DefId> {
+            desc {"getting the DefId of the MetaUpdate trait"}
+        }
+
         query analysis(key: CrateNum) -> Result<(), ErrorReported> {
             eval_always
             desc { "running analysis passes on this crate" }
