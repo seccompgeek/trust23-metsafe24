@@ -43,4 +43,17 @@ export PATH=$LLVM_DIR/bin:$PATH
 export PTABIN=$SVFHOME/$Build/bin
 export PATH=$PTABIN:$PATH
 
+if [[ $1 == 'debug' ]]
+then
+	rm -rf ./'Debug-build'
+	mkdir ./'Debug-build'
+	cd ./'Debug-build'
+	cmake -D CMAKE_BUILD_TYPE:STRING=Debug  -D LLVM_DIR=${PRJHOME}/rust/build/x86_64-unknown-linux-gnu/llvm ../
+else
+	rm -rf ./'Release-build'
+	mkdir ./'Release-build'
+	cd ./'Release-build'
+	cmake -D LLVM_DIR=${PRJHOME}/rust/build/x86_64-unknown-linux-gnu/llvm ../
+fi
+make -j 16 PRJHOME=${PRJHOME}
 
