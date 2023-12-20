@@ -1,0 +1,752 @@
+[
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/DDA/ContextDDA.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/ContextDDA.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/ContextDDA.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/DDA/ContextDDA.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/DDA/DDAClient.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/DDAClient.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/DDAClient.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/DDA/DDAClient.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/DDA/DDAPass.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/DDAPass.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/DDAPass.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/DDA/DDAPass.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/DDA/DDAStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/DDAStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/DDAStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/DDA/DDAStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/DDA/FlowDDA.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/FlowDDA.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/DDA/FlowDDA.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/DDA/FlowDDA.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/ConsG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ConsG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ConsG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/ConsG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/ExternalPAG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ExternalPAG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ExternalPAG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/ExternalPAG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/ICFG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ICFG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ICFG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/ICFG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/OfflineConsG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/OfflineConsG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/OfflineConsG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/OfflineConsG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/PAG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/PAG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/PAG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/PAG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/PTACallGraph.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/PTACallGraph.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/PTACallGraph.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/PTACallGraph.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/SVFG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/SVFG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/SVFG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/SVFG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/SVFGOPT.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/SVFGOPT.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/SVFGOPT.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/SVFGOPT.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/SVFGStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/SVFGStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/SVFGStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/SVFGStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/ThreadCallGraph.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ThreadCallGraph.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/ThreadCallGraph.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/ThreadCallGraph.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Graphs/VFG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/VFG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Graphs/VFG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Graphs/VFG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MSSA/MemPartition.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/MemPartition.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/MemPartition.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MSSA/MemPartition.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MSSA/MemRegion.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/MemRegion.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/MemRegion.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MSSA/MemRegion.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MSSA/MemSSA.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/MemSSA.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/MemSSA.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MSSA/MemSSA.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MSSA/SVFGBuilder.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/SVFGBuilder.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MSSA/SVFGBuilder.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MSSA/SVFGBuilder.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/FSMPTA.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/FSMPTA.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/FSMPTA.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/FSMPTA.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/LockAnalysis.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/LockAnalysis.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/LockAnalysis.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/LockAnalysis.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/LockResultValidator.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/LockResultValidator.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/LockResultValidator.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/LockResultValidator.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/MHP.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MHP.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MHP.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/MHP.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/MTA.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTA.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTA.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/MTA.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/MTAAnnotator.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTAAnnotator.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTAAnnotator.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/MTAAnnotator.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/MTAResultValidator.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTAResultValidator.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTAResultValidator.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/MTAResultValidator.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/MTAStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTAStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/MTAStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/MTAStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/PCG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/PCG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/PCG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/PCG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MTA/TCT.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/TCT.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MTA/TCT.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MTA/TCT.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MemoryModel/LocationSet.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/LocationSet.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/LocationSet.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MemoryModel/LocationSet.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MemoryModel/MemModel.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/MemModel.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/MemModel.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MemoryModel/MemModel.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MemoryModel/PAGBuilderFromFile.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/PAGBuilderFromFile.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/PAGBuilderFromFile.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MemoryModel/PAGBuilderFromFile.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MemoryModel/PointerAnalysis.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/PointerAnalysis.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/PointerAnalysis.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MemoryModel/PointerAnalysis.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MemoryModel/PointerAnalysisImpl.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/PointerAnalysisImpl.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MemoryModel/PointerAnalysisImpl.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MemoryModel/PointerAnalysisImpl.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/MpkRustIsolation/MPKRustIsolation.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/MpkRustIsolation/MPKRustIsolation.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/MpkRustIsolation/MPKRustIsolation.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/MpkRustIsolation/MPKRustIsolation.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/DoubleFreeChecker.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/DoubleFreeChecker.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/DoubleFreeChecker.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/DoubleFreeChecker.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/FileChecker.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/FileChecker.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/FileChecker.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/FileChecker.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/LeakChecker.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/LeakChecker.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/LeakChecker.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/LeakChecker.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/ProgSlice.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/ProgSlice.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/ProgSlice.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/ProgSlice.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/SaberAnnotator.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SaberAnnotator.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SaberAnnotator.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/SaberAnnotator.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/SaberCheckerAPI.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SaberCheckerAPI.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SaberCheckerAPI.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/SaberCheckerAPI.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/SaberSVFGBuilder.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SaberSVFGBuilder.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SaberSVFGBuilder.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/SaberSVFGBuilder.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SABER/SrcSnkDDA.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SrcSnkDDA.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SABER/SrcSnkDDA.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SABER/SrcSnkDDA.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/BreakConstantExpr.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/BreakConstantExpr.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/BreakConstantExpr.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/BreakConstantExpr.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/CHG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/CHG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/CHG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/CHG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/CPPUtil.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/CPPUtil.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/CPPUtil.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/CPPUtil.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/CallGraphBuilder.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/CallGraphBuilder.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/CallGraphBuilder.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/CallGraphBuilder.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/DCHG.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/DCHG.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/DCHG.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/DCHG.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/DataFlowUtil.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/DataFlowUtil.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/DataFlowUtil.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/DataFlowUtil.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/Graph2Json.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/Graph2Json.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/Graph2Json.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/Graph2Json.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/ICFGBuilder.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/ICFGBuilder.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/ICFGBuilder.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/ICFGBuilder.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/LLVMModule.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/LLVMModule.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/LLVMModule.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/LLVMModule.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/LLVMUtil.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/LLVMUtil.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/LLVMUtil.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/LLVMUtil.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/LocMemModel.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/LocMemModel.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/LocMemModel.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/LocMemModel.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/PAGBuilder.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/PAGBuilder.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/PAGBuilder.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/PAGBuilder.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/SVF-FE/SymbolTableInfo.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/SymbolTableInfo.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/SVF-FE/SymbolTableInfo.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/SVF-FE/SymbolTableInfo.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/Conditions.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/Conditions.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/Conditions.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/Conditions.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/ExtAPI.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/ExtAPI.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/ExtAPI.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/ExtAPI.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/NodeIDAllocator.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/NodeIDAllocator.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/NodeIDAllocator.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/NodeIDAllocator.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/Options.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/Options.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/Options.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/Options.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/PTAStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/PTAStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/PTAStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/PTAStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/PathCondAllocator.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/PathCondAllocator.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/PathCondAllocator.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/PathCondAllocator.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/SVFUtil.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/SVFUtil.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/SVFUtil.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/SVFUtil.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/ThreadAPI.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/ThreadAPI.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/ThreadAPI.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/ThreadAPI.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/Util/TypeBasedHeapCloning.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/Util/TypeBasedHeapCloning.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/Util/TypeBasedHeapCloning.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/Util/TypeBasedHeapCloning.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/Andersen.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/Andersen.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/Andersen.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/Andersen.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenHCD.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenHCD.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenHCD.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenHCD.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenHLCD.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenHLCD.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenHLCD.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenHLCD.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenLCD.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenLCD.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenLCD.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenLCD.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenSCD.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenSCD.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenSCD.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenSCD.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenSFR.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenSFR.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenSFR.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenSFR.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenWaveDiff.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenWaveDiff.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenWaveDiff.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenWaveDiff.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/AndersenWaveDiffWithType.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenWaveDiffWithType.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/AndersenWaveDiffWithType.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/AndersenWaveDiffWithType.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/CSC.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/CSC.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/CSC.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/CSC.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/FlowSensitive.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/FlowSensitive.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/FlowSensitive.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/FlowSensitive.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/FlowSensitiveStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/FlowSensitiveStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/FlowSensitiveStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/FlowSensitiveStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/FlowSensitiveTBHC.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/FlowSensitiveTBHC.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/FlowSensitiveTBHC.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/FlowSensitiveTBHC.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/Steensgaard.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/Steensgaard.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/Steensgaard.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/Steensgaard.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/TypeAnalysis.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/TypeAnalysis.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/TypeAnalysis.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/TypeAnalysis.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/VersionedFlowSensitive.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/VersionedFlowSensitive.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/VersionedFlowSensitive.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/VersionedFlowSensitive.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/VersionedFlowSensitiveStat.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/VersionedFlowSensitiveStat.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/VersionedFlowSensitiveStat.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/VersionedFlowSensitiveStat.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -fno-exceptions -funwind-tables -o lib/CMakeFiles/Svf.dir/WPA/WPAPass.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/WPAPass.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/WPA/WPAPass.cpp",
+  "output": "lib/CMakeFiles/Svf.dir/WPA/WPAPass.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddTable.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddTable.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddTable.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddTable.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddInit.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddInit.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddInit.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddInit.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddAPI.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddAPI.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddAPI.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddAPI.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddRef.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddRef.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddRef.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddRef.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddCheck.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddCheck.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddCheck.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddCheck.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddUtil.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddUtil.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddUtil.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddUtil.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddCof.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddCof.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddCof.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddCof.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddSat.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddSat.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddSat.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddSat.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddReorder.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddReorder.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddReorder.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddReorder.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddAddIte.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddAddIte.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddAddIte.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddAddIte.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddBddIte.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddBddIte.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddBddIte.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddBddIte.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddBddAbs.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddBddAbs.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddBddAbs.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddBddAbs.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddReord.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddReord.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddReord.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddReord.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/safe_mem.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/safe_mem.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/safe_mem.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/safe_mem.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/mtrBasic.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/mtrBasic.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/mtrBasic.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/mtrBasic.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/mtrGroup.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/mtrGroup.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/mtrGroup.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/mtrGroup.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddCache.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddCache.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddCache.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddCache.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddLCache.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddLCache.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddLCache.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddLCache.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddInteract.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddInteract.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddInteract.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddInteract.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddGroup.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddGroup.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddGroup.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddGroup.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddAnneal.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddAnneal.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddAnneal.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddAnneal.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddExact.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddExact.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddExact.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddExact.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddGenetic.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddGenetic.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddGenetic.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddGenetic.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddLinear.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddLinear.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddLinear.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddLinear.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddSymmetry.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddSymmetry.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddSymmetry.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddSymmetry.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddWindow.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddWindow.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddWindow.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddWindow.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddFuncs.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddFuncs.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddFuncs.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddFuncs.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddGroup.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddGroup.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddGroup.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddGroup.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddIsop.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddIsop.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddIsop.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddIsop.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddSetop.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddSetop.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddSetop.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddSetop.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddLin.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddLin.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddLin.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddLin.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cuddZddSymm.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddSymm.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cuddZddSymm.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cuddZddSymm.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/datalimit.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/datalimit.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/datalimit.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/datalimit.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/cpu_time.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cpu_time.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/cpu_time.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/cpu_time.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/epd.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/epd.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/epd.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/epd.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/cc -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -g -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -Wno-format -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -DHAVE_IEEE_754 -DSIZEOF_VOID_P=8 -DSIZEOF_LONG=8 -o lib/CUDD/CMakeFiles/Cudd.dir/st.c.o -c /home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/st.c",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/lib/CUDD/st.c",
+  "output": "lib/CUDD/CMakeFiles/Cudd.dir/st.c.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -o tools/SABER/CMakeFiles/saber.dir/saber.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/tools/SABER/saber.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/tools/SABER/saber.cpp",
+  "output": "tools/SABER/CMakeFiles/saber.dir/saber.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -o tools/WPA/CMakeFiles/wpa.dir/wpa.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/tools/WPA/wpa.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/tools/WPA/wpa.cpp",
+  "output": "tools/WPA/CMakeFiles/wpa.dir/wpa.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -o tools/Example/CMakeFiles/svf-ex.dir/svf-ex.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/tools/Example/svf-ex.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/tools/Example/svf-ex.cpp",
+  "output": "tools/Example/CMakeFiles/svf-ex.dir/svf-ex.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -o tools/DDA/CMakeFiles/dvf.dir/dda.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/tools/DDA/dda.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/tools/DDA/dda.cpp",
+  "output": "tools/DDA/CMakeFiles/dvf.dir/dda.cpp.o"
+},
+{
+  "directory": "/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release",
+  "command": "/usr/bin/c++ -I/home/martin/projects/metasafe/trust/mpk-svf/include -I/home/martin/projects/metasafe/trust/mpk-svf/cmake-build-release/include -I/include  -fPIC -Werror -O0 -fno-rtti -g -std=gnu++14 -fdiagnostics-color=always   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -o tools/MTA/CMakeFiles/mta.dir/mta.cpp.o -c /home/martin/projects/metasafe/trust/mpk-svf/tools/MTA/mta.cpp",
+  "file": "/home/martin/projects/metasafe/trust/mpk-svf/tools/MTA/mta.cpp",
+  "output": "tools/MTA/CMakeFiles/mta.dir/mta.cpp.o"
+}
+]
