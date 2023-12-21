@@ -17,5 +17,6 @@ typedef struct thread_data{
 void init_threading_hooks();
 void free_domain_data(void*);
 void *thread_hook(void* args);
+int __pkey_set(int pkey, unsigned long rights, unsigned long flags);
 typedef int (*pthread_create_t)(pthread_t* restrict, const pthread_attr_t* restrict, void*(*)(void*), void* restrict);
 #endif //MPK_LIBRARY_THREADS_H

@@ -5,3 +5,4 @@ pub trait MetaUpdate {
     /// Used to synchronized to metadata of a given smart pointer.
     fn synchronize(&self);
 }
+

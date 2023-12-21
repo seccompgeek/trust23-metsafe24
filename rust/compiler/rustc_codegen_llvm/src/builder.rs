@@ -685,13 +685,17 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
 
     fn gep(&mut self, ptr: &'ll Value, indices: &[&'ll Value]) -> &'ll Value {
         unsafe {
-            llvm::LLVMBuildGEP(
+            let val = llvm::LLVMBuildGEP(
                 self.llbuilder,
                 ptr,
                 indices.as_ptr(),
                 indices.len() as c_uint,
                 UNNAMED,
-            )
+            );
+            if self.in_unsafe {
+                LLVMSetInUnsafeMetadata(val);
+            }
+            val
         }
     }
 

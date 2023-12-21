@@ -19,6 +19,8 @@ size_t TOTAL_ALLOCA = 0;
 size_t FALSE_POSITIVES = 0;
 size_t FALSE_NEGATIVES = 0;
 
+__thread int type_id = 0;
+
 static inline void __wrpkru(unsigned int pkru) {
   unsigned int eax = pkru;
   unsigned int ecx = 0;

@@ -40,4 +40,5 @@ void __check_load_false_negative(void *addr);
 void __check_store_false_negative(void *addr);
 void __count_allocas(uint8_t allocas, uint8_t unsafe_allocas);
 void __check_r15();
+extern __thread int type_id;
 #endif
