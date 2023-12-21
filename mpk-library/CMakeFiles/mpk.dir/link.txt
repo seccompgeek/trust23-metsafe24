@@ -1,1 +1,0 @@
-clang -fPIC -ggdb3 -lpthread -shared -Wl,-soname,libmpk.so -o libmpk.so CMakeFiles/mpk.dir/mpk.c.o CMakeFiles/mpk.dir/threads.c.o CMakeFiles/mpk.dir/allocator.c.o CMakeFiles/mpk.dir/logger.c.o   -L/mpk-mimalloc/out/release  -Wl,-rpath,/mpk-mimalloc/out/release -lmimalloc 

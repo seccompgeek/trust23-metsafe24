@@ -1,3 +1,0 @@
-/home/martin/projects/metasafe/trust-sec23/mpk-library/CMakeFiles/mpk.dir
-/home/martin/projects/metasafe/trust-sec23/mpk-library/CMakeFiles/edit_cache.dir
-/home/martin/projects/metasafe/trust-sec23/mpk-library/CMakeFiles/rebuild_cache.dir
