@@ -277,6 +277,9 @@ language_item_table! {
     Oom,                     sym::oom,                 oom,                        Target::Fn;
     AllocLayout,             sym::alloc_layout,        alloc_layout,               Target::Struct;
 
+    //TRust + MetaSafe
+    MetaSafeTypeId,          sym::metasafe_type_id,    metasafe_type_id,           Target::Static; 
+
     Start,                   sym::start,               start_fn,                   Target::Fn;
 
     EhPersonality,           sym::eh_personality,      eh_personality,             Target::Fn;

@@ -844,6 +844,9 @@ impl<'a> Builder<'a> {
                 cargo.args(s.split_whitespace());
             }
             rustflags.env("RUSTFLAGS_NOT_BOOTSTRAP");
+            if stage == 1 {
+                rustflags.arg("--cfg=stage1");
+            }
         } else {
             if let Ok(s) = env::var("CARGOFLAGS_BOOTSTRAP") {
                 cargo.args(s.split_whitespace());

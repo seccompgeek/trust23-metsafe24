@@ -369,6 +369,9 @@ mod macros;
 // The Rust prelude
 pub mod prelude;
 
+#[unstable(feature = "metasafe", issue = "none")]
+pub mod metasafe;
+
 // Public module declarations and re-exports
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use alloc_crate::borrow;

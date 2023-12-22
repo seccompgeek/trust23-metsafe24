@@ -48,6 +48,8 @@ pub mod simplify_try;
 pub mod uninhabited_enum_branching;
 pub mod unreachable_prop;
 pub mod validate;
+pub mod metasafe_validators;
+pub mod metasafe_unsafe_markers;
 
 pub use rustc_middle::mir::MirSource;
 
@@ -381,6 +383,7 @@ fn run_optimization_passes<'tcx>(tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
         &unreachable_prop::UnreachablePropagation,
         &uninhabited_enum_branching::UninhabitedEnumBranching,
         &simplify::SimplifyCfg::new("after-uninhabited-enum-branching"),
+        &metasafe_validators::MetaSafeAddValidators,
         &inline::Inline,
         &generator::StateTransform,
     ];

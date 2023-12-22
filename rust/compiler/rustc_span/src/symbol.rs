@@ -685,6 +685,7 @@ symbols! {
         memory,
         message,
         meta,
+        metasafe_type_id,
         min_align_of,
         min_align_of_val,
         min_const_fn,

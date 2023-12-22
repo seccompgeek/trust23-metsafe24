@@ -79,6 +79,7 @@
 #![feature(allocator_api)]
 #![feature(array_chunks)]
 #![feature(array_methods)]
+#![feature(thread_local)]
 #![feature(array_value_iter)]
 #![feature(array_windows)]
 #![feature(allow_internal_unstable)]
