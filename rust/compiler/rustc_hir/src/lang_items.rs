@@ -279,6 +279,9 @@ language_item_table! {
 
     //TRust + MetaSafe
     MetaSafeTypeId,          sym::metasafe_type_id,    metasafe_type_id,           Target::Static; 
+    MetaSafeUnsafeStart,     sym::metasafe_unsafe_start,    metasafe_unsafe_start,  Target::Static;
+    MetaSafeUnsafeEnd,       sym::metasafe_unsafe_end,      metasafe_unsafe_end,    Target::Static;
+    MetaSafeGetTypeId,       sym::metasafe_get_type_id,     metasafe_get_type_id,   Target::Fn;
 
     Start,                   sym::start,               start_fn,                   Target::Fn;
 

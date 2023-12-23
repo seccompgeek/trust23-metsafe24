@@ -355,7 +355,7 @@ pub(super) fn type_of(tcx: TyCtxt<'_>, def_id: DefId) -> Ty<'_> {
 pub(super) fn is_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
     let ty = ty.peel_refs();
 
-    if ty.is_box() {
+    if ty.is_box() || ty.is_slice() {
         return true;
     }
     if !ty.is_adt() && !ty.is_array() && !ty.is_slice() {

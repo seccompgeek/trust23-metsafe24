@@ -2,14 +2,14 @@
 //! Additionally, inserts marks (type IDs) to identify smart pointer entry boundaries.
 use rustc_ast::Mutability;
 //use rustc_ast::Mutability;
-use rustc_data_structures::{stable_map::FxHashMap};
+use rustc_data_structures::{stable_map::FxHashMap, stable_set::FxHashSet};
 use rustc_hir::{LangItem, /*Unsafety,*/ def_id::DefId};
 use rustc_middle::{
     mir::{
         self as mir, BasicBlockData, Location, Operand, Rvalue,
-        SourceInfo, StatementKind, Terminator, TerminatorKind, interpret::Scalar, BorrowKind
+        SourceInfo, StatementKind, Terminator, TerminatorKind, interpret::Scalar, BorrowKind, NullOp, BasicBlock
     },
-    ty::{self, subst::GenericArgKind, List, TyCtxt, TypeAndMut, ParamEnv},
+    ty::{self, List, TyCtxt, TypeAndMut, subst::{GenericArg, GenericArgKind}},
 };
 
 use crate::util::patch::MirPatch;
@@ -97,14 +97,31 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
         let mut type_id_map = FxHashMap::default();
         let mut patch = MirPatch::new(body);
 
+        let mut box_exprs = FxHashSet::default();
+
+        let mut type_ids = 1;
+
         //collect basic blocks where to insert validator calls
         for idx in bbs.indices() {
-            let terminator = bbs[idx].terminator();
+            let bb = &bbs[idx];
+            for (stmt_idx, stmt) in bb.statements.iter().enumerate() {
+                if let StatementKind::Assign(box (_, rval)) = &stmt.kind {
+                    if let Rvalue::NullaryOp(op, inner_ty) = rval {
+                        match op {
+                            NullOp::Box => {
+                                box_exprs.insert((idx, stmt_idx, *inner_ty));
+                            },
+                            _ => {}
+                        }
+                    }
+                }
+            }
+            let terminator = bb.terminator();
             match &terminator.kind {
                 TerminatorKind::Call { func, args, destination, .. } => {
                     let callee = func.ty(&body.local_decls, tcx);
                     match callee.kind() {
-                        ty::FnDef(def_id, func_args) => {
+                        ty::FnDef(def_id, _) => {
 
                             //let fn_sig = tcx.fn_sig(*def_id).skip_binder();
                             if let Some(impl_id) = tcx.impl_of_method(*def_id) {
@@ -147,23 +164,10 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
                                     //but as MetaSafe suggests, If a programmer defines another smart pointer, it is in their interest to
                                     //implement the MetaUpdate trait to secure it. Just like Rust requires programmers to define the Drop
                                     //trait in similar cases.
-                                    let impl_ty = tcx.subst_and_normalize_erasing_regions(&func_args, ParamEnv::reveal_all(), &impl_ty);
+                                    //TODO: we may fail to get the type_id from here, so let's do it after monomorphization.
                                     let inner_type = impl_ty.peel_refs();
-                                    if let ty::Adt(_, substs) = inner_type.kind() {
-                                        if let Some(first) = substs.first() {
-                                            match first.unpack() {
-                                                GenericArgKind::Type(ty) => {
-                                                    if tcx.is_smart_pointer(ty) || tcx.contains_smart_pointer(ty) {
-                                                        type_id_map.insert(idx,0);
-                                                    } else {
-                                                        type_id_map.insert(idx, 1);
-                                                    }
-                                                },
-                                                _ => {}
-                                            }
-                                        } else {
-                                            type_id_map.insert(idx, 0);
-                                        }
+                                    if let ty::Adt(_, _) = inner_type.kind() {
+                                        type_id_map.insert(idx, 0);
                                     }
 
                                 } else if tcx.is_smart_pointer(impl_ty){
@@ -190,6 +194,62 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
                 }*/
                 _ => {}
             }
+        }
+
+        let store_type_id = |block: BasicBlock, statement_index: usize, patch: &mut MirPatch<'tcx>, tcx: TyCtxt<'tcx>, type_id: u64| {
+            let type_id_ref = mir::Place::from(patch.new_temp(
+                tcx.mk_mut_ptr(tcx.types.u64),
+                body.span.clone(),
+            ));
+            
+            let deref_place = tcx.mk_place_elem(type_id_ref.clone(), mir::PlaceElem::Deref);
+            let loc = Location { block, statement_index };
+            let metasafe_li = tcx.require_lang_item(LangItem::MetaSafeTypeId, None);
+            let metasafe_li_ref = Rvalue::ThreadLocalRef(metasafe_li);
+            let statement_kind =
+                StatementKind::Assign(Box::new((type_id_ref, metasafe_li_ref)));
+            patch.add_statement(loc, statement_kind);
+
+            let type_id_lit = ty::Const::from_scalar(tcx, Scalar::from_u64(type_id), tcx.types.u64);
+            let type_id_operand = Operand::Constant(Box::new(mir::Constant {
+                span: body.span.clone(),
+                user_ty: None,
+                literal: type_id_lit,
+            }));
+            let type_id_rval = Rvalue::Use(type_id_operand);
+            let statement_kind =
+                StatementKind::Assign(Box::new((deref_place, type_id_rval)));
+            patch.add_statement(loc, statement_kind);
+        };
+
+        for (block, stmt_idx, ty) in box_exprs {
+            let bb = &mut body.basic_blocks_mut()[block];
+            let statements = bb.statements.split_at_mut(stmt_idx);
+
+            let args = [GenericArgKind::Type(ty)];
+            let substs = tcx.mk_substs(args.iter());
+            let id_storer = Operand::function_handle(tcx, LangItem::MetaSafeGetTypeId, substs, body.span.clone());
+            let block_data = BasicBlockData {
+                statements: Vec::new().extend_from_slice(statements.1),
+                terminator: bb.terminator.clone(),
+                is_cleanup: false
+            };
+
+            let new_idx = patch.new_block(block_data);
+
+            let temp = mir::Place::from(patch.new_temp(tcx.mk_unit(), body.span.clone()));
+            let terminator_kind =  TerminatorKind::Call { 
+                func: id_storer, 
+                args: vec![], 
+                destination: Some((temp, new_idx)), 
+                cleanup: None, 
+                from_hir_call: false, 
+                fn_span: body.span.clone() 
+            };
+
+            patch.patch_terminator(block, terminator_kind);
+
+            store_type_id(new_idx, 0, &mut patch, tcx, 0);
         }
 
         for (idx, data) in validators {
@@ -250,76 +310,22 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
             patch.patch_terminator(idx, orig_terminator);
 
             //store the type_id in the reference
-            if let Some(type_id) = type_id_map.get(&idx) {
-                let type_id_ref = mir::Place::from(patch.new_temp(
-                    tcx.mk_mut_ptr(tcx.types.u64),
-                    body.span.clone(),
-                ));
-                let deref_place = tcx.mk_place_elem(type_id_ref.clone(), mir::PlaceElem::Deref);
-                let loc = Location { block: idx, statement_index: bb.statements.len() };
-                let metasafe_li = tcx.require_lang_item(LangItem::MetaSafeTypeId, None);
-                let metasafe_li_ref = Rvalue::ThreadLocalRef(metasafe_li);
-                let statement_kind =
-                    StatementKind::Assign(Box::new((type_id_ref, metasafe_li_ref)));
-                patch.add_statement(loc, statement_kind);
-
-                let loc = Location {block: new_idx, statement_index: 0};
-                let type_id_lit = ty::Const::from_scalar(tcx, Scalar::from_u64(*type_id), tcx.types.u64);
-                let type_id_operand = Operand::Constant(Box::new(mir::Constant {
-                    span: body.span.clone(),
-                    user_ty: None,
-                    literal: type_id_lit,
-                }));
-                let type_id_rval = Rvalue::Use(type_id_operand);
-                let statement_kind =
-                    StatementKind::Assign(Box::new((deref_place, type_id_rval)));
-                patch.add_statement(loc, statement_kind);
+            if let Some(_type_id) = type_id_map.get(&idx) {
+                store_type_id(idx, bb.statements.len(), &mut patch, tcx, type_ids);
+                store_type_id(new_idx, 0, &mut patch, tcx, 0);
+                type_ids += 1;
             }
             type_id_map.remove(&idx);
         }
 
         //the rest of the implementation will simply store the type_id
-        for (idx, type_id) in &type_id_map {
+        for (idx, _type_id) in &type_id_map {
             let bb = bbs.get(*idx).unwrap();
-            let type_id_ref = mir::Place::from(patch.new_temp(
-                tcx.mk_mut_ptr(tcx.types.u64),
-                body.span.clone(),
-            ));
-            let deref_place = tcx.mk_place_elem(type_id_ref.clone(), mir::PlaceElem::Deref);
-            let loc = Location { block: *idx, statement_index: bb.statements.len() };
-            let metasafe_li = tcx.require_lang_item(LangItem::MetaSafeTypeId, None);
-            let metasafe_li_ref = Rvalue::ThreadLocalRef(metasafe_li);
-            let statement_kind =
-                StatementKind::Assign(Box::new((type_id_ref, metasafe_li_ref)));
-            patch.add_statement(loc, statement_kind);
-
-            //loc.statement_index += 1;
-            let type_id_lit = ty::Const::from_scalar(tcx, Scalar::from_u64(*type_id), tcx.types.u64);
-            let type_id_operand = Operand::Constant(Box::new(mir::Constant {
-                span: body.span.clone(),
-                user_ty: None,
-                literal: type_id_lit,
-            }));
-            let type_id_rval = Rvalue::Use(type_id_operand);
-            let statement_kind =
-                StatementKind::Assign(Box::new((deref_place, type_id_rval)));
-            patch.add_statement(loc, statement_kind);
+            store_type_id(*idx, bb.statements.len(), &mut patch, tcx, type_ids);
 
             let terminator = bb.terminator();
-            if let TerminatorKind::Call {destination,..} = &terminator.kind {
-                let deref_place = tcx.mk_place_elem(type_id_ref.clone(), mir::PlaceElem::Deref);
-                let dest_block = destination.unwrap();
-                let loc = Location {block: dest_block.1, statement_index: 0};
-                let type_id_lit = ty::Const::from_scalar(tcx, Scalar::from_u64(0), tcx.types.u64);
-                let type_id_operand = Operand::Constant(Box::new(mir::Constant {
-                    span: body.span.clone(),
-                    user_ty: None,
-                    literal: type_id_lit,
-                }));
-                let type_id_rval = Rvalue::Use(type_id_operand);
-                let statement_kind =
-                    StatementKind::Assign(Box::new((deref_place, type_id_rval)));
-                patch.add_statement(loc, statement_kind);
+            for succ in terminator.successors() {
+                store_type_id(*succ, 0, &mut patch, tcx, 0);
             }
         }
 
