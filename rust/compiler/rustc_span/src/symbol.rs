@@ -685,7 +685,7 @@ symbols! {
         memory,
         message,
         meta,
-        metasafe_get_type_id,
+        metasafe_spapi_bound,
         metasafe_type_id,
         metasafe_unsafe_end,
         metasafe_unsafe_start,

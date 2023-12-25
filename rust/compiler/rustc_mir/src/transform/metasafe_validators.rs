@@ -2,14 +2,14 @@
 //! Additionally, inserts marks (type IDs) to identify smart pointer entry boundaries.
 use rustc_ast::Mutability;
 //use rustc_ast::Mutability;
-use rustc_data_structures::{stable_map::FxHashMap, stable_set::FxHashSet};
-use rustc_hir::{LangItem, /*Unsafety,*/ def_id::DefId};
+use rustc_data_structures::{stable_map::FxHashMap, /*stable_set::FxHashSet*/};
+use rustc_hir::{/*Unsafety,*/ def_id::DefId, Unsafety};
 use rustc_middle::{
     mir::{
         self as mir, BasicBlockData, Location, Operand, Rvalue,
-        SourceInfo, StatementKind, Terminator, TerminatorKind, interpret::Scalar, BorrowKind, NullOp, BasicBlock
+        SourceInfo, StatementKind, Terminator, TerminatorKind /*, interpret::Scalar,*/, BorrowKind, //NullOp, BasicBlock
     },
-    ty::{self, List, TyCtxt, TypeAndMut, subst::{GenericArg, GenericArgKind}},
+    ty::{self, List, TyCtxt, TypeAndMut, /*subst::{GenericArg, GenericArgKind}*/},
 };
 
 use crate::util::patch::MirPatch;
@@ -94,28 +94,12 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
         let mut validators = FxHashMap::default();
         //let mut ret_validators = FxHashMap::default();
         //let mut drop_validators = FxHashMap::default();
-        let mut type_id_map = FxHashMap::default();
+        //let mut type_id_map = FxHashMap::default();
         let mut patch = MirPatch::new(body);
-
-        let mut box_exprs = FxHashSet::default();
-
-        let mut type_ids = 1;
 
         //collect basic blocks where to insert validator calls
         for idx in bbs.indices() {
             let bb = &bbs[idx];
-            for (stmt_idx, stmt) in bb.statements.iter().enumerate() {
-                if let StatementKind::Assign(box (_, rval)) = &stmt.kind {
-                    if let Rvalue::NullaryOp(op, inner_ty) = rval {
-                        match op {
-                            NullOp::Box => {
-                                box_exprs.insert((idx, stmt_idx, *inner_ty));
-                            },
-                            _ => {}
-                        }
-                    }
-                }
-            }
             let terminator = bb.terminator();
             match &terminator.kind {
                 TerminatorKind::Call { func, args, destination, .. } => {
@@ -123,34 +107,47 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
                     match callee.kind() {
                         ty::FnDef(def_id, _) => {
 
-                            //let fn_sig = tcx.fn_sig(*def_id).skip_binder();
+                            let fn_sig = tcx.fn_sig(*def_id).skip_binder();
                             if let Some(impl_id) = tcx.impl_of_method(*def_id) {
                                 let impl_ty = tcx.type_of(impl_id);
-                                
+
                                 if let Some(validator) = impl_ty
                                     .ty_adt_def()
                                     .and_then(|adt_def| calculate_validator(tcx, adt_def.did))
                                 {
-                                    //let mut inserted = false;
+                                    let unsafety = if let Some(trait_id) = tcx.trait_id_of_impl(impl_id) {
+                                        let t = tcx.trait_def(trait_id);
+                                        t.unsafety == Unsafety::Unsafe
+                                    }else {
+                                        fn_sig.unsafety == Unsafety::Unsafe
+                                    };
+                                    
                                     let mut arg_iter = args.iter();
                                     if let Some(first_arg) = arg_iter.next() {
                                         if let Operand::Copy(place) = first_arg {
                                             let arg_ty = place.ty(&body.local_decls, tcx).ty;
                                             if arg_ty.peel_refs().ty_adt_def() == impl_ty.ty_adt_def() {
-                                                validators.insert(
-                                                    idx,
-                                                    (
-                                                        first_arg.clone(),
-                                                        validator,
-                                                        destination.clone(),
-                                                        false
-                                                    ),
-                                                );
+                                                // Validator calls need to be inserted only on unsafe function calls
+                                                // Or unsafe traits.
+                                                if unsafety {
+                                                    validators.insert(
+                                                        idx,
+                                                        (
+                                                            first_arg.clone(),
+                                                            validator,
+                                                            destination.clone(),
+                                                            false
+                                                        ),
+                                                    );
+                                                }
                                                 //inserted = true;
                                             }
                                         }
                                     }
                                     
+                                    // TODO: This works on 1.74 but doesn't on 1.49, 
+                                    // Problem is this tries to load the returned value from its pointer,
+                                    // yet we need the pointer to call the synchronizer.
                                     /*if !inserted {
                                         let ret_ty = fn_sig.output();
                                         let dest = destination.clone().unwrap();
@@ -165,10 +162,10 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
                                     //implement the MetaUpdate trait to secure it. Just like Rust requires programmers to define the Drop
                                     //trait in similar cases.
                                     //TODO: we may fail to get the type_id from here, so let's do it after monomorphization.
-                                    let inner_type = impl_ty.peel_refs();
+                                    /*let inner_type = impl_ty.peel_refs();
                                     if let ty::Adt(_, _) = inner_type.kind() {
                                         type_id_map.insert(idx, 0);
-                                    }
+                                    }*/
 
                                 } else if tcx.is_smart_pointer(impl_ty){
                                     panic!("No validator for: {}", impl_ty.to_string());
@@ -196,7 +193,7 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
             }
         }
 
-        let store_type_id = |block: BasicBlock, statement_index: usize, patch: &mut MirPatch<'tcx>, tcx: TyCtxt<'tcx>, type_id: u64| {
+        /*let store_type_id = |block: BasicBlock, statement_index: usize, patch: &mut MirPatch<'tcx>, tcx: TyCtxt<'tcx>, type_id: u64, lang: LangItem| {
             let type_id_ref = mir::Place::from(patch.new_temp(
                 tcx.mk_mut_ptr(tcx.types.u64),
                 body.span.clone(),
@@ -204,7 +201,7 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
             
             let deref_place = tcx.mk_place_elem(type_id_ref.clone(), mir::PlaceElem::Deref);
             let loc = Location { block, statement_index };
-            let metasafe_li = tcx.require_lang_item(LangItem::MetaSafeTypeId, None);
+            let metasafe_li = tcx.require_lang_item(lang, None);
             let metasafe_li_ref = Rvalue::ThreadLocalRef(metasafe_li);
             let statement_kind =
                 StatementKind::Assign(Box::new((type_id_ref, metasafe_li_ref)));
@@ -220,37 +217,7 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
             let statement_kind =
                 StatementKind::Assign(Box::new((deref_place, type_id_rval)));
             patch.add_statement(loc, statement_kind);
-        };
-
-        for (block, stmt_idx, ty) in box_exprs {
-            let bb = &mut body.basic_blocks_mut()[block];
-            let statements = bb.statements.split_at_mut(stmt_idx);
-
-            let args = [GenericArgKind::Type(ty)];
-            let substs = tcx.mk_substs(args.iter());
-            let id_storer = Operand::function_handle(tcx, LangItem::MetaSafeGetTypeId, substs, body.span.clone());
-            let block_data = BasicBlockData {
-                statements: Vec::new().extend_from_slice(statements.1),
-                terminator: bb.terminator.clone(),
-                is_cleanup: false
-            };
-
-            let new_idx = patch.new_block(block_data);
-
-            let temp = mir::Place::from(patch.new_temp(tcx.mk_unit(), body.span.clone()));
-            let terminator_kind =  TerminatorKind::Call { 
-                func: id_storer, 
-                args: vec![], 
-                destination: Some((temp, new_idx)), 
-                cleanup: None, 
-                from_hir_call: false, 
-                fn_span: body.span.clone() 
-            };
-
-            patch.patch_terminator(block, terminator_kind);
-
-            store_type_id(new_idx, 0, &mut patch, tcx, 0);
-        }
+        };*/
 
         for (idx, data) in validators {
             let bb = &bbs[idx];
@@ -310,24 +277,26 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
             patch.patch_terminator(idx, orig_terminator);
 
             //store the type_id in the reference
-            if let Some(_type_id) = type_id_map.get(&idx) {
-                store_type_id(idx, bb.statements.len(), &mut patch, tcx, type_ids);
-                store_type_id(new_idx, 0, &mut patch, tcx, 0);
+            /*if let Some(_type_id) = type_id_map.get(&idx) {
+                store_type_id(*idx, bb.statements.len(), &mut patch, tcx, type_ids, LangItem::MetaSafeSPAPIBound);
+                store_type_id(idx, bb.statements.len(), &mut patch, tcx, type_ids, LangItem::MetaSafeTypeId);
+                store_type_id(new_idx, 0, &mut patch, tcx, 0, LangItem::MetaSafeTypeId);
                 type_ids += 1;
             }
-            type_id_map.remove(&idx);
+            type_id_map.remove(&idx);*/
         }
 
         //the rest of the implementation will simply store the type_id
-        for (idx, _type_id) in &type_id_map {
+        /*for (idx, _type_id) in &type_id_map {
             let bb = bbs.get(*idx).unwrap();
-            store_type_id(*idx, bb.statements.len(), &mut patch, tcx, type_ids);
+            store_type_id(*idx, bb.statements.len(), &mut patch, tcx, type_ids, LangItem::MetaSafeSPAPIBound);
+            store_type_id(*idx, bb.statements.len(), &mut patch, tcx, type_ids, LangItem::MetaSafeTypeId);
 
             let terminator = bb.terminator();
             for succ in terminator.successors() {
-                store_type_id(*succ, 0, &mut patch, tcx, 0);
+                store_type_id(*succ, 0, &mut patch, tcx, 0, LangItem::MetaSafeTypeId);
             }
-        }
+        }*/
 
         //apply the changes
         patch.apply(body);

@@ -543,6 +543,13 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                 let box_layout = bx.cx().layout_of(bx.tcx().mk_box(content_ty));
                 let llty_ptr = bx.cx().backend_type(box_layout);
 
+                if bx.tcx().sess.opts.cg.metasafe {
+                    if bx.tcx().is_smart_pointer(content_ty) {
+                        bx.set_smart_pointer_type_id(1);
+                    }else{
+                        bx.set_smart_pointer_type_id(bx.tcx().type_id_hash(content_ty));
+                    }
+                }
                 // Allocate space:
                 let def_id = match bx.tcx().lang_items().require(LangItem::ExchangeMalloc) {
                     Ok(id) => id,
@@ -554,6 +561,10 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                 let r = bx.cx().get_fn_addr(instance);
                 let call = bx.call(r, &[llsize, llalign], None);
                 let val = bx.pointercast(call, llty_ptr);
+                
+                if bx.tcx().sess.opts.cg.metasafe {
+                    bx.set_smart_pointer_type_id(0);
+                }
 
                 let operand = OperandRef { val: OperandValue::Immediate(val), layout: box_layout };
                 (bx, operand)

@@ -318,6 +318,11 @@ fn collect_roots(tcx: TyCtxt<'_>, mode: MonoItemCollectionMode) -> Vec<MonoItem<
     {
         let entry_fn = tcx.entry_fn(LOCAL_CRATE);
 
+        /*if tcx.sess.opts.cg.metasafe {
+            let def_id = tcx.lang_items().metasafe_type_id();
+            self.output.push(respan(DUMMY_SP, MonoItem::Static(def_id)));
+        }*/
+
         debug!("collect_roots: entry_fn = {:?}", entry_fn);
 
         let mut visitor = RootCollector { tcx, mode, entry_fn, output: &mut roots };

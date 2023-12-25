@@ -10,7 +10,7 @@ use super::debuginfo::{
     DebugEmissionKind,
 };
 
-use libc::{c_char, c_int, c_uint, size_t};
+use libc::{c_char, c_int, c_uint, size_t, c_ulong};
 use libc::{c_ulonglong, c_void};
 
 use std::marker::PhantomData;
@@ -967,6 +967,7 @@ extern "C" {
     pub fn LLVMSetMetadata(Val: &'a Value, KindID: c_uint, Node: &'a Value);
     pub fn LLVMSetInUnsafeMetadata(Val: &'a Value);
     pub fn LLVMSetSmartPointerMetadata(Val: &'a Value);
+    pub fn LLVMSetSmartPointerTypeId(M: &'a Module, Block: &'a BasicBlock, Val: c_ulong);
 
     // Operations on constants of any type
     pub fn LLVMConstNull(Ty: &Type) -> &Value;

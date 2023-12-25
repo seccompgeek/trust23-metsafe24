@@ -17,7 +17,8 @@ use rustc_middle::mir::AssertKind;
 use rustc_middle::mir::{self, SwitchTargets};
 use rustc_middle::ty::layout::{FnAbiExt, HasTyCtxt};
 use rustc_middle::ty::print::with_no_trimmed_paths;
-use rustc_middle::ty::{self, Instance, Ty, TypeFoldable};
+use rustc_middle::ty::subst::GenericArgKind;
+use rustc_middle::ty::{self, Instance, Ty, TypeFoldable, ParamEnv};
 use rustc_span::source_map::Span;
 use rustc_span::{sym, Symbol};
 use rustc_target::abi::call::{ArgAbi, FnAbi, PassMode};
@@ -535,19 +536,64 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         let source_info = terminator.source_info;
         let span = source_info.span;
 
+        let self_did = self.mir.source.def_id();
+        let self_ty = bx.tcx().type_of(self_did);
+        let mut normal_fun = true;
+        let mut calls_spapi = false;
+        let mut inner_ty_is_smart = false;
+        let mut inner_ty_id = 1;
+        if let ty::FnDef(fn_did, _) = self_ty.kind() {
+            if let Some(impl_id) = bx.tcx().impl_of_method(*fn_did) {
+                let impl_ty = bx.tcx().type_of(impl_id);
+                normal_fun = !bx.tcx().is_smart_pointer(impl_ty) && bx.tcx().sess.opts.cg.metasafe;
+            } 
+        }
+
         // Create the callee. This is a fn ptr or zero-sized and hence a kind of scalar.
         let callee = self.codegen_operand(&mut bx, func);
 
         let (instance, mut llfn) = match *callee.layout.ty.kind() {
-            ty::FnDef(def_id, substs) => (
-                Some(
+            ty::FnDef(def_id, substs) => {
+                if normal_fun {
+                    if let Some(impl_id) = bx.tcx().impl_of_method(def_id) {
+                        let impl_ty = bx.tcx().type_of(impl_id);
+                        if bx.tcx().is_smart_pointer(impl_ty) {
+                            calls_spapi = true;
+                            let actual_ty = bx.tcx().subst_and_normalize_erasing_regions(substs, ParamEnv::reveal_all(), &impl_ty);
+                            if let ty::Adt(_, substs) = actual_ty.kind() {
+                                let mut last_arg = None;
+                                for arg in substs.iter() {
+                                    match arg.unpack() {
+                                        GenericArgKind::Type(t) => {
+                                            if bx.tcx().is_smart_pointer(t) || bx.tcx().contains_smart_pointer(t) {
+                                                inner_ty_is_smart = true;
+                                                break;
+                                            }
+                                            last_arg = Some(t);
+                                        },
+                                        _ => {}
+                                    }
+                                }
+
+                                if !inner_ty_is_smart {
+                                    if let Some(last_arg) = last_arg {
+                                        inner_ty_id = bx.tcx().type_id_hash(last_arg);
+                                    } else {
+                                        inner_ty_id = bx.tcx().type_id_hash(actual_ty);
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                }
+                (Some(
                     ty::Instance::resolve(bx.tcx(), ty::ParamEnv::reveal_all(), def_id, substs)
                         .unwrap()
                         .unwrap()
                         .polymorphize(bx.tcx()),
                 ),
-                None,
-            ),
+                None,)
+            },
             ty::FnPtr(_) => (None, Some(callee.immediate())),
             _ => bug!("{} is not callable", callee.layout.ty),
         };
@@ -559,6 +605,10 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
             helper.maybe_sideeffect(self.mir, &mut bx, &[target]);
             helper.funclet_br(self, &mut bx, target);
             return;
+        }
+
+        if calls_spapi {
+            bx.set_smart_pointer_type_id(inner_ty_id);
         }
 
         // FIXME(eddyb) avoid computing this if possible, when `instance` is

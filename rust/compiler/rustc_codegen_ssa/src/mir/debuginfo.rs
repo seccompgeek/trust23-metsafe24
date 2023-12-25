@@ -95,7 +95,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         source_info: mir::SourceInfo,
     ) -> Option<(Bx::DIScope, Option<Bx::DILocation>, Span)> {
         let span = self.adjust_span_for_debugging(source_info.span);
-        let scope = &self.debug_context.as_ref()?.scopes[source_info.scope];
+        let scope: &DebugScope<<Bx as BackendTypes>::DIScope, <Bx as BackendTypes>::DILocation> = &self.debug_context.as_ref()?.scopes[source_info.scope];
         Some((scope.adjust_dbg_scope_for_span(self.cx, span), scope.inlined_at, span))
     }
 

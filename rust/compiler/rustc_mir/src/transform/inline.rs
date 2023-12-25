@@ -35,7 +35,7 @@ struct CallSite<'tcx> {
 
 impl<'tcx> MirPass<'tcx> for Inline {
     fn run_pass(&self, tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
-        if tcx.sess.opts.debugging_opts.mir_opt_level < 2 {
+        if tcx.sess.opts.debugging_opts.mir_opt_level < 2 || tcx.sess.opts.cg.metasafe {
             return;
         }
 

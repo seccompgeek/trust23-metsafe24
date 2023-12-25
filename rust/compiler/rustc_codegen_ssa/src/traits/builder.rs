@@ -109,6 +109,7 @@ pub trait BuilderMethods<'a, 'tcx>:
     fn not(&mut self, v: Self::Value) -> Self::Value;
     //MetaSafe + TRust: MK
     fn mark_smart_pointer(&self, v: Self::Value);
+    fn set_smart_pointer_type_id(&self, id: u64);
 
     fn checked_binop(
         &mut self,

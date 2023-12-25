@@ -5,7 +5,7 @@ use crate::llvm::{AtomicOrdering, AtomicRmwBinOp, SynchronizationScope};
 use crate::type_::Type;
 use crate::type_of::LayoutLlvmExt;
 use crate::value::Value;
-use libc::{c_char, c_uint};
+use libc::{c_char, c_uint, c_ulong};
 use rustc_codegen_ssa::common::{IntPredicate, RealPredicate, TypeKind};
 use rustc_codegen_ssa::mir::operand::{OperandRef, OperandValue};
 use rustc_codegen_ssa::mir::place::PlaceRef;
@@ -156,6 +156,12 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     fn mark_smart_pointer(&self, v: Self::Value) {
         unsafe {
             llvm::LLVMSetSmartPointerMetadata(v);
+        }
+    }
+
+    fn set_smart_pointer_type_id(&self, id: u64) {
+        unsafe {
+            llvm::LLVMSetSmartPointerTypeId( self.cx().llmod,  self.llbb(), id as c_ulong);
         }
     }
 
