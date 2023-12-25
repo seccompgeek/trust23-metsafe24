@@ -885,6 +885,16 @@ void LLVMSetSmartPointerMetadata(LLVMValueRef Inst) {
   unwrap<Instruction>(Inst)->setMetadata("MPK-SmartPointer", N);
 }
 
+void LLVMSetSmartPointerTypeId(LLVMModuleRef M, LLVMBasicBlockRef Block, unsigned long ID){
+  Module *module = unwrap(M);
+  auto InsertPoint = unwrap(Block);
+  auto global = module->getOrInsertGlobal("METASAFE_SPAPI_BOUND", llvm::Type::getInt64Ty(module->getContext()));
+  auto value = Constant::getIntegerValue(llvm::Type::getInt64Ty(module->getContext()), llvm::APInt(64,ID));
+  IRBuilder<> Builder(module->getContext());
+  Builder.SetInsertPoint(InsertPoint);
+  Builder.CreateStore(value, global);
+}
+
 struct LLVMOpaqueValueMetadataEntry {
   unsigned Kind;
   LLVMMetadataRef Metadata;
