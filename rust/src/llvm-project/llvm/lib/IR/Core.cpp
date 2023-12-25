@@ -888,7 +888,7 @@ void LLVMSetSmartPointerMetadata(LLVMValueRef Inst) {
 void LLVMSetSmartPointerTypeId(LLVMModuleRef M, LLVMBasicBlockRef Block, unsigned long ID){
   Module *module = unwrap(M);
   auto InsertPoint = unwrap(Block);
-  auto global = module->getOrInsertGlobal("METASAFE_SPAPI_BOUND", llvm::Type::getInt64Ty(module->getContext()));
+  auto global = module->getOrInsertGlobal("METASAFE_TYPE_ID", llvm::Type::getInt64Ty(module->getContext()));
   auto value = Constant::getIntegerValue(llvm::Type::getInt64Ty(module->getContext()), llvm::APInt(64,ID));
   IRBuilder<> Builder(module->getContext());
   Builder.SetInsertPoint(InsertPoint);
