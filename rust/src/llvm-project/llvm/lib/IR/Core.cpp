@@ -879,6 +879,22 @@ void LLVMSetInUnsafeMetadata(LLVMValueRef Inst) {
   unwrap<Instruction>(Inst)->setMetadata("MPK-Unsafe", N);
 }
 
+void LLVMMarkUnsafeStart(LLVMModuleRef Module, LLVMBuilderRef Builder) {
+  auto module = unwrap(Module);
+  auto builder = unwrap(Builder);
+  auto &context = module->getContext();
+  auto callee = module->getOrInsertFunction("__trust_mark_unsafe_start", llvm::FunctionType::get(llvm::Type::getVoidTy(context), false));
+  builder->CreateCall(callee);
+}
+
+void LLVMMarkUnsafeEnd(LLVMModuleRef Module, LLVMBuilderRef Builder) {
+  auto module = unwrap(Module);
+  auto builder = unwrap(Builder);
+  auto &context = module->getContext();
+  auto callee = module->getOrInsertFunction("__trust_mark_unsafe_end", llvm::FunctionType::get(llvm::Type::getVoidTy(context), false));
+  builder->CreateCall(callee);
+}
+
 void LLVMSetSmartPointerMetadata(LLVMValueRef Inst) {
   LLVMContext &C = unwrap<Instruction>(Inst)->getContext();
   MDNode *N = MDNode::get(C, MDString::get(C, "Is smart pointer"));

@@ -3084,6 +3084,11 @@ LLVMValueRef LLVMGetMetadata(LLVMValueRef Val, unsigned KindID);
 void LLVMSetMetadata(LLVMValueRef Val, unsigned KindID, LLVMValueRef Node);
 ///MPK-Unsafe
 void LLVMSetInUnsafeMetadata(LLVMValueRef Inst);
+///MPK: mark unsafe start
+void LLVMMarkUnsafeStart(LLVMModuleRef Module, LLVMBuilderRef Builder);
+///MPK: mark unsafe end
+void LLVMMarkUnsafeEnd(LLVMModuleRef Module, LLVMBuilderRef Builder);
+
 ///MPK-SmartPointer
 void LLVMSetSmartPointerMetadata(LLVMValueRef Inst);
 ///MPK-Set smart pointer type-id
