@@ -47,6 +47,8 @@ pub trait BuilderMethods<'a, 'tcx>:
     fn llbb(&self) -> Self::BasicBlock;
     fn set_span(&mut self, span: Span);
     fn set_in_unsafe(&mut self, unsafety: bool);
+    fn mark_unsafe_end(&mut self);
+    fn mark_unsafe_start(&mut self);
     fn position_at_end(&mut self, llbb: Self::BasicBlock);
     fn ret_void(&mut self);
     fn ret(&mut self, v: Self::Value);

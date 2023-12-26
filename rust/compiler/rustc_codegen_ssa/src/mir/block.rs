@@ -12,13 +12,14 @@ use crate::MemFlags;
 use rustc_ast as ast;
 use rustc_hir::lang_items::LangItem;
 use rustc_index::vec::Idx;
+use rustc_middle::middle::region::Scope;
 use rustc_middle::mir::interpret::ConstValue;
-use rustc_middle::mir::AssertKind;
+use rustc_middle::mir::{AssertKind, ClearCrossCrate, Safety, SourceScope};
 use rustc_middle::mir::{self, SwitchTargets};
 use rustc_middle::ty::layout::{FnAbiExt, HasTyCtxt};
 use rustc_middle::ty::print::with_no_trimmed_paths;
 use rustc_middle::ty::subst::GenericArgKind;
-use rustc_middle::ty::{self, Instance, Ty, TypeFoldable, ParamEnv};
+use rustc_middle::ty::{self, Instance, Ty, TypeFoldable, ParamEnv, TyCtxt};
 use rustc_span::source_map::Span;
 use rustc_span::{sym, Symbol};
 use rustc_target::abi::call::{ArgAbi, FnAbi, PassMode};
@@ -982,7 +983,52 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
     }
 }
 
+pub static SAFE_CRATES: [&'static str; 23] = [
+    "std",
+    "alloc",
+    "backtrace",
+    "core",
+    "panic_abort",
+    "panic_unwind",
+    "portable-simd",
+    "proc_macro",
+    "profiler_builtins",
+    "sysroot",
+    "rustc",
+    "stdarch",
+    "rtstartup",
+    "rustc_std_workspace_alloc",
+    "rustc_std_workspace_core",
+    "rustc_std_workspace_std",
+    "std_detect",
+    "hash_brown",
+    "libc",
+    "cfg_if",
+    "unwind",
+    "object",
+    "adler",
+];
+
 impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
+    fn unsafety(&mut self, tcx: TyCtxt<'tcx>, scope: SourceScope) -> bool {
+        if !tcx.sess.opts.cg.metasafe {
+            return false;
+        } 
+
+        let def_id = self.mir.source.def_id();
+        let crate_name = tcx.crate_name(def_id).to_string();
+        if SAFE_CRATES.contains(&crate_name.as_str()){
+            return false;
+        }
+
+        match &self.mir.source_scopes[scope].local_data {
+            ClearCrossCrate::Set(data) => {
+                return data.safety != Safety::Safe;
+            },
+            _ => {}
+        }
+        false
+    }
     pub fn codegen_block(&mut self, bb: mir::BasicBlock) {
         let mut bx = self.build_block(bb);
         let mir = self.mir;
@@ -991,8 +1037,21 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         debug!("codegen_block({:?}={:?})", bb, data);
 
         for statement in &data.statements {
-            let unsafety = self.mir.source_scopes[statement.source_info.scope].is_unsafe;
-            bx.set_in_unsafe(unsafety);
+            let mut unsafety = self.unsafety(bx.tcx(), statement.source_info.scope);
+
+            if !self.in_unsafe && unsafety {
+                self.in_unsafe = true;
+                bx.mark_unsafe_start()
+            }else if self.in_unsafe && !unsafety {
+                self.in_unsafe = false;
+                bx.mark_unsafe_end();
+            }
+            
+            if self.mir.source_scopes[statement.source_info.scope].is_unsafe {
+                bx.set_in_unsafe(true);
+            } else {
+                bx.set_in_unsafe(false);
+            }
 
             bx = self.codegen_statement(bx, statement);
         }
@@ -1000,8 +1059,20 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         let terminator = data.terminator();
         if self.mir.source_scopes[terminator.source_info.scope].is_unsafe {
             bx.set_in_unsafe(true);
+        }else{
+            bx.set_in_unsafe(false);
         }
 
+        let unsafety = self.unsafety(bx.tcx(), terminator.source_info.scope);
+
+        if !self.in_unsafe && unsafety {
+            self.in_unsafe = true;
+            bx.mark_unsafe_start()
+        }else if self.in_unsafe && !unsafety {
+            self.in_unsafe = false;
+            bx.mark_unsafe_end();
+        }
+        
         self.codegen_terminator(bx, bb, terminator);
     }
 

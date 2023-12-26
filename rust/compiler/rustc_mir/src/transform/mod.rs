@@ -49,7 +49,7 @@ pub mod uninhabited_enum_branching;
 pub mod unreachable_prop;
 pub mod validate;
 pub mod metasafe_validators;
-pub mod metasafe_unsafe_markers;
+//pub mod metasafe_unsafe_markers;
 
 pub use rustc_middle::mir::MirSource;
 
@@ -384,7 +384,7 @@ fn run_optimization_passes<'tcx>(tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
         &uninhabited_enum_branching::UninhabitedEnumBranching,
         &simplify::SimplifyCfg::new("after-uninhabited-enum-branching"),
         &metasafe_validators::MetaSafeAddValidators,
-        &metasafe_unsafe_markers::MetaSafeUnsafeMarkers,
+        //&metasafe_unsafe_markers::MetaSafeUnsafeMarkers,
         &inline::Inline,
         &generator::StateTransform,
     ];
@@ -393,7 +393,7 @@ fn run_optimization_passes<'tcx>(tcx: TyCtxt<'tcx>, body: &mut Body<'tcx>) {
     let no_optimizations_with_generators: &[&dyn MirPass<'tcx>] = &[
         &generator::StateTransform,
         &metasafe_validators::MetaSafeAddValidators,
-        &metasafe_unsafe_markers::MetaSafeUnsafeMarkers,
+        //&metasafe_unsafe_markers::MetaSafeUnsafeMarkers,
         ];
 
     // The main optimizations that we do on MIR.

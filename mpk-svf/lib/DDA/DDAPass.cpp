@@ -13,7 +13,6 @@
 #include "DDA/ContextDDA.h"
 #include "DDA/DDAClient.h"
 #include "SVF-FE/PAGBuilder.h"
-#include "RustIsolation/MPKRustIsolation.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
 #include <sstream>
@@ -27,11 +26,11 @@ map<CallBase*,Function*> CallBaseToCalleeMap;
 map<Function*,Function*> MpkRedefinedMap;
 map<CallBase*,CallBase*> CallBase2NewCallBase;
 map<CallBase*,set<int>> CallBaseToUnsafeBitsArgs;
-set<CallBase*>UnsafeCallBases;
-map<Function*,set<CallBase*>> FunctionToUnsafeCallBasesMap;
-map<CallBase*,int> CallBaseToUnsafeBitMap;
+set<CallBase*>UnsafeCallBases; //callbases that lead to unsafe memory allocation.
+map<Function*,set<CallBase*>> FunctionToUnsafeCallBasesMap; //Maps a function to the callbases that lead to an unsafe alloc
+map<CallBase*,int> CallBaseToUnsafeBitMap; // Maps a callbase to the bit a caller should set for it to lead to unsafe memory allocation
 set<CallBase*> EntryReplaceCBNSet;
-map<CallBase*,set<Function*>> IndirectCallsToVirtualFunctionMap;
+map<CallBase*,set<Function*>> IndirectCallsToVirtualFunctionMap; // Maps a callbase to functions called indirectly
 
 set<const SVFGNode*> UnsafePointers;
 map<Function*,AllocaInst*> IndirectFuncToUnsafeSpaceMap;
@@ -158,111 +157,13 @@ DDAPass::~DDAPass()
         delete _client;
 }
 
-Function* redefineFunction(Function*  F){
-    std::vector<Type*> ArgTypes;
-    llvm::ValueToValueMapTy VMap;
-    // The user might be deleting arguments to the function by specifying them in
-    // the VMap.  If so, we need to not add the arguments to the arg ty vector
-    //
-
-    for (const Argument &I : F->args())
-        if (VMap.count(&I) == 0) // Haven't mapped the argument to anything yet?
-            ArgTypes.push_back(I.getType());
-    ArgTypes.push_back(Type::getInt8Ty(F->getContext()));
-    // Create a new function type...
-    FunctionType *FTy = FunctionType::get(F->getFunctionType()->getReturnType(),
-                                          ArgTypes, F->getFunctionType()->isVarArg());
-
-    // Create the new function...
-    Function *NewF = Function::Create(FTy, F->getLinkage(), F->getAddressSpace(),
-                                      "__mpk_unsafe"+F->getName().str(), F->getParent());
-
-    if(F->isDeclaration())
-        return NewF;
-    // Loop over the arguments, copying the names of the mapped arguments over...
-    Function::arg_iterator DestI = NewF->arg_begin();
-    for (const Argument & I : F->args())
-        if (VMap.count(&I) == 0) {     // Is this argument preserved?
-            DestI->setName(I.getName()); // Copy the name over...
-            VMap[&I] = &*DestI++;        // Add mapping to VMap
-        }
-
-    SmallVector<ReturnInst*, 8> Returns;  // Ignore returns cloned.
-    CloneFunctionInto(NewF, F, VMap, F->getSubprogram() != nullptr, Returns, "",
-                      nullptr);
-    return NewF;
-}
-
-void mapFunctionCallBases(Function* oldFunc, Function* newFunc){
-    if(oldFunc->isDeclaration())
-        return;
-
-    for(auto BB = oldFunc->begin(), newBB = newFunc->begin(), BE = oldFunc->end(), newBE = newFunc->end(); BB != BE; ++BB, ++newBB){
-        if(newBB == newBE){
-            assert(BB == BE && "both functions must end together");
-        }
-
-        for(auto II = BB->begin(), newII = newBB->begin(), IE = BB->end(), newIE = newBB->end(); II != IE; ++II, ++newII){
-            if(newII == newIE){
-                assert(II == IE && "both functions must end together");
-            }
-
-            if(CallBase* CB = llvm::dyn_cast<CallBase>(II)){
-                CallBase2NewCallBase.insert(make_pair(llvm::cast<CallBase>(newII),CB));
-                if(IndirectCallsToVirtualFunctionMap.find(CB) != IndirectCallsToVirtualFunctionMap.end()) {
-                    IndirectCBMap.insert(make_pair(CB,llvm::cast<CallBase>(newII)));
-                }
-            }
-        }
-    }
-}
-
-void organizeCallBlocks(){
-    for(auto callBase: UnsafeCallBases){
-        auto funIt = CallBaseToCalleeMap.find(callBase);
-        if(funIt != CallBaseToCalleeMap.end()){
-            Function* calledFunc = funIt->second;
-            if(MpkRedefinedMap.find(calledFunc) == MpkRedefinedMap.end()){
-                Function* redefined = redefineFunction(calledFunc);
-                MpkRedefinedMap.insert(make_pair(calledFunc, redefined));
-            }
-        }
-    }
-
-    for(auto ff: MpkRedefinedMap){
-        mapFunctionCallBases(ff.first, ff.second);
-    }
-
-
-    for(auto it: IndirectCallsToVirtualFunctionMap) {
-        auto funcs = it.second;
-        for (auto func: funcs) {
-            if(!func->isDeclaration() && IndirectFuncToUnsafeSpaceMap.find(func) == IndirectFuncToUnsafeSpaceMap.end()){
-                IRBuilder IRB(&(*func->begin()->begin()));
-                auto &cxt = func->getContext();
-                Type* i8Type = Type::getInt8Ty(cxt);
-                AllocaInst* unsafeSpace = IRB.CreateAlloca(Type::getInt8Ty(cxt));
-                IndirectFuncToUnsafeSpaceMap.insert(make_pair(func,unsafeSpace));
-                std::vector<Type *> arg_type;
-                std::vector<Value*> args;
-                MDNode *N = MDNode::get(cxt, {MDString::get(cxt, "r15")});
-                arg_type.push_back(Type::getInt64Ty(cxt));
-                Function *readRegisterFunc = llvm::Intrinsic::getDeclaration(func->getParent(), llvm::Intrinsic::read_register, arg_type);
-                args.push_back(MetadataAsValue::get(cxt,N));
-                Value* savedStackPtr = IRB.CreateCall(readRegisterFunc, args);
-                Type* int8PtrTy = Type::getInt8PtrTy(cxt);
-                Value* intToPtr = IRB.CreateIntToPtr(savedStackPtr,int8PtrTy);
-                auto unsafeFlagGep = IRB.CreateGEP(intToPtr,ConstantInt::get(i8Type,32));
-                auto unsafeArg = IRB.CreateLoad(unsafeFlagGep);
-                IRB.CreateStore(unsafeArg,unsafeSpace);
-            }
-        }
-    }
-}
-
 bool replaceUnsafeCalls(){
-    organizeCallBlocks();
     std::vector<CallBase *> oldCalls;
+
+    for(auto call: CallBaseToUnsafeBitsArgs) {
+
+    }
+
     for(auto ff: MpkRedefinedMap){
         Function* origFunc = ff.first;
         Function* redefined = ff.second;
@@ -346,99 +247,6 @@ bool replaceUnsafeCalls(){
         }
     }
 
-    /*
-    for(auto unsafeCall: UnsafeCallBases){
-        bool isEntry = EntryReplaceCBNSet.find(unsafeCall) != EntryReplaceCBNSet.end();
-        CallBase* toReplace = isEntry ? unsafeCall: CallBase2NewCallBase.find(unsafeCall)->second;
-        std::vector<Value*> Args;
-        set<int> UnsafeArgBits = CallBaseToUnsafeBitsArgs[unsafeCall];
-        int callBaseUnsafeBit = isEntry? -1: CallBaseToUnsafeBitMap[unsafeCall];
-
-        Type* i8Type = IntegerType::getInt8Ty(toReplace->getContext());
-        Constant* i8Val = ConstantInt::get(i8Type,1, false);
-        Value* unsafeArg = nullptr;
-        IRBuilder IRB(toReplace);
-        int unsafeArgValue = 0;
-        for(auto bit: UnsafeArgBits){
-            unsafeArgValue |= (1 << bit);
-        }
-        
-        if(isEntry){
-            unsafeArg = ConstantInt::get(i8Type,unsafeArgValue);
-        }else{
-            Function* parentFunc = toReplace->getFunction();
-            int andValue = 1 << callBaseUnsafeBit;
-            Constant* unsafeAnd = ConstantInt::get(i8Type, andValue,false);
-            Value* unsafeArgBitVal = nullptr;
-            if(!parentFunc->getName().startswith("__mpk_unsafe")){
-                auto indIt = IndirectFuncToUnsafeSpaceMap.find(parentFunc);
-                assert(indIt != IndirectFuncToUnsafeSpaceMap.end() && "can't resolve callbase arg bit value?");
-                auto unsafeArgSpace = indIt->second;
-                unsafeArgBitVal = IRB.CreateLoad(unsafeArgSpace);
-            }else{
-                unsafeArgBitVal = parentFunc->getArg(parentFunc->arg_size()-1);
-            }
-            
-            unsafeArg = IRB.CreateAnd(unsafeAnd,unsafeArgBitVal);
-            Constant* zeroVal = ConstantInt::get(i8Type,0, false);
-            Value* cmp = IRB.CreateCmp(llvm::CmpInst::Predicate::ICMP_NE,unsafeArg,zeroVal);
-            unsafeArg = ConstantInt::get(i8Type, unsafeArgValue);
-            unsafeArg = IRB.CreateSelect(cmp,unsafeArg,zeroVal);
-
-        }
-        
-        assert(unsafeArg != nullptr && "did not build unsafe argument?");
-
-        auto funIt = CallBaseToCalleeMap.find(unsafeCall);
-        if(funIt == CallBaseToCalleeMap.end()){
-            Function* parentFunc = unsafeCall->getFunction();
-            std::vector<Type *> arg_type;
-            std::vector<Value*> args;
-            LLVMContext &C = parentFunc->getContext();
-            MDNode *N = MDNode::get(C, {MDString::get(C, "r15")});
-            arg_type.push_back(Type::getInt64Ty(C));
-            Function *readRegisterFunc = llvm::Intrinsic::getDeclaration(parentFunc->getParent(), llvm::Intrinsic::read_register, arg_type);
-            args.push_back(MetadataAsValue::get(C,N));
-
-            Value* savedStackPtr = IRB.CreateCall(readRegisterFunc, args);
-            Type* int8PtrTy = Type::getInt8PtrTy(C);
-            Value* intToPtr = IRB.CreateIntToPtr(savedStackPtr,int8PtrTy);
-            auto unsafeFlagGep = IRB.CreateGEP(intToPtr,ConstantInt::get(i8Type,32));
-            IRB.CreateStore(unsafeArg,unsafeFlagGep);
-            continue;
-        }
-        Function* origFunc = funIt->second;
-        Function* redefined = MpkRedefinedMap.find(origFunc)->second;
-        
-        Args.insert(Args.begin(),toReplace->arg_begin(), toReplace->arg_end());
-        Args.push_back(unsafeArg);
-
-        llvm::AttributeList PAL = toReplace->getAttributes();
-        if(!PAL.isEmpty()){
-            llvm::SmallVector<llvm::AttributeSet,8> ArgAttrs;
-            for(unsigned ArgNo = 0; ArgNo < toReplace->getNumArgOperands(); ++ArgNo)
-                ArgAttrs.push_back(PAL.getParamAttributes(ArgNo));
-            PAL = llvm::AttributeList::get(origFunc->getContext(), PAL.getFnAttributes(),PAL.getRetAttributes(), ArgAttrs);
-        }
-
-        SmallVector<llvm::OperandBundleDef, 1> OpBundles;
-        toReplace->getOperandBundlesAsDefs(OpBundles);
-
-        CallBase *NewCB = nullptr;
-        if(InvokeInst* II = llvm::dyn_cast<InvokeInst>(toReplace)){
-            NewCB = InvokeInst::Create(redefined, II->getNormalDest(), II->getUnwindDest(), Args, OpBundles, "", toReplace);
-        }else{
-            NewCB = CallInst::Create(redefined, Args, OpBundles, "", toReplace);
-            llvm::cast<CallInst>(NewCB)->setTailCallKind(llvm::cast<CallInst>(toReplace)->getTailCallKind());
-        }
-        NewCB->setCallingConv(toReplace->getCallingConv());
-        NewCB->setAttributes(PAL);
-        NewCB->copyMetadata(*toReplace,{LLVMContext::MD_prof, LLVMContext::MD_dbg});
-        if(!toReplace->use_empty())
-            toReplace->replaceAllUsesWith(NewCB);
-        oldCalls.push_back(toReplace);
-    }
-     */
 
     for(auto it: IndirectCallsToVirtualFunctionMap){
         auto unsafeCall = it.first;
@@ -537,45 +345,30 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
         ContextCond cxt = dpm.getCond();
         CallStrCxt calls = cxt.getContexts();
         if(!calls.empty()){
-
-            for(auto call: calls){
-                const CallBlockNode* cbn = _pta->getPTACallGraph()->getCallSite(call);
-            }
-            
             const CallBlockNode* cbn = _pta->getPTACallGraph()->getCallSite(calls.front());
             Function* topCaller = cbn->getCaller()->getLLVMFun();
-            if(!isRustLibraryFunc(topCaller)){
+            if(true){
                 const SVFGNode* node = dpm.getLoc();
                 const Value* nodeVal = node->getValue();
                 assert(llvm::isa<CallBase>(nodeVal) && "added a non-call node as final?");
                 CallBase* allocCallBase = const_cast<CallBase*>(llvm::cast<CallBase>(nodeVal));
-                if(allocCallBase->getCalledFunction()->getName().startswith("__mpk_unsafe")){
-                    continue;
-                }
                 UnsafeCallBases.insert(allocCallBase);
                 Function* calledFunc = allocCallBase->getCalledFunction();
                 CallBaseToCalleeMap.insert(make_pair(allocCallBase,calledFunc));
-                if(MpkRedefinedMap.find(calledFunc) == MpkRedefinedMap.end()){
-                    ///define unsafe alloc func
-                    Function* redefined = redefineFunction(calledFunc);
-                    MpkRedefinedMap.insert(make_pair(calledFunc, redefined));
-                    LLVMContext &C = allocCallBase->getContext();
-                    MDNode *N = MDNode::get(C, MDString::get(C, "Unsafe call replacement"));
-                    allocCallBase->setMetadata("MPK-HEAP-MOVE", N);
-                }
+
                 {
+                    if(CallBaseToUnsafeBitMap.find(allocCallBase) == CallBaseToUnsafeBitMap.end()){
+                        CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase, 0));
+                    }
+                    CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase,0));
                     Function* allocCaller = allocCallBase->getCalledFunction();
                     if(FunctionToUnsafeCallBasesMap.find(allocCaller) == FunctionToUnsafeCallBasesMap.end()){
                         set<CallBase*> ts;
                         ts.insert(allocCallBase);
-                        CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase,0));
                         FunctionToUnsafeCallBasesMap.insert(make_pair(allocCaller,ts));
                     }else{
-                        if(CallBaseToUnsafeBitMap.find(allocCallBase) == CallBaseToUnsafeBitMap.end()){
-                            auto fIT = FunctionToUnsafeCallBasesMap.find(allocCaller);
-                            CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase,0));
-                            fIT->second.insert(allocCallBase);
-                        }
+                        auto fIT = FunctionToUnsafeCallBasesMap.find(allocCaller);
+                        fIT->second.insert(allocCallBase);
                     }
                     if(CallBaseToUnsafeBitsArgs.find(allocCallBase) == CallBaseToUnsafeBitsArgs.end()){
                         set<int> ts;
@@ -640,22 +433,12 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
             const SVFGNode* node = dpm.getLoc();
             const Value* val = node->getValue();
             CallBase* allocCallBase = const_cast<CallBase*>(llvm::cast<CallBase>(val));
-            if(allocCallBase->getCalledFunction()->getName().startswith("__mpk_unsafe")){
-                continue;
-            }
             Function* caller = allocCallBase->getParent()->getParent();
             Function* calledFunc = allocCallBase->getCalledFunction();
             CallBaseToCalleeMap.insert(make_pair(allocCallBase,calledFunc));
             EntryReplaceCBNSet.insert(allocCallBase);
             UnsafeCallBases.insert(allocCallBase);
-            if(MpkRedefinedMap.find(calledFunc) == MpkRedefinedMap.end()){
-                    ///define unsafe alloc func
-                    Function* redefined = redefineFunction(calledFunc);
-                    MpkRedefinedMap.insert(make_pair(calledFunc, redefined));
-                    LLVMContext &C = allocCallBase->getContext();
-                    MDNode *N = MDNode::get(C, MDString::get(C, "Unsafe call replacement"));
-                    allocCallBase->setMetadata("MPK-HEAP-MOVE", N);
-            }
+
             {
                 Function* allocCaller = allocCallBase->getCalledFunction();
                 if(FunctionToUnsafeCallBasesMap.find(allocCaller) == FunctionToUnsafeCallBasesMap.end()){
@@ -686,10 +469,12 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
         const Value* val = node->getValue();
         if(const AllocaInst* inst = llvm::dyn_cast<AllocaInst>(val)){
             AllocaInst* allocaInst = const_cast<AllocaInst*>(inst);
-            LLVMContext &C = allocaInst->getContext();
-            MDNode *N = MDNode::get(C, MDString::get(C, "Unsafe stack object replacement"));
-            allocaInst->setMetadata("MPK-Extern-Move", N);
-            UnsafePointers.insert(node);
+            if(!allocaInst->getMetadata("MPK-SmartPointer")) {
+                LLVMContext &C = allocaInst->getContext();
+                MDNode *N = MDNode::get(C, MDString::get(C, "Unsafe stack object replacement"));
+                allocaInst->setMetadata("MPK-Extern-Move", N);
+                UnsafePointers.insert(node);
+            }
         }
     }
 
@@ -701,7 +486,7 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
             bool isUnsafe = false;
             if(val){
                 if(const Instruction* inst = llvm::dyn_cast<Instruction>(val)){
-                    if(inst->getMetadata("MPK-Unsafe") != nullptr){
+                    if(inst->getMetadata("MPK-Unsafe2") != nullptr){
                         isUnsafe = true;
                     }
                 }
@@ -709,7 +494,7 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                 if(!isUnsafe) {
                     for (auto user: val->users()) {
                         if (const Instruction *inst = llvm::dyn_cast<Instruction>(user)) {
-                            if (inst->getMetadata("MPK-Unsafe") != nullptr) {
+                            if (inst->getMetadata("MPK-Unsafe2") != nullptr) {
                                 isUnsafe = true;
                                 break;
                             }
@@ -726,10 +511,12 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                     const MemObj* obj = pag->getBaseObj(pt);
                     if(obj->isStack()){
                         AllocaInst* AI = const_cast<AllocaInst*>(llvm::cast<AllocaInst>(obj->getRefVal()));
-                        if(AI->getMetadata("MPK-Extern-Move") == nullptr){
-                            auto &cxt = AI->getContext();
-                            MDNode* N = MDNode::get(cxt,MDString::get(cxt,"Unsafe stack object replacement"));
-                            AI->setMetadata("MPK-Extern-Move", N);
+                        if(!AI->getMetadata("MPK-SmartPointer")) {
+                            if(AI->getMetadata("MPK-Extern-Move") == nullptr){
+                                auto &cxt = AI->getContext();
+                                MDNode* N = MDNode::get(cxt,MDString::get(cxt,"Unsafe stack object replacement"));
+                                AI->setMetadata("MPK-Extern-Move", N);
+                            }
                         }
                     }
                 }

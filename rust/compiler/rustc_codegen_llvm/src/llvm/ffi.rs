@@ -968,6 +968,8 @@ extern "C" {
     pub fn LLVMSetInUnsafeMetadata(Val: &'a Value);
     pub fn LLVMSetSmartPointerMetadata(Val: &'a Value);
     pub fn LLVMSetSmartPointerTypeId(M: &'a Module, Block: &'a BasicBlock, Val: c_ulong);
+    pub fn LLVMMarkUnsafeStart(M: &'a Module, Builder: &Builder<'a>);
+    pub fn LLVMMarkUnsafeEnd(M: &'a Module, Builder: &Builder<'a>);
 
     // Operations on constants of any type
     pub fn LLVMConstNull(Ty: &Type) -> &Value;

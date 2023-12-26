@@ -46,7 +46,7 @@ namespace SVF
                                 if(inst->getMetadata("MPK-SmartPointer") != nullptr){
                                     continue;
                                 }
-                                if( this->metasafe && inst->getMetadata("MPK-Unsafe") != nullptr){
+                                if( this->metasafe && inst->getMetadata("MPK-Unsafe2") != nullptr){
                                     candidateQueries.insert(id);
                                     isUnsafe = true;
                                 }
@@ -61,7 +61,7 @@ namespace SVF
                         if(!isUnsafe) {
                             for (auto user: val->users()) {
                                 if (const Instruction *inst = llvm::dyn_cast<Instruction>(user)) {
-                                    if (inst->getMetadata("MPK-Unsafe") != nullptr) {
+                                    if (inst->getMetadata("MPK-Unsafe2") != nullptr) {
                                         candidateQueries.insert(id);
                                         break;
                                     }

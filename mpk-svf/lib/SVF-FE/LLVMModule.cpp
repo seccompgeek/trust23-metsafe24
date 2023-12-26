@@ -34,7 +34,6 @@
 #include "SVF-FE/LLVMUtil.h"
 #include "SVF-FE/SymbolTableInfo.h"
 #include "llvm/Transforms/Utils/Cloning.h"
-#include "RustIsolation/MPKRustIsolation.h"
 
 using namespace std;
 using namespace SVF;
@@ -378,58 +377,76 @@ Function* redefineStructRetFunction(Function* F){
 }
 
 bool addDummyLoads(Module& M){
-    strapAndMarkRustStdLibraries(M);
     for(auto &F: M){
-        if(F.isDeclaration() && !isRustLibraryFunc(&F)){
-            continue;
-        }
+        bool in_unsafe = false;
+        std::set<Instruction*> removableMarkers;
         for(auto &BB: F) {
             for (auto &I: BB) {
-                if(LoadInst* load = llvm::dyn_cast<LoadInst>(&I)) {
-                    if (load->getMetadata("MPK-Unsafe") != nullptr && !load->getType()->isPointerTy()) {
+                if(CallInst* call = llvm::dyn_cast<CallInst>(&I)) {
+                    if (auto callee = call->getCalledFunction()) {
+                        if (callee->getName() == "__trust_mark_unsafe_start") {
+                            in_unsafe = true;
+                            removableMarkers.insert(&I);
+                        } else if(in_unsafe && callee->getName() == "__trust_mark_unsafe_end") {
+                            in_unsafe = false;
+                            removableMarkers.insert(&I);
+                        }
+                    }
+                }
+                if (in_unsafe) {
+                    if(LoadInst* load = llvm::dyn_cast<LoadInst>(&I)) {
                         Value *loadSrc = load->getPointerOperand();
                         BitCastInst *bitCastInst = new BitCastInst(loadSrc, loadSrc->getType()->getPointerTo(0),
-                                                                   "dummy_bit_cast", &I);
+                                                                "dummy_bit_cast", &I);
                         LoadInst *dummyLoad = new LoadInst(loadSrc->getType(), bitCastInst, "", &I);
                         LLVMContext &C = load->getContext();
                         MDNode *N = MDNode::get(C, MDString::get(C, "Dummy Load To help with PTA"));
                         dummyLoad->setMetadata("MPK-Dummy-Load", N);
                         bitCastInst->setMetadata("MPK-Dummy-Load", N);
                         MDNode *NN = MDNode::get(C,
-                                                 MDString::get(C, "Dummy Unsafe load_store to help with PTA"));
-                        dummyLoad->setMetadata("MPK-Unsafe", NN);
-                    }
-                }else if(StoreInst* store = llvm::dyn_cast<StoreInst>(&I)){
-                        if(store->getMetadata("MPK-Unsafe") != nullptr && !store->getOperand(0)->getType()->isPointerTy()){
+                                                MDString::get(C, "Dummy Unsafe load_store to help with PTA"));
+                        dummyLoad->setMetadata("MPK-Unsafe2", NN);
+                        load->setMetadata("MPK-Unsafe2", NN);
+                    }else if(StoreInst* store = llvm::dyn_cast<StoreInst>(&I)){
+                        if(!store->getOperand(0)->getType()->isPointerTy()){
                             Value* storeDst = store->getPointerOperand();
                             BitCastInst *bitCastInst = new BitCastInst(storeDst, storeDst->getType()->getPointerTo(0),
-                                                                       "dummy_bit_cast", &I);
+                                                                    "dummy_bit_cast", &I);
                             StoreInst *dummyStore = new StoreInst(storeDst,bitCastInst,store);
                             LLVMContext &C = store->getContext();
                             MDNode *N = MDNode::get(C, MDString::get(C, "Dummy Load To help with PTA"));
                             dummyStore->setMetadata("MPK-Dummy-Load", N);
                             bitCastInst->setMetadata("MPK-Dummy-Load", N);
                             MDNode *NN = MDNode::get(C,MDString::get(C,"Dummy Unsafe load_store to help with PTA"));
-                            dummyStore->setMetadata("MPK-Unsafe",NN);
+                            dummyStore->setMetadata("MPK-Unsafe2",NN);
+                            store->setMetadata("MPK-Unsafe2", NN);
                         }
-                }else if(CallBase* CB = llvm::dyn_cast<CallBase>(&I)){
-                    if(CB->getMetadata("MPK-Unsafe") != nullptr){
+                    }else if(CallBase* CB = llvm::dyn_cast<CallBase>(&I)){
                         for(auto &callArg: CB->args()){
                             if(callArg->getType()->isPointerTy()){
                                 BitCastInst *bitCastInst = new BitCastInst(callArg, callArg->getType()->getPointerTo(0),
-                                                                           "dummy_bit_cast", &I);
+                                                                        "dummy_bit_cast", &I);
                                 LoadInst *dummyLoad = new LoadInst(callArg->getType(), bitCastInst, "", &I);
                                 LLVMContext &C = CB->getContext();
                                 MDNode *N = MDNode::get(C, MDString::get(C, "Dummy Load To help with PTA"));
                                 dummyLoad->setMetadata("MPK-Dummy-Load", N);
                                 bitCastInst->setMetadata("MPK-Dummy-Load", N);
                                 MDNode *NN = MDNode::get(C,MDString::get(C,"Dummy Unsafe load_store to help with PTA"));
-                                dummyLoad->setMetadata("MPK-Unsafe",NN);
+                                dummyLoad->setMetadata("MPK-Unsafe2",NN);
                             }
                         }
+                    } else {
+                        Instruction* inst = llvm::cast<Instruction>(&I);
+                        auto& context = inst->getContext();
+                        MDNode *N = MDNode::get(context, MDString::get(context, "Instruction in unsafe region"));
+                        inst->setMetadata("MPK-Unsafe2", N);
                     }
                 }
             }
+        }
+
+        for(auto inst: removableMarkers){
+            inst->eraseFromParent();
         }
     }
 

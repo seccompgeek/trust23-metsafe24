@@ -13,7 +13,6 @@
 #include "WPA/Andersen.h"
 #include "Util/SCC.h"
 #include <algorithm>
-#include "RustIsolation/RustDemangle.h"
 
 namespace SVF
 {

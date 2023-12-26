@@ -19,13 +19,11 @@ file (GLOB SOURCES
         WPA/*.cpp
         MTA/*.cpp
         SABER/*.cpp
-        MpkRustIsolation/*.cpp
         DDA/*.cpp)
-add_llvm_library(Svf STATIC ${SOURCES} LINK_LIBS Cudd ${Z3_DIR}/bin/libz3.a /home/martin/projects/metasafe/trust-sec23/mpk-rust-demangle/target/debug/libmpk_rust_demangle.a)
+add_llvm_library(Svf STATIC ${SOURCES} LINK_LIBS Cudd ${Z3_DIR}/bin/libz3.a)
 
 link_directories(
         ${CMAKE_BINARY_DIR}/lib/Cudd ${Z3_DIR}/bin
-        ${PRJHOME}mpk-rust-demangle/target/debug
         )
 
 

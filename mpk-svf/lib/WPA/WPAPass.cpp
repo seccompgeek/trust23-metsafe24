@@ -53,7 +53,6 @@
 #include "WPA/TypeAnalysis.h"
 #include "WPA/Steensgaard.h"
 #include "SVF-FE/PAGBuilder.h"
-#include "RustIsolation/MPKRustIsolation.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 #include <utility>
 #include "Util/DPItem.h"

@@ -1,6 +1,6 @@
 use crate::common::Funclet;
 use crate::context::CodegenCx;
-use crate::llvm::{self, BasicBlock, False, LLVMSetInUnsafeMetadata};
+use crate::llvm::{self, BasicBlock, False, LLVMSetInUnsafeMetadata, LLVMMarkUnsafeStart, LLVMMarkUnsafeEnd};
 use crate::llvm::{AtomicOrdering, AtomicRmwBinOp, SynchronizationScope};
 use crate::type_::Type;
 use crate::type_of::LayoutLlvmExt;
@@ -129,6 +129,18 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
 
     fn set_in_unsafe(&mut self, unsafety: bool) {
         self.in_unsafe = unsafety;
+    }
+
+    fn mark_unsafe_start(&mut self) {
+        unsafe {
+            LLVMMarkUnsafeStart(self.llmod, &self.llbuilder);
+        }
+    }
+
+    fn mark_unsafe_end(&mut self){
+        unsafe {
+            LLVMMarkUnsafeEnd(self.llmod, &self.llbuilder);
+        }
     }
 
     fn with_cx(cx: &'a CodegenCx<'ll, 'tcx>) -> Self {
