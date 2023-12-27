@@ -3,8 +3,8 @@ set ( CMAKE_EXPORT_COMPILE_COMMANDS on )
 set ( CMAKE_BUILD_TYPE Debug )
 
 project("SVF")
-set(LLVM_DIR ${PRJHOME}/rust/build/x86_64-unknown-linux-gnu/llvm)
-set(Z3_DIR ${PRJHOME}/mpk-svf/z3.obj)
+#set(LLVM_DIR ${PRJHOME}/rust/build/x86_64-unknown-linux-gnu/llvm)
+#set(Z3_DIR ${PRJHOME}/mpk-svf/z3.obj)
 
 # To support both in- and out-of-source builds,
 # we check for the presence of the add_llvm_loadable_module command.
@@ -54,7 +54,7 @@ Please set this to environment variable to point to the LLVM build directory\
 else()
         set(IN_SOURCE_BUILD 1)
 endif()
-set(Z3_DIR $ENV{Z3_DIR})
+#set(Z3_DIR $ENV{Z3_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include
                     ${CMAKE_CURRENT_BINARY_DIR}/include
                     ${Z3_DIR}/include/)

@@ -160,161 +160,63 @@ DDAPass::~DDAPass()
 bool replaceUnsafeCalls(){
     std::vector<CallBase *> oldCalls;
 
-    for(auto call: CallBaseToUnsafeBitsArgs) {
+    //for each function with a callbase that leads to unsafe memory allocation,
+    //set the flags.
+    for(auto it: FunctionToUnsafeCallBasesMap){
+        Function* Caller = it.first;
+        auto callBases = it.second;
+        auto &context = Caller->getContext();
+        Module* module = Caller->getParent();
+        GlobalVariable* safetyFlag = llvm::cast<GlobalVariable>(module->getOrInsertGlobal("METASAFE_UNSAFE_FLAG", llvm::Type::getInt64Ty(context)));
+        
+        Instruction* firstInst = &*Caller->getBasicBlockList().begin()->getFirstInsertionPt();
+        llvm::IRBuilder<> Builder(firstInst);
+        std::vector<AllocaInst*> flags;
+        std::map<CallBase*, AllocaInst*> callBaseToUnsafeArgAlloca;
+        for(auto callBase: callBases){
+            callBaseToUnsafeArgAlloca.insert(make_pair(callBase, Builder.CreateAlloca(llvm::Type::getInt64Ty(context))));
+        }
+        
+        auto currentFlag = Builder.CreateLoad(llvm::Type::getInt64Ty(context), safetyFlag);
+        safetyFlag->setThreadLocal(true);
+        Constant* zeroVal = ConstantInt::get(llvm::Type::getInt64Ty(context),0, false);
 
-    }
+        int index = 0;
+        for(auto callBase: callBases){
+            int bit = CallBaseToUnsafeBitMap[callBase];
+            int bitMask = 0x1 << bit;
+            Constant* bitMaskVal = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, bitMask));
+            auto bitAnd = Builder.CreateAnd({bitMaskVal, currentFlag});
+            
+            Value* cmp = Builder.CreateCmp(llvm::CmpInst::Predicate::ICMP_NE,bitAnd,zeroVal);
+            
+            auto callArgBits = CallBaseToUnsafeBitsArgs[callBase];
+            int argBits = 0;
+            for(auto arg: callArgBits){
+                argBits |= (0x1 << arg);
+            }
+            Constant *argBitValue = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, argBits));
+            Value* unsafeArg = Builder.CreateSelect(cmp, argBitValue, zeroVal);
+            Builder.CreateStore(unsafeArg, callBaseToUnsafeArgAlloca[callBase]);
+        }
 
-    for(auto ff: MpkRedefinedMap){
-        Function* origFunc = ff.first;
-        Function* redefined = ff.second;
-
-        for(auto use = origFunc->user_begin(), use_end = origFunc->user_end(); use != use_end; ++use){
-            if(CallBase* unsafeCall = llvm::dyn_cast<CallBase>(*use)){
-                bool isEntry = EntryReplaceCBNSet.find(unsafeCall) != EntryReplaceCBNSet.end();
-                Function* parentFunc = unsafeCall->getFunction();
-                bool isInIndirect = IndirectFuncToUnsafeSpaceMap.find(parentFunc) != IndirectFuncToUnsafeSpaceMap.end();
-                set<int> UnsafeArgBits;
-                int callBaseUnsafeBit = -1;
-                if(isEntry) {
-                    UnsafeArgBits = CallBaseToUnsafeBitsArgs[unsafeCall];
-                }else if(parentFunc->getName().startswith("__mpk_unsafe")){
-                    CallBase* origCB = CallBase2NewCallBase[unsafeCall];
-                    UnsafeArgBits = CallBaseToUnsafeBitsArgs[origCB];
-                    callBaseUnsafeBit = CallBaseToUnsafeBitMap[origCB];
-                }else if(!isInIndirect){
-                    continue;
+        for(auto callBase: callBases){
+            Builder.SetInsertPoint(callBase);
+            auto bitArg = Builder.CreateLoad(llvm::Type::getInt64Ty(context), callBaseToUnsafeArgAlloca[callBase]);
+            Builder.CreateStore(bitArg, safetyFlag);
+            if(CallInst* call = llvm::dyn_cast<CallInst>(callBase)){
+                if(callBase->getNextNode() == nullptr){
+                    Builder.SetInsertPoint(callBase->getParent());
+                }else {
+                    Builder.SetInsertPoint(callBase->getNextNode());
                 }
-
-                Type* i8Type = IntegerType::getInt8Ty(unsafeCall->getContext());
-                Constant* i8Val = ConstantInt::get(i8Type,1, false);
-                Value* unsafeArg = nullptr;
-                IRBuilder IRB(unsafeCall);
-                int unsafeArgValue = 0;
-                for(auto bit: UnsafeArgBits){
-                    unsafeArgValue |= (1 << bit);
-                }
-
-                if(isEntry){
-                    unsafeArg = ConstantInt::get(i8Type,unsafeArgValue);
-                }else{
-                    int andValue = 1 << callBaseUnsafeBit;
-                    Constant* unsafeAnd = ConstantInt::get(i8Type, andValue,false);
-                    Value* unsafeArgBitVal = nullptr;
-                    if(isInIndirect){
-                        auto allocaSpace = IndirectFuncToUnsafeSpaceMap.find(parentFunc)->second;
-                        unsafeArgBitVal = IRB.CreateLoad(allocaSpace);
-                    }else {
-                        assert(parentFunc->getName().startswith("__mpk_unsafe") &&
-                               "this must be done in an unsafe function");
-                        unsafeArgBitVal = parentFunc->getArg(parentFunc->arg_size() - 1);
-                    }
-                    unsafeArg = IRB.CreateAnd(unsafeAnd,unsafeArgBitVal);
-                    Constant* zeroVal = ConstantInt::get(i8Type,0, false);
-                    Value* cmp = IRB.CreateCmp(llvm::CmpInst::Predicate::ICMP_NE,unsafeArg,zeroVal);
-                    unsafeArg = ConstantInt::get(i8Type, unsafeArgValue);
-                    unsafeArg = IRB.CreateSelect(cmp,unsafeArg,zeroVal);
-                }
-
-                std::vector<Value*> Args;
-                Args.insert(Args.begin(),unsafeCall->arg_begin(), unsafeCall->arg_end());
-                Args.push_back(unsafeArg);
-
-                llvm::AttributeList PAL = unsafeCall->getAttributes();
-                if(!PAL.isEmpty()){
-                    llvm::SmallVector<llvm::AttributeSet,8> ArgAttrs;
-                    for(unsigned ArgNo = 0; ArgNo < unsafeCall->getNumArgOperands(); ++ArgNo)
-                        ArgAttrs.push_back(PAL.getParamAttributes(ArgNo));
-                    PAL = llvm::AttributeList::get(origFunc->getContext(), PAL.getFnAttributes(),PAL.getRetAttributes(), ArgAttrs);
-                }
-
-                SmallVector<llvm::OperandBundleDef, 1> OpBundles;
-                unsafeCall->getOperandBundlesAsDefs(OpBundles);
-
-                CallBase *NewCB = nullptr;
-                if(InvokeInst* II = llvm::dyn_cast<InvokeInst>(unsafeCall)){
-                    NewCB = InvokeInst::Create(redefined, II->getNormalDest(), II->getUnwindDest(), Args, OpBundles, "", unsafeCall);
-                }else{
-                    NewCB = CallInst::Create(redefined, Args, OpBundles, "", unsafeCall);
-                    llvm::cast<CallInst>(NewCB)->setTailCallKind(llvm::cast<CallInst>(unsafeCall)->getTailCallKind());
-                }
-                NewCB->setCallingConv(unsafeCall->getCallingConv());
-                NewCB->setAttributes(PAL);
-                NewCB->copyMetadata(*unsafeCall,{LLVMContext::MD_prof, LLVMContext::MD_dbg});
-                if(!unsafeCall->use_empty())
-                    unsafeCall->replaceAllUsesWith(NewCB);
-                oldCalls.push_back(unsafeCall);
+                Builder.CreateStore(zeroVal, safetyFlag);
+            } else if(InvokeInst* invoke = llvm::dyn_cast<InvokeInst>(callBase)){
+                Builder.SetInsertPoint(&*invoke->getNormalDest()->getFirstInsertionPt());
+                Builder.CreateStore(zeroVal, safetyFlag);
             }
         }
-    }
 
-
-    for(auto it: IndirectCallsToVirtualFunctionMap){
-        auto unsafeCall = it.first;
-        bool isEntry = EntryReplaceCBNSet.find(unsafeCall) != EntryReplaceCBNSet.end();
-        CallBase * replacement = isEntry? unsafeCall: IndirectCBMap.find(unsafeCall)->second;
-        Function* parentFunc = replacement->getFunction();
-        bool isInIndirect = IndirectFuncToUnsafeSpaceMap.find(parentFunc) != IndirectFuncToUnsafeSpaceMap.end();
-        set<int> UnsafeArgBits;
-        int callBaseUnsafeBit = -1;
-        if(isEntry) {
-            UnsafeArgBits = CallBaseToUnsafeBitsArgs[unsafeCall];
-        }else if(parentFunc->getName().startswith("__mpk_unsafe")){
-            CallBase* origCB = CallBase2NewCallBase[unsafeCall];
-            UnsafeArgBits = CallBaseToUnsafeBitsArgs[origCB];
-            callBaseUnsafeBit = CallBaseToUnsafeBitMap[origCB];
-        }else if(!isInIndirect) {
-            continue;
-        }
-
-        Type* i8Type = IntegerType::getInt8Ty(unsafeCall->getContext());
-        Constant* i8Val = ConstantInt::get(i8Type,1, false);
-        Value* unsafeArg = nullptr;
-        IRBuilder IRB(replacement);
-        int unsafeArgValue = 0;
-        for(auto bit: UnsafeArgBits){
-            unsafeArgValue |= (1 << bit);
-        }
-
-        if(isEntry){
-            unsafeArg = ConstantInt::get(i8Type,unsafeArgValue);
-        }else{
-            int andValue = 1 << callBaseUnsafeBit;
-            Constant* unsafeAnd = ConstantInt::get(i8Type, andValue,false);
-            Value* unsafeArgBitVal = nullptr;
-            if(isInIndirect){
-                auto allocaSpace = IndirectFuncToUnsafeSpaceMap.find(parentFunc)->second;
-                unsafeArgBitVal = IRB.CreateLoad(allocaSpace);
-            }else {
-                assert(parentFunc->getName().startswith("__mpk_unsafe") &&
-                       "this must be done in an unsafe function");
-                unsafeArgBitVal = parentFunc->getArg(parentFunc->arg_size() - 1);
-            }
-            unsafeArg = IRB.CreateAnd(unsafeAnd,unsafeArgBitVal);
-            Constant* zeroVal = ConstantInt::get(i8Type,0, false);
-            Value* cmp = IRB.CreateCmp(llvm::CmpInst::Predicate::ICMP_NE,unsafeArg,zeroVal);
-            unsafeArg = ConstantInt::get(i8Type, unsafeArgValue);
-            unsafeArg = IRB.CreateSelect(cmp,unsafeArg,zeroVal);
-        }
-        IRB.SetInsertPoint(replacement);
-        std::vector<Type *> arg_type;
-        std::vector<Value*> args;
-        LLVMContext &C = parentFunc->getContext();
-        MDNode *N = MDNode::get(C, {MDString::get(C, "r15")});
-        arg_type.push_back(Type::getInt64Ty(C));
-        Function *readRegisterFunc = llvm::Intrinsic::getDeclaration(parentFunc->getParent(), llvm::Intrinsic::read_register, arg_type);
-        args.push_back(MetadataAsValue::get(C,N));
-
-        Value* savedStackPtr = IRB.CreateCall(readRegisterFunc, args);
-        Type* int8PtrTy = Type::getInt8PtrTy(C);
-        Value* intToPtr = IRB.CreateIntToPtr(savedStackPtr,int8PtrTy);
-        auto unsafeFlagGep = IRB.CreateGEP(intToPtr,ConstantInt::get(i8Type,32));
-        IRB.CreateStore(unsafeArg,unsafeFlagGep);
-    }
-
-    while(!oldCalls.empty()){
-        CallBase *CB = oldCalls.back();
-        oldCalls.pop_back();
-        CB->eraseFromParent();
     }
 
     return true;
@@ -361,7 +263,7 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                         CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase, 0));
                     }
                     CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase,0));
-                    Function* allocCaller = allocCallBase->getCalledFunction();
+                    Function* allocCaller = allocCallBase->getFunction();
                     if(FunctionToUnsafeCallBasesMap.find(allocCaller) == FunctionToUnsafeCallBasesMap.end()){
                         set<CallBase*> ts;
                         ts.insert(allocCallBase);
@@ -440,7 +342,7 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
             UnsafeCallBases.insert(allocCallBase);
 
             {
-                Function* allocCaller = allocCallBase->getCalledFunction();
+                Function* allocCaller = allocCallBase->getFunction();
                 if(FunctionToUnsafeCallBasesMap.find(allocCaller) == FunctionToUnsafeCallBasesMap.end()){
                     set<CallBase*> ts;
                     ts.insert(allocCallBase);

@@ -50,13 +50,8 @@ namespace SVF
                                     candidateQueries.insert(id);
                                     isUnsafe = true;
                                 }
-                            } else if (this->metasafe){ 
-                                if(const Argument* arg = llvm::dyn_cast<Argument>(val)){
-                                    if(inst->getMetadata("MPK-SmartPointer") != nullptr){
-                                        continue;
-                                    }
-                                }
                             }
+                            //TODO: check arguments which are smart pointers.
                         }
                         if(!isUnsafe) {
                             for (auto user: val->users()) {

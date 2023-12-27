@@ -12,7 +12,6 @@ use crate::MemFlags;
 use rustc_ast as ast;
 use rustc_hir::lang_items::LangItem;
 use rustc_index::vec::Idx;
-use rustc_middle::middle::region::Scope;
 use rustc_middle::mir::interpret::ConstValue;
 use rustc_middle::mir::{AssertKind, ClearCrossCrate, Safety, SourceScope};
 use rustc_middle::mir::{self, SwitchTargets};
@@ -1016,7 +1015,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         } 
 
         let def_id = self.mir.source.def_id();
-        let crate_name = tcx.crate_name(def_id).to_string();
+        let crate_name = tcx.crate_name(def_id.krate).to_string();
         if SAFE_CRATES.contains(&crate_name.as_str()){
             return false;
         }
@@ -1037,7 +1036,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         debug!("codegen_block({:?}={:?})", bb, data);
 
         for statement in &data.statements {
-            let mut unsafety = self.unsafety(bx.tcx(), statement.source_info.scope);
+            let unsafety = self.unsafety(bx.tcx(), statement.source_info.scope);
 
             if !self.in_unsafe && unsafety {
                 self.in_unsafe = true;
