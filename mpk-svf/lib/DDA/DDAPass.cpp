@@ -174,7 +174,8 @@ bool replaceUnsafeCalls(){
         std::vector<AllocaInst*> flags;
         std::map<CallBase*, AllocaInst*> callBaseToUnsafeArgAlloca;
         for(auto callBase: callBases){
-            callBaseToUnsafeArgAlloca.insert(make_pair(callBase, Builder.CreateAlloca(llvm::Type::getInt64Ty(context))));
+            if(EntryReplaceCBNSet.find(callBase) == EntryReplaceCBNSet.end())
+                callBaseToUnsafeArgAlloca.insert(make_pair(callBase, Builder.CreateAlloca(llvm::Type::getInt64Ty(context))));
         }
         
         auto currentFlag = Builder.CreateLoad(llvm::Type::getInt64Ty(context), safetyFlag);
@@ -183,6 +184,8 @@ bool replaceUnsafeCalls(){
 
         int index = 0;
         for(auto callBase: callBases){
+            if(EntryReplaceCBNSet.find(callBase) != EntryReplaceCBNSet.end())
+                continue;
             int bit = CallBaseToUnsafeBitMap[callBase];
             int bitMask = 0x1 << bit;
             Constant* bitMaskVal = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, bitMask));
@@ -201,6 +204,17 @@ bool replaceUnsafeCalls(){
         }
 
         for(auto callBase: callBases){
+            if(EntryReplaceCBNSet.find(callBase) != EntryReplaceCBNSet.end()){
+                auto unsafeBits = CallBaseToUnsafeBitsArgs[callBase];
+                int64_t actualArg = 0;
+                for(auto bit: unsafeBits){
+                    actualArg |= (1 << bit);
+                }
+                Constant *argBitValue = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, actualArg));
+                Builder.SetInsertPoint(callBase);
+                Builder.CreateStore(argBitValue, safetyFlag);
+                continue;
+            }
             Builder.SetInsertPoint(callBase);
             auto bitArg = Builder.CreateLoad(llvm::Type::getInt64Ty(context), callBaseToUnsafeArgAlloca[callBase]);
             Builder.CreateStore(bitArg, safetyFlag);
@@ -259,22 +273,22 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                 CallBaseToCalleeMap.insert(make_pair(allocCallBase,calledFunc));
 
                 {
-                    if(CallBaseToUnsafeBitMap.find(allocCallBase) == CallBaseToUnsafeBitMap.end()){
-                        CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase, 0));
-                    }
-                    CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase,0));
                     Function* allocCaller = allocCallBase->getFunction();
                     if(FunctionToUnsafeCallBasesMap.find(allocCaller) == FunctionToUnsafeCallBasesMap.end()){
                         set<CallBase*> ts;
                         ts.insert(allocCallBase);
                         FunctionToUnsafeCallBasesMap.insert(make_pair(allocCaller,ts));
+                        CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase, 0));
                     }else{
                         auto fIT = FunctionToUnsafeCallBasesMap.find(allocCaller);
+                        if (CallBaseToUnsafeBitMap.find(allocCallBase) == CallBaseToUnsafeBitMap.end()){
+                            CallBaseToUnsafeBitMap.insert(make_pair(allocCallBase, fIT->second.size()));
+                        }
                         fIT->second.insert(allocCallBase);
                     }
                     if(CallBaseToUnsafeBitsArgs.find(allocCallBase) == CallBaseToUnsafeBitsArgs.end()){
                         set<int> ts;
-                        ts.insert(1);
+                        ts.insert(0);
                         CallBaseToUnsafeBitsArgs.insert(make_pair(allocCallBase,ts));
                     }
                 }
@@ -357,7 +371,7 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                 }
                 if(CallBaseToUnsafeBitsArgs.find(allocCallBase) == CallBaseToUnsafeBitsArgs.end()){
                     set<int> ts;
-                    ts.insert(1);
+                    ts.insert(0);
                     CallBaseToUnsafeBitsArgs.insert(make_pair(allocCallBase,ts));
                 }
             }
