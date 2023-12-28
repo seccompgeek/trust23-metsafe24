@@ -10,10 +10,16 @@
 
 static unsigned TEMP_CALLOC[TEMP_CALLOC_SIZE];
 
+__thread uint64_t METASAFE_UNSAFE_FLAG = 0;
+__thread uint64_t METASAFE_TYPE_ID = 0;
+__thread mi_heap_t* SAFE_HEAPS[MAX_HEAPS] = {
+	NULL, };
+__thread mi_heap_t* UNSAFE_HEAPS[MAX_HEAPS] = {NULL,};
+int INITIALIZING = 0;
+
 
 void init_allocator_hooks(){
     INITIALIZING=1;
-    __allocate_shadow_memory();
 }
 
 static mi_heap_t* get_alloc_heap(){

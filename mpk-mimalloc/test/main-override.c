@@ -5,6 +5,8 @@
 
 #include <mimalloc.h>
 
+mi_decl_export mi_decl_thread u_int64_t METASAFE_TYPE_ID = 0;
+
 int main() {
   mi_version();       // ensure mimalloc library is linked
   void* p1 = malloc(78);

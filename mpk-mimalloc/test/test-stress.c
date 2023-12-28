@@ -21,6 +21,8 @@ terms of the MIT license.
 #include <stdbool.h>
 #include <string.h>
 
+__thread uint64_t METASAFE_TYPE_ID = 0;
+
 // > mimalloc-test-stress [THREADS] [SCALE] [ITER]
 //
 // argument defaults

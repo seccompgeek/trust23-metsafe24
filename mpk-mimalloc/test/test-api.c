@@ -42,6 +42,7 @@ we therefore test the API over various inputs. Please add more tests :-)
 static int ok = 0;
 static int failed = 0;
 
+mi_decl_export __thread uint64_t METASAFE_TYPE_ID = 0;
 #define CHECK_BODY(name,body) \
  do { \
   fprintf(stderr,"test: %s...  ", name ); \

@@ -345,6 +345,47 @@ extern pthread_key_t _mi_heap_default_key;
 // However, on the Apple M1 we do use the address of this variable as the unique thread-id (issue #356).
 extern mi_decl_thread mi_heap_t* _mi_heap_default;  // default heap to allocate from
 
+//METASAFE + TRUST
+#define MAX_HEAPS 1024
+extern mi_decl_export mi_decl_thread uint64_t METASAFE_TYPE_ID;
+extern mi_decl_export mi_decl_thread uint64_t METASAFE_UNSAFE_FLAG;
+extern mi_decl_thread mi_heap_t* UNSAFE_HEAPS[MAX_HEAPS];
+extern mi_decl_thread mi_heap_t* SAFE_HEAPS[MAX_HEAPS];
+
+static inline mi_heap_t* get_alloc_heap(void)
+{
+  mi_heap_t* heap;
+  if(METASAFE_TYPE_ID == 1)// smart pointer
+  {
+    heap = SAFE_HEAPS[1];
+    if(heap == NULL)
+    {
+      heap = SAFE_HEAPS[1] = mi_heap_new();
+    }
+  }else if(METASAFE_TYPE_ID == 0)//in FFI domain
+  {
+    heap = UNSAFE_HEAPS[0];
+    if(heap == NULL)
+    {
+      heap = UNSAFE_HEAPS[0] = mi_heap_new();
+    }
+  }else
+  {
+    uint64_t type = METASAFE_TYPE_ID % MAX_HEAPS;
+    while(type < 2)
+    {
+      type = (type + 1) % MAX_HEAPS;
+    }
+    mi_heap_t** heaps = METASAFE_UNSAFE_FLAG? UNSAFE_HEAPS: SAFE_HEAPS;
+    heap = heaps[type];
+    if(heap== NULL){
+      heap = heaps[type] = mi_heap_new();
+    }
+  }
+
+  return heap;
+}
+
 
 static inline mi_heap_t* mi_get_default_heap(void) {
 #if defined(MI_TLS_SLOT)
