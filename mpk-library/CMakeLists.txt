@@ -7,9 +7,24 @@ set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS  "-ggdb3")
 set(CMAKE_SHARED_LINKER_FLAGS "-lpthread")
-add_library(mpk SHARED
-        mpk.c errors.h mpk.h threads.c threads.h allocator.c allocator.h domain.h logger.c logger.h)
+set(ENV{PRJHOME} /home/martin/projects/metasafe/trust) #hard coded, remember to take it out
 
-target_link_libraries(mpk PUBLIC mimalloc)
-target_link_directories(mpk PUBLIC $ENV{PRJHOME}/mpk-mimalloc/out/release)
+add_library(mpk STATIC
+                allocator.c allocator.h)
+
+include(ExternalProject)
+
+ExternalProject_Add(
+        rustfuncs
+        DOWNLOAD_COMMAND ""
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND cargo build COMMAND cargo build --release
+        BINARY_DIR "${CMAKE_SOURCE_DIR}/rust-lib"
+        INSTALL_COMMAND ""
+        LOG_BUILD ON)
+
+target_link_libraries(mpk
+        libmimalloc.a librustfuncs.a)
+
+target_link_directories(mpk PUBLIC $ENV{PRJHOME}/mpk-mimalloc/out/release ${CMAKE_SOURCE_DIR}/rust-lib/target/release)
 target_include_directories(mpk PUBLIC $ENV{PRJHOME}/mpk-mimalloc/include)
