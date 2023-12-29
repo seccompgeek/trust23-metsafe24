@@ -901,6 +901,12 @@ void LLVMSetSmartPointerMetadata(LLVMValueRef Inst) {
   unwrap<Instruction>(Inst)->setMetadata("MPK-SmartPointer", N);
 }
 
+void LLVMMarkSmartPointerShadow(LLVMValueRef Val){
+  LLVMContext &C = unwrap<Instruction>(Val)->getContext();
+  MDNode *N = MDNode::get(C, MDString::get(C, "Is shadow field"));
+  unwrap<Instruction>(Val)->setMetadata("MPK-SmartPointer-Shadow", N);
+}
+
 void LLVMSetSmartPointerTypeId(LLVMModuleRef M, LLVMBasicBlockRef Block, unsigned long ID){
   Module *module = unwrap(M);
   auto InsertPoint = unwrap(Block);
