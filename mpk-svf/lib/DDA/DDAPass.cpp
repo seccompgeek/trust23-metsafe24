@@ -54,7 +54,19 @@ typedef std::stack<const CallBlockNode*> CallStack;
 typedef set<CallBlockNode*> CallBlockNodeSet;
 typedef map<CallBlockNode*, CallBlockNodeSet> CallBlockNodeNodeSetMap;
 
+// represents a callbase and its link in a `road` to an allocation site
+struct Node {
+    CallBase* ID;
+    set<Node*> neighbors;
+};
+
+// represents a `roads` to allocation sites.
+struct CallBaseMap {
+    map<CalBase*, Node*> nodes;
+};
+
 map<const SVFGNode*, bool> ForwardVisitedNodes;
+CallBaseMap HeapAllocationMap;
 
 static bool isForwardVisited(const SVFGNode* node){
     return ForwardVisitedNodes.find(node) != ForwardVisitedNodes.end();
@@ -271,6 +283,11 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                 UnsafeCallBases.insert(allocCallBase);
                 Function* calledFunc = allocCallBase->getCalledFunction();
                 CallBaseToCalleeMap.insert(make_pair(allocCallBase,calledFunc));
+                if(HeapAllocationMap.nodes.find(allocCallBase) == HeapAllocationMap.nodes.end()){
+                    Node* callBaseNode = new Node();
+                    callBaseNode->ID = allocCallBase;
+                    HeapAllocationMap.nodes.insert(make_pair(allocCallBase, callBaseNode));
+                }
 
                 {
                     Function* allocCaller = allocCallBase->getFunction();

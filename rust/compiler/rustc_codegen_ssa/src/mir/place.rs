@@ -93,6 +93,7 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         let offset = self.layout.fields.offset(ix);
         let effective_field_align = self.align.restrict_for_offset(offset);
         let is_smart = bx.cx().tcx().is_smart_pointer(field.ty) || bx.cx().tcx().contains_smart_pointer(field.ty);
+        let contains_smart_pointer = bx.tcx().contains_smart_pointer(self.layout.ty);
 
         let mut simple = || {
             let llval = match self.layout.abi {
@@ -129,7 +130,11 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
                 bx.mark_smart_pointer(temp);
                 temp
             } else {
-                bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)))
+                let temp = bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)));
+                if contains_smart_pointer {
+                    bx.mark_smart_pointer_shadow(temp);
+                }
+                temp
             };
 
             PlaceRef {
@@ -215,7 +220,11 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
             bx.mark_smart_pointer(temp);
             temp
         } else {
-            bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty))
+            let temp = bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty));
+            if contains_smart_pointer {
+                bx.mark_smart_pointer_shadow(temp);
+            }
+            temp
         };
 
         PlaceRef {

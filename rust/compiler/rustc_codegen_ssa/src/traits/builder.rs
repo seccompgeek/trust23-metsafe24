@@ -112,6 +112,7 @@ pub trait BuilderMethods<'a, 'tcx>:
     //MetaSafe + TRust: MK
     fn mark_smart_pointer(&self, v: Self::Value);
     fn set_smart_pointer_type_id(&self, id: u64);
+    fn mark_smart_pointer_shadow(&self, v: Self::Value);
 
     fn checked_binop(
         &mut self,

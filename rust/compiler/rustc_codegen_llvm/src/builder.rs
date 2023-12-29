@@ -171,6 +171,12 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         }
     }
 
+    fn mark_smart_pointer_shadow(&self, v: Self::Value) {
+        unsafe {
+            llvm::LLVMMarkSmartPointerShadow(v);
+        }
+    }
+
     fn set_smart_pointer_type_id(&self, id: u64) {
         unsafe {
             llvm::LLVMSetSmartPointerTypeId( self.cx().llmod,  self.llbb(), id as c_ulong);
