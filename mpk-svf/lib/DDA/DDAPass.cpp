@@ -62,7 +62,7 @@ struct Node {
 
 // represents a `roads` to allocation sites.
 struct CallBaseMap {
-    map<CalBase*, Node*> nodes;
+    map<CallBase*, Node*> nodes;
 };
 
 map<const SVFGNode*, bool> ForwardVisitedNodes;
@@ -171,9 +171,23 @@ DDAPass::~DDAPass()
 
 bool replaceUnsafeCalls(){
     std::vector<CallBase *> oldCalls;
+    set<CallBase*> exemptCallBases;
 
     //for each function with a callbase that leads to unsafe memory allocation,
     //set the flags.
+    for(auto entry: EntryReplaceCBNSet){
+        Node* entryNode = HeapAllocationMap.nodes[entry];
+        set<Node*> workList;
+        workList.insert(entryNode);
+        while(!workList.empty()){
+            auto currNode = *workList.begin();
+            for(auto neighbor: currNode->neighbors) {
+                workList.insert(neighbor);
+                exemptCallBases.insert(neighbor->ID);
+            }
+        }
+    }
+    
     for(auto it: FunctionToUnsafeCallBasesMap){
         Function* Caller = it.first;
         auto callBases = it.second;
@@ -186,6 +200,9 @@ bool replaceUnsafeCalls(){
         std::vector<AllocaInst*> flags;
         std::map<CallBase*, AllocaInst*> callBaseToUnsafeArgAlloca;
         for(auto callBase: callBases){
+            if(exemptCallBases.find(callBase) != exemptCallBases.end()){
+                continue;
+            }
             if(EntryReplaceCBNSet.find(callBase) == EntryReplaceCBNSet.end())
                 callBaseToUnsafeArgAlloca.insert(make_pair(callBase, Builder.CreateAlloca(llvm::Type::getInt64Ty(context))));
         }
@@ -196,6 +213,9 @@ bool replaceUnsafeCalls(){
 
         int index = 0;
         for(auto callBase: callBases){
+            if(exemptCallBases.find(callBase) != exemptCallBases.end()){
+                continue;
+            }
             if(EntryReplaceCBNSet.find(callBase) != EntryReplaceCBNSet.end())
                 continue;
             int bit = CallBaseToUnsafeBitMap[callBase];
@@ -216,6 +236,9 @@ bool replaceUnsafeCalls(){
         }
 
         for(auto callBase: callBases){
+            if(exemptCallBases.find(callBase) != exemptCallBases.end()){
+                continue;
+            }
             if(EntryReplaceCBNSet.find(callBase) != EntryReplaceCBNSet.end()){
                 auto unsafeBits = CallBaseToUnsafeBitsArgs[callBase];
                 int64_t actualArg = 0;
@@ -327,6 +350,16 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
                         }
                         IndirectlyDefined.insert(prev->getFunction());
                     }
+                    Node* prevNode = HeapAllocationMap.nodes[prev];
+                    if(HeapAllocationMap.nodes.find(currCB) == HeapAllocationMap.nodes.end()){
+                        Node* CBNode = new Node();
+                        CBNode->ID = currCB;
+                        prevNode->neighbors.insert(CBNode);
+                        HeapAllocationMap.nodes.insert(make_pair(currCB, CBNode));
+                    }else{
+                        Node* CBNode = HeapAllocationMap.nodes[prev];
+                        prevNode->neighbors.insert(CBNode);
+                    }
 
                     LLVMContext &C = currCB->getContext();
                     MDNode *N = MDNode::get(C, MDString::get(C, "Unsafe call replacement"));
@@ -371,7 +404,11 @@ void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, con
             CallBaseToCalleeMap.insert(make_pair(allocCallBase,calledFunc));
             EntryReplaceCBNSet.insert(allocCallBase);
             UnsafeCallBases.insert(allocCallBase);
-
+            if(HeapAllocationMap.nodes.find(allocCallBase) == HeapAllocationMap.nodes.end()){
+                Node* callBaseNode = new Node();
+                callBaseNode->ID = allocCallBase;
+                HeapAllocationMap.nodes.insert(make_pair(allocCallBase, callBaseNode));
+            }
             {
                 Function* allocCaller = allocCallBase->getFunction();
                 if(FunctionToUnsafeCallBasesMap.find(allocCaller) == FunctionToUnsafeCallBasesMap.end()){
