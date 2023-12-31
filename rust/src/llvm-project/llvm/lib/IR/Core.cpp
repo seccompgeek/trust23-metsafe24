@@ -894,7 +894,7 @@ void LLVMMarkUnsafeEnd(LLVMModuleRef Module, LLVMBuilderRef Builder) {
   auto module = unwrap(Module);
   auto builder = unwrap(Builder);
   auto &context = module->getContext();
-  auto callee = llvm::cast<GlobalVariable>(module->getOrInsertGlobal("METASAFE_UNASFE_END", llvm::Type::getInt64Ty(context)));
+  auto callee = llvm::cast<GlobalVariable>(module->getOrInsertGlobal("METASAFE_UNSAFE_END", llvm::Type::getInt64Ty(context)));
   Constant* value = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, UNSAFE_END++));
   builder->CreateStore(value, callee);
 }
