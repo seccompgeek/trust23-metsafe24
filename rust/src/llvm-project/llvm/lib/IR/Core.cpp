@@ -880,19 +880,23 @@ void LLVMSetInUnsafeMetadata(LLVMValueRef Inst) {
 }
 
 void LLVMMarkUnsafeStart(LLVMModuleRef Module, LLVMBuilderRef Builder) {
+  static unsigned long UNSAFE_START = 1;
   auto module = unwrap(Module);
   auto builder = unwrap(Builder);
   auto &context = module->getContext();
-  auto callee = module->getOrInsertFunction("__trust_mark_unsafe_start", llvm::FunctionType::get(llvm::Type::getVoidTy(context), false));
-  builder->CreateCall(callee);
+  auto callee = llvm::cast<GlobalVariable>(module->getOrInsertGlobal("METASAFE_UNSAFE_START", llvm::Type::getInt64Ty(context)));
+  Constant* value = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, UNSAFE_START++));
+  builder->CreateStore(value, callee);
 }
 
 void LLVMMarkUnsafeEnd(LLVMModuleRef Module, LLVMBuilderRef Builder) {
+  static unsigned long UNSAFE_END = 1;
   auto module = unwrap(Module);
   auto builder = unwrap(Builder);
   auto &context = module->getContext();
-  auto callee = module->getOrInsertFunction("__trust_mark_unsafe_end", llvm::FunctionType::get(llvm::Type::getVoidTy(context), false));
-  builder->CreateCall(callee);
+  auto callee = llvm::cast<GlobalVariable>(module->getOrInsertGlobal("METASAFE_UNASFE_END", llvm::Type::getInt64Ty(context)));
+  Constant* value = ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, UNSAFE_END++));
+  builder->CreateStore(value, callee);
 }
 
 void LLVMSetSmartPointerMetadata(LLVMValueRef Inst) {
