@@ -360,9 +360,8 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
   //  FunctionCallee Fn = F.getParent()->getOrInsertFunction(
   //      EXTERN_STACK_OBJECTS_PTR_CALL, StackPtrTy->getPointerTo(0));
   Value *savedStackPtr = IRB.CreateCall(getStackPointerFunc, args);
-  Type *int64Ptr = Type::getInt64PtrTy(C);
-  Value *intToPtr = IRB.CreateIntToPtr(savedStackPtr, int64Ptr);
-  intToPtr = IRB.CreateBitCast(intToPtr, int64Ptr->getPointerTo(0));
+  //Type *int64Ptr = Type::getInt64PtrTy(C);
+  /*Value *intToPtr = savedStackPtr;
   this->ExternStackPtr =
       IRB.CreateBitCast(intToPtr, StackPtrTy->getPointerTo(0));
   Instruction *BasePtr =
@@ -380,7 +379,7 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
   for (ReturnInst *RI : Returns) {
     IRB.SetInsertPoint(RI);
     IRB.CreateStore(BasePtr, ExternStackPtr);
-  }
+  }*/
 }
 
 class MpkIsolationGatesPass : public FunctionPass {
@@ -596,11 +595,11 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
         totalAllocas++;
       } else if (auto returnInst = dyn_cast<ReturnInst>(currInst)) {
         Returns.push_back(returnInst);
-      } else if (isa<StoreInst>(currInst) || isa<LoadInst>(currInst)) {
+      } else if (isa<StoreInst>(currInst)) {
 
-        if (currInst->getMetadata("MPK-Unsafe") != nullptr) {
+        if (currInst->getMetadata("MPK-Unsafe2") != nullptr) {
           if (auto storeInst = llvm::dyn_cast<StoreInst>(currInst)) {
-            applySFICast(storeInst);
+            //applySFICast(storeInst);
           }
           // applyFalsePositiveCheck(currInst);
         }else{

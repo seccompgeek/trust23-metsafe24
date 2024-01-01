@@ -160,6 +160,7 @@ bool X86TestPass::runOnMachineFunction(MachineFunction &Fn) {
   if(!llvm::shouldHookWithMpkIsolation()){
     return false;
   }
+  return false;
   // TD = &Fn.getDataLayout();
   STI = &static_cast<const TargetSubtargetInfo&>(Fn.getSubtarget());
   TII = STI->getInstrInfo();
