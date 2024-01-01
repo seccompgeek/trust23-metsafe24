@@ -347,16 +347,19 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
   std::vector<Type *> arg_type;
   std::vector<Value *> args;
   LLVMContext &C = F.getContext();
-  MDNode *N = MDNode::get(C, {MDString::get(C, "r15")});
+  //MDNode *N = MDNode::get(C, {MDString::get(C, "r15")});
   arg_type.push_back(Type::getInt64Ty(C));
-  Function *readRegisterFunc = Intrinsic::getDeclaration(
-      F.getParent(), Intrinsic::read_register, arg_type);
-  args.push_back(MetadataAsValue::get(C, N));
+  //Function *readRegisterFunc = Intrinsic::getDeclaration(
+  //    F.getParent(), Intrinsic::read_register, arg_type);
+  //args.push_back(MetadataAsValue::get(C, N));
 
+  Value* stackSize = ConstantInt::get(llvm::Type::getInt64Ty(C), llvm::APInt(64, 4096));//let's ensure at least we have a page for this frame
+  FunctionCallee getStackPointerFunc = F.getParent()->getOrInsertFunction("__more_stack", FunctionType::get(llvm::Type::getVoidTy(C)->getPointerTo(0), arg_type, false));
+  args.push_back(stackSize);
   ///
   //  FunctionCallee Fn = F.getParent()->getOrInsertFunction(
   //      EXTERN_STACK_OBJECTS_PTR_CALL, StackPtrTy->getPointerTo(0));
-  Value *savedStackPtr = IRB.CreateCall(readRegisterFunc, args);
+  Value *savedStackPtr = IRB.CreateCall(getStackPointerFunc, args);
   Type *int64Ptr = Type::getInt64PtrTy(C);
   Value *intToPtr = IRB.CreateIntToPtr(savedStackPtr, int64Ptr);
   intToPtr = IRB.CreateBitCast(intToPtr, int64Ptr->getPointerTo(0));
@@ -513,7 +516,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
   ScalarEvolution SE(F, TLI, ACT, DT, LI);
   externStack = new MPKExternStack(F, *TL, *DL, SE);
 
-  if (!domain) {
+  /*if (!domain) {
     // initialize domain
     domain = new MpkDomain();
     FunctionType *voidType =
@@ -527,14 +530,14 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
         createFunction(SFI_EXCEPTION_FUNC_NAME, voidType, currModule));
     domain->setCountAllocasFunc(
         createFunction(COUNT_ALLOCA_FUNC_NAME, void2IntArgType, currModule));
-  }
+  }*/
   SmallVector<AllocaInst *, 4> StaticArrayAllocas;
   SmallVector<AllocaInst *, 4> DynamicArrayAllocas;
   SmallVector<Instruction *, 8> StackRestorePoints;
   SmallVector<ReturnInst *, 4> Returns;
   SmallVector<Instruction *, 8> ExternCalls;
   bool foundMovable = false;
-  if (F.getName() == "main") {
+  /*if (F.getName() == "main") {
     auto II = F.begin()->begin();
     Instruction *inst = &(*II);
     IRBuilder<> IRB(inst);
@@ -559,7 +562,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
 
     IRB.CreateCall(writeRegisterFunc, args);
     return true;
-  }
+  }*/
 
   size_t totalAllocas = 0;
   size_t totalUnsafeAllocas = 0;
@@ -609,7 +612,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
           applySFIGEPCheck(gepInst);
         }
       }*/
-      if (MpkDomain::shouldInstrumentInstruction(currInst)) {
+      /*if (MpkDomain::shouldInstrumentInstruction(currInst)) {
         MDNode *N = MDNode::get(currContext,
                                 MDString::get(currContext, "wrap-ffi-call"));
         currInst->setMetadata("ADD-FFI-WRAPPER", N);
@@ -617,7 +620,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
         MDNode *NN =
             MDNode::get(currContext, MDString::get(currContext, "TRUE"));
         F.addMetadata("HAS_EXTERN_CALLS", *NN);
-      }
+      }*/
     }
   }
 
