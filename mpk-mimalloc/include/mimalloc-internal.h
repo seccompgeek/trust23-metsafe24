@@ -349,6 +349,8 @@ extern mi_decl_thread mi_heap_t* _mi_heap_default;  // default heap to allocate 
 #define MAX_HEAPS 1024
 extern mi_decl_export mi_decl_thread uint64_t METASAFE_TYPE_ID;
 extern mi_decl_export mi_decl_thread uint64_t METASAFE_UNSAFE_FLAG;
+extern mi_decl_export uint64_t METASAFE_UNSAFE_START;
+extern mi_decl_export uint64_t METASAFE_UNSAFE_END;
 extern mi_decl_thread mi_heap_t* UNSAFE_HEAPS[MAX_HEAPS];
 extern mi_decl_thread mi_heap_t* SAFE_HEAPS[MAX_HEAPS];
 

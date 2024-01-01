@@ -543,6 +543,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
                 let box_layout = bx.cx().layout_of(bx.tcx().mk_box(content_ty));
                 let llty_ptr = bx.cx().backend_type(box_layout);
 
+                
                 if bx.tcx().sess.opts.cg.metasafe {
                     if bx.tcx().is_smart_pointer(content_ty) {
                         bx.set_smart_pointer_type_id(1);

@@ -110,8 +110,10 @@ mi_decl_thread mi_heap_t* _mi_heap_default = (mi_heap_t*)&_mi_heap_empty;
 //METASAFE + TRust
 mi_decl_thread mi_heap_t* SAFE_HEAPS[MAX_HEAPS] = {NULL,};
 mi_decl_thread mi_heap_t* UNSAFE_HEAPS[MAX_HEAPS] = {NULL,};
-//mi_decl_export mi_decl_thread uint64_t METASAFE_TYPE_ID = 0; //defined by Rust?
+mi_decl_export mi_decl_thread uint64_t METASAFE_TYPE_ID = 0; 
 mi_decl_export mi_decl_thread uint64_t METASAFE_UNSAFE_FLAG = 0;
+mi_decl_export uint64_t METASAFE_UNSAFE_START = 0;
+mi_decl_export uint64_t METASAFE_UNSAFE_END = 0;
 
 extern mi_heap_t _mi_heap_main;
 

@@ -68,6 +68,8 @@ struct CallBaseMap {
 map<const SVFGNode*, bool> ForwardVisitedNodes;
 CallBaseMap HeapAllocationMap;
 
+set<CallBase*> ExternFunCalls;
+
 static bool isForwardVisited(const SVFGNode* node){
     return ForwardVisitedNodes.find(node) != ForwardVisitedNodes.end();
 }
@@ -103,42 +105,133 @@ static bool isPtrUnsafe(const Value* v){
 }
 
 static uint64_t unsafePointerCount = 0;
-static void traverseUnsafePointerCopies(SVFG* _svfg, PAG* pag){ 
-    FIFOWorkList<const SVFGNode *> workList;
-    SVFGNodeSet visited;
-    for(auto node: UnsafePointers) {
-        workList.push(node);
-        bool foundUnsafe = false;
-        while (!workList.empty()) {
-            unsafePointerCount++;
-            const SVFGNode *currNode = workList.pop();
-            if (const GepSVFGNode* gepNode = SVFUtil::dyn_cast<GepSVFGNode>(currNode)) {
-                auto nodeVal = gepNode->getValue();
-                Instruction* inst = const_cast<Instruction*>(llvm::cast<Instruction>(nodeVal));
-                auto &cxt = inst->getContext();
-                MDNode* N = MDNode::get(cxt,MDString::get(cxt,"SFI-GEP-WRAP"));
-                inst->setMetadata("POSSIBLE-Unsafe",N);
-            }
-            SVFGEdgeSet outEdges(currNode->getOutEdges());
-            for (auto it = outEdges.begin(), eit = outEdges.end(); it != eit; ++it) {
-                SVFGEdge *edge = *it;
-                if (const DirectSVFGEdge *dirEdge = SVFUtil::dyn_cast<DirectSVFGEdge>(edge)) {
-                    const SVFGNode *dest = dirEdge->getDstNode();
-                    if (SVFUtil::isa<CopySVFGNode>(dest) || SVFUtil::isa<ActualParmSVFGNode>(dest) ||
-                        SVFUtil::isa<FormalParmSVFGNode>(dest) || SVFUtil::isa<FormalRetSVFGNode>(dest) ||
-                        SVFUtil::isa<ActualRetSVFGNode>(dest) || SVFUtil::isa<GepSVFGNode>(dest) || SVFUtil::isa<LoadSVFGNode>(dest)) {
-                        if(visited.find(dest) == visited.end()) {
-                            workList.push(dest);
-                            visited.insert(dest);
+
+void traverseUnsafePointerStores(SVFModule* svfModule){
+    auto moduleSet = LLVMModuleSet::getLLVMModuleSet();
+    set<StoreInst*> unsafeStores;
+    for(int i=0; i<moduleSet->getModuleNum(); i++){
+        auto &module = moduleSet->getModuleRef(i);
+        for(auto& F: module){
+            for(auto& BB: F){
+                for(auto& I: BB){
+                    if(StoreInst* store = llvm::dyn_cast<StoreInst>(&I)){
+                        if(store->hasMetadata("MPK-Unsafe2")){
+                            unsafeStores.insert(store);
                         }
                     }
                 }
             }
         }
     }
+
+    for(auto store: unsafeStores){
+        auto pointer = store->getPointerOperand();
+        if(llvm::isa<GlobalValue>(pointer)){
+            continue;
+        }
+        auto& context = store->getContext();
+        llvm::IRBuilder<> Builder(context);
+        Builder.SetInsertPoint(store);
+        auto cast1 =Builder.CreateBitCast(pointer, llvm::Type::getInt8PtrTy(context));
+        auto Ptr2Int = Builder.CreatePtrToInt(cast1, llvm::Type::getInt64Ty(context));
+        auto And = Builder.CreateBinOp(llvm::Instruction::BinaryOps::And, Ptr2Int, ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, -1)));
+        auto Int2Ptr = Builder.CreateIntToPtr(And, llvm::Type::getInt8PtrTy(context));
+        auto cast = Builder.CreatePointerCast(Int2Ptr, pointer->getType());
+        store->setOperand(store->getPointerOperandIndex(), cast);
+    }
 }
 
+void traverseSmartPointerShadows(SVFModule* svfModule){
+    auto moduleSet = LLVMModuleSet::getLLVMModuleSet();
+    set<Instruction*> geps;
+    set<StoreInst*> unsafeStores;
+    for(int i=0; i<moduleSet->getModuleNum(); i++){
+        auto& module = moduleSet->getModuleRef(i);
+        for(auto &F: module){
+            int movableAllocas = 0;
+            for(auto& BB: F){
+                for(auto &I: BB){
+                    if(GetElementPtrInst* gep = llvm::dyn_cast<GetElementPtrInst>(&I)){
+                        if(gep->hasMetadata("MPK-SmartPointer-Shadow")){
+                            geps.insert(&I);
+                        }
+                    } else if(AllocaInst* alloca = llvm::dyn_cast<AllocaInst>(&I)){
+                        if(alloca->hasMetadata("MPK-Extern-Move")){
+                            movableAllocas ++;
+                        }
+                    }
+                }
+            }
+            /*if(movableAllocas > 0){
+                //insert call to get stack pointer.
+                auto& context = F.getContext();
+                std::vector<llvm::Type*> argTypes = {llvm::Type::getInt64Ty(context)};
+                llvm::FunctionType* calleeType = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(context), argTypes, false);
+                FunctionCallee callee = module.getOrInsertFunction("__trust_more_stack", calleeType);
+                llvm::IRBuilder<> IRBuilder(context);
+                IRBuilder.SetInsertPoint(&*F.begin()->getFirstInsertionPt());
 
+                llvm::SmallVector<Value*, 4> args;
+                args.push_back(ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, 4096)));
+                IRBuilder.CreateCall(callee, args);
+            }*/
+        }
+    }
+
+
+    for(auto gep: geps){
+        //simulate shadow ptr
+        auto& context = gep->getContext();
+        llvm::IRBuilder<> Builder(context);
+        Instruction* insertPoint = gep->getNextNode();
+        if(!insertPoint){
+            Builder.SetInsertPoint(gep->getParent());
+        }else{
+            Builder.SetInsertPoint(insertPoint);
+        }
+
+        auto cast1 = Builder.CreateBitCast(gep, llvm::Type::getInt8PtrTy(context));
+        auto Ptr2Int = Builder.CreatePtrToInt(cast1, llvm::Type::getInt64Ty(context));
+        auto And = Builder.CreateBinOp(llvm::Instruction::BinaryOps::And, Ptr2Int, ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, -1)));
+        auto Int2Ptr = Builder.CreateIntToPtr(And, llvm::Type::getInt8PtrTy(context));
+        auto cast = Builder.CreatePointerCast(Int2Ptr, gep->getType());
+        gep->replaceUsesWithIf(cast, [=](Use& U){
+            if(cast1 != gep){
+                return U.getUser() != cast1;
+            }
+            return U.getUser() != Ptr2Int;
+        });
+    }
+}
+/*map<Function*,Function*> ExternFunctionToWrapperMap;
+
+void replaceExternCalls(){
+
+    for(auto call: ExternFunCalls){
+        Module* module = call->getModule();
+        auto& context = module->getContext();
+        DataLayout* DL = module->getDataLayout();
+        size_t allocSize = 0;
+        Function* callee = call->getCalledFunction();
+        FunctionType* wrapperType = FunctionType::get(llvm::Type::getVoidTy(context)->getPointerTo(),false);
+        Function* wrapperFunc = llvm::Function::Create(
+            wrapperType,
+            callee->getLinkage(),
+            callee->getName()+"_extern_wrapper",
+            *module
+        );
+        BasicBlock* entryBlock = BasicBlock::Create(context, "entry", wrapperFunc);
+        llvm::IRBuilder<> Builder(context);
+        Builder.SetInsertPoint(entryBlock);
+        auto allocaInst = Builder.CreateAlloca(llvm::Type::getInt8Ty(context), ConstantInt::get(llvm::Type::getInt8Ty(context),llvm::APInt(64, allocSize)));
+
+        for(auto arg: call->args()){
+            auto argType = arg->getType();
+            allocSize += DL->getTypeAllocSize(argType);
+        }
+        llvm::IRBuilder<> Builder(call);
+    }
+}*/
 
 void getCallPaths(const SVFModule* svfModule, const PTACallGraph* callgraph, const Function* f, set<const CallBlockNode*>& curPath) {
     if (const SVFFunction* sf = svfModule->getSVFFunction(f)) {
@@ -173,6 +266,7 @@ bool replaceUnsafeCalls(){
     std::vector<CallBase *> oldCalls;
     set<CallBase*> exemptCallBases;
 
+    std::cout<<"Replacing Unsafe Calls"<<std::endl;
     //for each function with a callbase that leads to unsafe memory allocation,
     //set the flags.
     for(auto entry: EntryReplaceCBNSet){
@@ -185,6 +279,7 @@ bool replaceUnsafeCalls(){
                 workList.insert(neighbor);
                 exemptCallBases.insert(neighbor->ID);
             }
+            workList.erase(currNode);
         }
     }
     
@@ -291,6 +386,7 @@ void removeDummyLoads(SVFModule* module){
 
 void DDAPass::findUnsafePointers(PointerAnalysis* pta, SVFG* svfg, PAG* pag, const SVFModule* svfModule){
     
+    std::cout<<"Finding Unsafe Pointers and traces"<<std::endl;
     const set<CxtLocDPItem> heapPaths = ((ContextDDA*)_pta)->getFinalHeapDpms(); 
     for(auto dpm: heapPaths){
         ContextCond cxt = dpm.getCond();
@@ -523,7 +619,9 @@ void DDAPass::runOnModule(SVFModule* module)
     ///Find and mark unsafe pointers, unsafe alloc entry calls
     findUnsafePointers(_pta,((ContextDDA*)_pta)->getSVFG(),pag,module);
 
-    traverseUnsafePointerCopies(((ContextDDA*)_pta)->getSVFG(), pag);
+    //traverseUnsafePointerCopies(((ContextDDA*)_pta)->getSVFG(), pag);
+
+    traverseSmartPointerShadows(module);
 
     removeDummyLoads(module);
     std::cout<<"Cloned Functions: "<<MpkRedefinedMap.size()<<std::endl;

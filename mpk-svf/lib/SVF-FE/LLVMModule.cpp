@@ -382,14 +382,17 @@ bool addDummyLoads(Module& M){
         std::set<Instruction*> removableMarkers;
         for(auto &BB: F) {
             for (auto &I: BB) {
-                if(CallInst* call = llvm::dyn_cast<CallInst>(&I)) {
-                    if (auto callee = call->getCalledFunction()) {
-                        if (callee->getName() == "__trust_mark_unsafe_start") {
+                if(StoreInst* store = llvm::dyn_cast<StoreInst>(&I)) {
+                    Value* ptr = store->getPointerOperand();
+                    if(llvm::GlobalVariable* global = llvm::dyn_cast<llvm::GlobalVariable>(ptr)){
+                        if(global->getName() == "METASAFE_UNSAFE_START"){
+                            removableMarkers.insert(store);
                             in_unsafe = true;
-                            removableMarkers.insert(&I);
-                        } else if(in_unsafe && callee->getName() == "__trust_mark_unsafe_end") {
+                            continue;
+                        }else if(global->getName() == "METASAFE_UNSAFE_END"){
+                            removableMarkers.insert(store);
                             in_unsafe = false;
-                            removableMarkers.insert(&I);
+                            continue;
                         }
                     }
                 }
@@ -422,6 +425,12 @@ bool addDummyLoads(Module& M){
                             store->setMetadata("MPK-Unsafe2", NN);
                         }
                     }else if(CallBase* CB = llvm::dyn_cast<CallBase>(&I)){
+                        if(auto callee = CB->getCalledFunction()){
+                            auto calleeName = callee->getName();
+                            if(calleeName == "__rust_alloc" || calleeName == "__rust_realloc" || calleeName == "__rust_alloc_zeroed"){
+                                continue;
+                            }
+                        }
                         for(auto &callArg: CB->args()){
                             if(callArg->getType()->isPointerTy()){
                                 BitCastInst *bitCastInst = new BitCastInst(callArg, callArg->getType()->getPointerTo(0),

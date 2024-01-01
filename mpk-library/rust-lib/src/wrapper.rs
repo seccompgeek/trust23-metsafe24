@@ -16,7 +16,7 @@ use std::intrinsics::size_of;
 #[no_mangle]
 pub fn __wrap_call(func: fn(*mut c_void), args: *mut c_void){
     unsafe {
-        let stack = __more_stack(PAGE_SIZE*8) as *mut usize; //let's ensure we have atlease 8 pages to run on
+        let stack = __trust_more_stack(PAGE_SIZE*8) as *mut usize; //let's ensure we have atlease 8 pages to run on
         let stack_base = (*stack - PAGE_SIZE) & !(PAGE_SIZE-1);
         let stack_end = get_stack_limit();
         let stack_size = stack_base - stack_end;
@@ -73,7 +73,7 @@ fn set_stack_ptr(stack_ptr: usize){
 }
 
 #[no_mangle]
-pub fn __more_stack(bytes: usize) -> *mut c_void {
+pub fn __trust_more_stack(bytes: usize) -> *mut c_void {
 
     let mut limit = get_stack_limit();
     let curr_stack = get_current_stack();
@@ -103,7 +103,7 @@ pub fn __more_stack(bytes: usize) -> *mut c_void {
                 panic!("Unable to allocate additional stack");
             }
 
-            let stack_top = start as usize + reserved;
+            let stack_top = start as usize + reserved - size_of::<usize>();
             let stack_bottom = stack_top - DEFAULT_STACK;
             set_stack_limit(stack_bottom);
             let ptr = stack_top as *mut usize;
@@ -127,8 +127,9 @@ pub fn __more_stack(bytes: usize) -> *mut c_void {
             *ptr = 'b';
             limit -= PAGE_SIZE;
             size += PAGE_SIZE;
+            set_stack_limit(limit);
         }
-        set_stack_limit(limit);
-        return get_current_stack() as *mut c_void;
+        
+        return curr_stack as *mut c_void;
     }
 }

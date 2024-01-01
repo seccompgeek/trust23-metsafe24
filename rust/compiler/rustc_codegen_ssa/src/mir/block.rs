@@ -1020,6 +1020,17 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
             return false;
         }
 
+        let scope_data = &self.mir.source_scopes[scope];
+        if let Some(inlined) = scope_data.inlined {
+            let did = inlined.0.def_id();
+            let crate_name = tcx.crate_name(did.krate).to_string();
+            if SAFE_CRATES.contains(&crate_name.as_str()){
+                return false;
+            }
+        } else if let Some(inlined_parent) = scope_data.inlined_parent_scope {
+            return self.unsafety(tcx, inlined_parent);
+        }
+
         match &self.mir.source_scopes[scope].local_data {
             ClearCrossCrate::Set(data) => {
                 return data.safety != Safety::Safe;
@@ -1028,6 +1039,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         }
         false
     }
+
     pub fn codegen_block(&mut self, bb: mir::BasicBlock) {
         let mut bx = self.build_block(bb);
         let mir = self.mir;
@@ -1038,39 +1050,29 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
         for statement in &data.statements {
             let unsafety = self.unsafety(bx.tcx(), statement.source_info.scope);
 
-            if !self.in_unsafe && unsafety {
-                self.in_unsafe = true;
-                bx.mark_unsafe_start()
-            }else if self.in_unsafe && !unsafety {
-                self.in_unsafe = false;
+            if self.in_unsafe && !unsafety {
                 bx.mark_unsafe_end();
+                self.in_unsafe = false;
+            }else if !self.in_unsafe && unsafety {
+                bx.mark_unsafe_start();
+                self.in_unsafe = true;
             }
-            
-            if self.mir.source_scopes[statement.source_info.scope].is_unsafe {
-                bx.set_in_unsafe(true);
-            } else {
-                bx.set_in_unsafe(false);
-            }
+
+            bx.set_in_unsafe(self.in_unsafe);
 
             bx = self.codegen_statement(bx, statement);
         }
 
         let terminator = data.terminator();
-        if self.mir.source_scopes[terminator.source_info.scope].is_unsafe {
-            bx.set_in_unsafe(true);
-        }else{
-            bx.set_in_unsafe(false);
-        }
-
         let unsafety = self.unsafety(bx.tcx(), terminator.source_info.scope);
-
-        if !self.in_unsafe && unsafety {
-            self.in_unsafe = true;
-            bx.mark_unsafe_start()
-        }else if self.in_unsafe && !unsafety {
+        if self.in_unsafe && !unsafety {
             self.in_unsafe = false;
             bx.mark_unsafe_end();
+        }else if !self.in_unsafe && unsafety {
+            self.in_unsafe = true;
+            bx.mark_unsafe_start();
         }
+        bx.set_in_unsafe(self.in_unsafe);
         
         self.codegen_terminator(bx, bb, terminator);
     }
