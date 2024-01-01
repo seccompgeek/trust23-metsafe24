@@ -340,6 +340,7 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
                          ArrayRef<AllocaInst *> DynamicAllocas,
                          ArrayRef<Instruction *> StackRestorePoints,
                          ArrayRef<ReturnInst *> Returns) {
+return;
   IRBuilder<> IRB(&F.front(), F.begin()->getFirstInsertionPt());
   if (DISubprogram *SP = F.getSubprogram())
     IRB.SetCurrentDebugLocation(DebugLoc::get(SP->getScopeLine(), 0, SP));
