@@ -595,12 +595,12 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
         totalAllocas++;
       } else if (auto returnInst = dyn_cast<ReturnInst>(currInst)) {
         Returns.push_back(returnInst);
-      } else if (StoreInst storeInst = llvm::dyn_cast<StoreInst>(currInst)) {
+      } else if (StoreInst *storeInst = llvm::dyn_cast<StoreInst>(currInst)) {
         if(storeInst->getMetadata("MPK-Unsafe2")) {
           auto pointer = storeInst->getPointerOperand();
           auto pointerName = pointer->getName();
           if(!pointerName.contains("UNSAFE_FLAG") && !pointerName.contains("TYPE_ID")){
-            //applySFICast(storeInst);
+            applySFICast(storeInst);
             errs()<<"Found unsafe store\n";
           }
         }
