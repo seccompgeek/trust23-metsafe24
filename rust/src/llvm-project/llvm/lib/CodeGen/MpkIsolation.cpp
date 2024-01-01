@@ -354,14 +354,14 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
   //args.push_back(MetadataAsValue::get(C, N));
 
   Value* stackSize = ConstantInt::get(llvm::Type::getInt64Ty(C), llvm::APInt(64, 4096));//let's ensure at least we have a page for this frame
-  FunctionCallee getStackPointerFunc = F.getParent()->getOrInsertFunction("__more_stack", FunctionType::get(llvm::Type::getVoidTy(C)->getPointerTo(0), arg_type, false));
+  FunctionCallee getStackPointerFunc = F.getParent()->getOrInsertFunction("__trust_more_stack", FunctionType::get(llvm::Type::getInt8PtrTy(C), arg_type, false));
   args.push_back(stackSize);
   ///
   //  FunctionCallee Fn = F.getParent()->getOrInsertFunction(
   //      EXTERN_STACK_OBJECTS_PTR_CALL, StackPtrTy->getPointerTo(0));
   Value *savedStackPtr = IRB.CreateCall(getStackPointerFunc, args);
   //Type *int64Ptr = Type::getInt64PtrTy(C);
-  /*Value *intToPtr = savedStackPtr;
+  Value *intToPtr = savedStackPtr;
   this->ExternStackPtr =
       IRB.CreateBitCast(intToPtr, StackPtrTy->getPointerTo(0));
   Instruction *BasePtr =
@@ -379,7 +379,7 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
   for (ReturnInst *RI : Returns) {
     IRB.SetInsertPoint(RI);
     IRB.CreateStore(BasePtr, ExternStackPtr);
-  }*/
+  }
 }
 
 class MpkIsolationGatesPass : public FunctionPass {
