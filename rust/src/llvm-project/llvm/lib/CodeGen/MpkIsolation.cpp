@@ -600,7 +600,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
 
         if (currInst->getMetadata("MPK-Unsafe2") != nullptr) {
           if (auto storeInst = llvm::dyn_cast<StoreInst>(currInst)) {
-            //applySFICast(storeInst);
+            applySFICast(storeInst);
           }
           // applyFalsePositiveCheck(currInst);
         }else{
