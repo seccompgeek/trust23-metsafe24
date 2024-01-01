@@ -340,7 +340,6 @@ void MPKExternStack::run(ArrayRef<AllocaInst *> StaticAllocas,
                          ArrayRef<AllocaInst *> DynamicAllocas,
                          ArrayRef<Instruction *> StackRestorePoints,
                          ArrayRef<ReturnInst *> Returns) {
-return;
   IRBuilder<> IRB(&F.front(), F.begin()->getFirstInsertionPt());
   if (DISubprogram *SP = F.getSubprogram())
     IRB.SetCurrentDebugLocation(DebugLoc::get(SP->getScopeLine(), 0, SP));
@@ -596,16 +595,28 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
         totalAllocas++;
       } else if (auto returnInst = dyn_cast<ReturnInst>(currInst)) {
         Returns.push_back(returnInst);
-      } else if (isa<StoreInst>(currInst)) {
-
-        if (currInst->getMetadata("MPK-Unsafe2") != nullptr) {
-          if (auto storeInst = llvm::dyn_cast<StoreInst>(currInst)) {
-            applySFICast(storeInst);
+      } else if (StoreInst storeInst = llvm::dyn_cast<StoreInst>(currInst)) {
+        if(storeInst->getMetadata("MPK-Unsafe2")) {
+          auto pointer = storeInst->getPointerOperand();
+          auto pointerName = pointer->getName();
+          if(!pointerName.contains("UNSAFE_FLAG") && !pointerName.contains("TYPE_ID")){
+            //applySFICast(storeInst);
+            errs()<<"Found unsafe store\n";
           }
-          // applyFalsePositiveCheck(currInst);
-        }else{
-          // applyFalseNegativeCheck(currInst);
         }
+      } else if(auto gepInst = llvm::dyn_cast<GetElementPtrInst>(currInst)){
+        //metasafe shadows
+        /*if(gepInst->getMetadata("MPK-SmartPointer-Shadow")){
+          IRBuilder<> Builder(currContext);
+          Instruction* InsertPoint = currInst->getNextNode();
+          if(!InsertPoint){
+            Builder.SetInsertPoint(currInst->getParent());
+          }else{
+            Builder.SetInsertPoint(InsertPoint);
+          }
+          auto cast1 = Builder.CreateBitCast(gepInst)
+        }*/
+        errs()<<"Found smart pointer shadow\n";
       }
       /*else if(auto gepInst = dyn_cast<GetElementPtrInst>(currInst)){
         if(gepInst->getMetadata("POSSIBLE-Unsafe") != nullptr){
