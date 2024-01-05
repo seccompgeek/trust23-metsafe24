@@ -607,7 +607,7 @@ impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
             return;
         }
 
-        if calls_spapi {
+        if calls_spapi && bx.tcx().sess.opts.cg.metasafe {
             bx.set_smart_pointer_type_id(inner_ty_id);
         }
 
@@ -1010,7 +1010,7 @@ pub static SAFE_CRATES: [&'static str; 23] = [
 
 impl<'a, 'tcx, Bx: BuilderMethods<'a, 'tcx>> FunctionCx<'a, 'tcx, Bx> {
     fn unsafety(&mut self, tcx: TyCtxt<'tcx>, scope: SourceScope) -> bool {
-        if !tcx.sess.opts.cg.metasafe {
+        if !tcx.sess.opts.cg.metasafe && !tcx.sess.opts.cg.trust {
             return false;
         } 
 

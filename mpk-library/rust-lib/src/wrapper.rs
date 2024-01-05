@@ -103,8 +103,13 @@ pub fn __trust_more_stack(bytes: usize) -> *mut c_void {
                 panic!("Unable to allocate additional stack");
             }
 
-            let stack_top = start as usize + reserved - size_of::<usize>();
-            let stack_bottom = stack_top - DEFAULT_STACK;
+            let mut stack_top;
+            if(mapped as usize != (start as usize + reserved - DEFAULT_STACK)){
+                stack_top = mapped as usize + DEFAULT_STACK - size_of::<usize>();
+            }else {
+                stack_top = start as usize + reserved - size_of::<usize>();
+            }
+            let stack_bottom = stack_top - DEFAULT_STACK + size_of::<usize>();
             set_stack_limit(stack_bottom);
             let ptr = stack_top as *mut usize;
             *ptr = stack_top - size_of::<usize>();

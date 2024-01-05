@@ -43,7 +43,7 @@ cfg_if! {
 // native and dynamic regexes.
 macro_rules! regex {
     ($re:expr) => {
-        crate::Regex::new(&$re.to_owned()).unwrap()
+        regex::Regex::new(&$re.to_owned()).unwrap()
     };
 }
 

@@ -9,7 +9,11 @@ repository = "https://github.com/hyperium/hyper"
 license = "MIT"
 authors = ["Sean McArthur <sean@seanmonstar.com>"]
 keywords = ["http", "hyper", "hyperium"]
-categories = ["network-programming", "web-programming::http-client", "web-programming::http-server"]
+categories = [
+  "network-programming",
+  "web-programming::http-client",
+  "web-programming::http-server",
+]
 edition = "2018"
 
 include = [
@@ -45,7 +49,9 @@ libc = { version = "0.2", optional = true }
 socket2 = { version = "0.4", optional = true }
 
 [dev-dependencies]
-futures-util = { version = "0.3", default-features = false, features = ["alloc"] }
+futures-util = { version = "0.3", default-features = false, features = [
+  "alloc",
+] }
 matches = "0.1"
 num_cpus = "1.0"
 pretty_env_logger = "0.4"
@@ -53,19 +59,19 @@ spmc = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1", features = [
-    "fs",
-    "macros",
-    "io-std",
-    "io-util",
-    "rt",
-    "rt-multi-thread", # so examples can use #[tokio::main]
-    "sync",
-    "time",
-    "test-util",
+  "fs",
+  "macros",
+  "io-std",
+  "io-util",
+  "rt",
+  "rt-multi-thread", # so examples can use #[tokio::main]
+  "sync",
+  "time",
+  "test-util",
 ] }
 tokio-test = "0.4"
 tokio-util = { version = "0.6", features = ["codec"] }
-tower = { version = "0.4", features = ["make", "util"] }
+tower = { version = "=0.4.13", features = ["make", "util"] }
 url = "2.2"
 
 [target.'cfg(any(target_os = "linux", target_os = "macos"))'.dev-dependencies]
@@ -76,14 +82,7 @@ pnet_datalink = "0.27.2"
 default = []
 
 # Easily turn it all on
-full = [
-    "client",
-    "http1",
-    "http2",
-    "server",
-    "stream",
-    "runtime",
-]
+full = ["client", "http1", "http2", "server", "stream", "runtime"]
 
 # HTTP versions
 http1 = []
@@ -97,17 +96,8 @@ server = []
 stream = []
 
 # Tokio support
-runtime = [
-    "tcp",
-    "tokio/rt",
-    "tokio/time",
-]
-tcp = [
-    "socket2",
-    "tokio/net",
-    "tokio/rt",
-    "tokio/time",
-]
+runtime = ["tcp", "tokio/rt", "tokio/time"]
+tcp = ["socket2", "tokio/net", "tokio/rt", "tokio/time"]
 
 # C-API support (currently unstable (no semver))
 ffi = ["libc"]
@@ -128,7 +118,7 @@ codegen-units = 1
 incremental = false
 
 [profile.bench]
-opt-level=3
+opt-level = 3
 incremental = false
 
 [[example]]
@@ -253,4 +243,3 @@ required-features = ["full"]
 name = "server"
 path = "tests/server.rs"
 required-features = ["full"]
-

@@ -346,7 +346,7 @@ extern pthread_key_t _mi_heap_default_key;
 extern mi_decl_thread mi_heap_t* _mi_heap_default;  // default heap to allocate from
 
 //METASAFE + TRUST
-#define MAX_HEAPS 1024
+#define MAX_HEAPS 4
 extern mi_decl_export mi_decl_thread uint64_t METASAFE_TYPE_ID;
 extern mi_decl_export mi_decl_thread uint64_t METASAFE_UNSAFE_FLAG;
 extern mi_decl_export uint64_t METASAFE_UNSAFE_START;
@@ -360,17 +360,16 @@ static inline mi_heap_t* get_alloc_heap(void)
   if(METASAFE_TYPE_ID == 1)// smart pointer
   {
     heap = SAFE_HEAPS[1];
-    if(heap == NULL)
+    if(heap == &_mi_heap_empty)
     {
       heap = SAFE_HEAPS[1] = mi_heap_new();
     }
   }else if(METASAFE_TYPE_ID == 0)//in FFI domain
   {
-    heap = UNSAFE_HEAPS[0];
-    if(heap == NULL)
-    {
-      heap = UNSAFE_HEAPS[0] = mi_heap_new();
+    if(UNSAFE_HEAPS[0] == &_mi_heap_empty){
+      UNSAFE_HEAPS[0] = mi_heap_new();
     }
+    return UNSAFE_HEAPS[0];
   }else
   {
     uint64_t type = METASAFE_TYPE_ID % MAX_HEAPS;
@@ -380,7 +379,7 @@ static inline mi_heap_t* get_alloc_heap(void)
     }
     mi_heap_t** heaps = METASAFE_UNSAFE_FLAG? UNSAFE_HEAPS: SAFE_HEAPS;
     heap = heaps[type];
-    if(heap== NULL){
+    if(heap == &_mi_heap_empty){
       heap = heaps[type] = mi_heap_new();
     }
   }

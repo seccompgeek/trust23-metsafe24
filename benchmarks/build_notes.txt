@@ -1,0 +1,4 @@
+Some benchmarks like tokio, hyper, base64 have many dependencies that won't run because the TRust compiler is
+of a very old version.
+Run: cargo update -Z minimal-versions
+But be careful as this command will reset some dependencies to version too old to build and those need to be fixed by hand by writing the exact extension.

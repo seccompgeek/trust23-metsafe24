@@ -425,12 +425,12 @@ bool addDummyLoads(Module& M){
                             store->setMetadata("MPK-Unsafe2", NN);
                         }
                     }else if(CallBase* CB = llvm::dyn_cast<CallBase>(&I)){
-                        if(auto callee = CB->getCalledFunction()){
+                        /*if(auto callee = CB->getCalledFunction()){
                             auto calleeName = callee->getName();
                             if(calleeName == "__rust_alloc" || calleeName == "__rust_realloc" || calleeName == "__rust_alloc_zeroed"){
                                 continue;
                             }
-                        }
+                        }*/
                         for(auto &callArg: CB->args()){
                             if(callArg->getType()->isPointerTy()){
                                 BitCastInst *bitCastInst = new BitCastInst(callArg, callArg->getType()->getPointerTo(0),

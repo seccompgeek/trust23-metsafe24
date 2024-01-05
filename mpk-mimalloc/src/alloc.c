@@ -116,8 +116,7 @@ extern inline mi_decl_restrict void* mi_heap_malloc(mi_heap_t* heap, size_t size
 }
 
 extern inline mi_decl_restrict void* mi_malloc(size_t size) mi_attr_noexcept {
-  mi_heap_t* heap = get_alloc_heap();
-  return mi_heap_malloc(heap, size);
+  return mi_heap_malloc(mi_get_default_heap(), size);
 }
 
 
@@ -161,7 +160,7 @@ extern inline mi_decl_restrict void* mi_heap_zalloc(mi_heap_t* heap, size_t size
 }
 
 mi_decl_restrict void* mi_zalloc(size_t size) mi_attr_noexcept {
-  return mi_heap_zalloc(get_alloc_heap(),size);
+  return mi_heap_zalloc(mi_get_default_heap(),size);
 }
 
 
@@ -599,7 +598,7 @@ extern inline mi_decl_restrict void* mi_heap_calloc(mi_heap_t* heap, size_t coun
 }
 
 mi_decl_restrict void* mi_calloc(size_t count, size_t size) mi_attr_noexcept {
-  return mi_heap_calloc(get_alloc_heap(),count,size);
+  return mi_heap_calloc(mi_get_default_heap(),count,size);
 }
 
 // Uninitialized `calloc`
@@ -610,7 +609,7 @@ extern mi_decl_restrict void* mi_heap_mallocn(mi_heap_t* heap, size_t count, siz
 }
 
 mi_decl_restrict void* mi_mallocn(size_t count, size_t size) mi_attr_noexcept {
-  return mi_heap_mallocn(get_alloc_heap(),count,size);
+  return mi_heap_mallocn(mi_get_default_heap(),count,size);
 }
 
 // Expand in place or fail
@@ -670,24 +669,24 @@ void* mi_heap_recalloc(mi_heap_t* heap, void* p, size_t count, size_t size) mi_a
 
 
 void* mi_realloc(void* p, size_t newsize) mi_attr_noexcept {
-  return mi_heap_realloc(get_alloc_heap(),p,newsize);
+  return mi_heap_realloc(mi_get_default_heap(),p,newsize);
 }
 
 void* mi_reallocn(void* p, size_t count, size_t size) mi_attr_noexcept {
-  return mi_heap_reallocn(get_alloc_heap(),p,count,size);
+  return mi_heap_reallocn(mi_get_default_heap(),p,count,size);
 }
 
 // Reallocate but free `p` on errors
 void* mi_reallocf(void* p, size_t newsize) mi_attr_noexcept {
-  return mi_heap_reallocf(get_alloc_heap(),p,newsize);
+  return mi_heap_reallocf(mi_get_default_heap(),p,newsize);
 }
 
 void* mi_rezalloc(void* p, size_t newsize) mi_attr_noexcept {
-  return mi_heap_rezalloc(get_alloc_heap(), p, newsize);
+  return mi_heap_rezalloc(mi_get_default_heap(), p, newsize);
 }
 
 void* mi_recalloc(void* p, size_t count, size_t size) mi_attr_noexcept {
-  return mi_heap_recalloc(get_alloc_heap(), p, count, size);
+  return mi_heap_recalloc(mi_get_default_heap(), p, count, size);
 }
 
 
