@@ -8,4 +8,4 @@ edition = "2018"
 
 [dependencies]
 #smallvec = { git = "https://github.com/servo/rust-smallvec.git", rev = "0b2b4e5" }
-smallvec = { path = "../rust-smallvec/" }
+smallvec = { path = "../smallvec/" }
