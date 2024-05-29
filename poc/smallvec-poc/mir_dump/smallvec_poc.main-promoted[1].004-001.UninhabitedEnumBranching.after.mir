@@ -1,0 +1,30 @@
+// MIR for `main::promoted[1]` after UninhabitedEnumBranching
+
+promoted[1] in main: &[&str; 3] = {
+    let mut _0: &[&str; 3];              // return place in scope 0 at /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+    let mut _1: [&str; 3];               // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+
+    bb0: {
+        _1 = [const "assertion failed: `(left == right)`\n  left: `", const "`,\n right: `", const "`"]; // scope 0 at /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [97, 115, 115, 101, 114, 116, 105, 111, 110, 32, 102, 97, 105, 108, 101, 100, 58, 32, 96, 40, 108, 101, 102, 116, 32, 61, 61, 32, 114, 105, 103, 104, 116, 41, 96, 10, 32, 32, 108, 101, 102, 116, 58, 32, 96], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [35184372088831], len: Size { raw: 45 } }, size: Size { raw: 45 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 45 })
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [97, 115, 115, 101, 114, 116, 105, 111, 110, 32, 102, 97, 105, 108, 101, 100, 58, 32, 96, 40, 108, 101, 102, 116, 32, 61, 61, 32, 114, 105, 103, 104, 116, 41, 96, 10, 32, 32, 108, 101, 102, 116, 58, 32, 96], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [35184372088831], len: Size { raw: 45 } }, size: Size { raw: 45 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 45 }) }
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [96, 44, 10, 32, 114, 105, 103, 104, 116, 58, 32, 96], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [4095], len: Size { raw: 12 } }, size: Size { raw: 12 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 12 })
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [96, 44, 10, 32, 114, 105, 103, 104, 116, 58, 32, 96], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [4095], len: Size { raw: 12 } }, size: Size { raw: 12 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 12 }) }
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [96], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [1], len: Size { raw: 1 } }, size: Size { raw: 1 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 1 })
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [96], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [1], len: Size { raw: 1 } }, size: Size { raw: 1 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 1 }) }
+        _0 = &_1;                        // scope 0 at /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+        return;                          // scope 0 at /home/martin/projects/metasafe/trust/rust/library/core/src/macros/mod.rs:47:28: 49:17
+    }
+}

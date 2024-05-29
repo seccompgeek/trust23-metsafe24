@@ -2,3 +2,6 @@ Some benchmarks like tokio, hyper, base64 have many dependencies that won't run 
 of a very old version.
 Run: cargo update -Z minimal-versions
 But be careful as this command will reset some dependencies to version too old to build and those need to be fixed by hand by writing the exact extension.
+
+Run:
+env RUST_BACKTRACE=1 RUSTFLAGS="-C codegen-units=1 -C save-temps -Zprint-link-args --emit=llvm-bc -C metasafe -C trust -Clink-args=-Wl,-rpath=/home/martin/projects/metasafe/trust/mpk-mimalloc/out/release -L/home/martin/projects/metasafe/trust/mpk-mimalloc/out/release -lmimalloc -Clink-args=-Wl,-rpath=/home/martin/projects/metasafe/trust/mpk-library/rust-lib/target/release -L/home/martin/projects/metasafe/trust/mpk-library/rust-lib/target/release -lrustfuncs" cargo bench --no-run  --target x86_64-unknown-linux-gnu

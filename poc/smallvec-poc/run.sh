@@ -1,0 +1,2 @@
+#!/bin/bash
+env RUST_BACKTRACE=1 RUSTFLAGS="-C codegen-units=1 -C metasafe -C trust -Clink-args=-Wl,-rpath=/home/martin/projects/metasafe/trust/mpk-mimalloc/out/release -L/home/martin/projects/metasafe/trust/mpk-mimalloc/out/release -lmimalloc -Clink-args=-Wl,-rpath=/home/martin/projects/metasafe/trust/mpk-library/rust-lib/target/release -L/home/martin/projects/metasafe/trust/mpk-library/rust-lib/target/release -lrustfuncs" cargo run --release

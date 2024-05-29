@@ -1,0 +1,28 @@
+// MIR for `main::promoted[0]` before StateTransform
+
+promoted[0] in main: &[&str; 2] = {
+    let mut _0: &[&str; 2];              // return place in scope 0 at src/main.rs:6:14: 6:39
+    let mut _1: [&str; 2];               // in scope 0 at src/main.rs:6:14: 6:39
+
+    bb0: {
+        _1 = [const "Hacked collection: ", const "\n"]; // scope 0 at src/main.rs:6:14: 6:39
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [72, 97, 99, 107, 101, 100, 32, 99, 111, 108, 108, 101, 99, 116, 105, 111, 110, 58, 32], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [524287], len: Size { raw: 19 } }, size: Size { raw: 19 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 19 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:6:14: 6:39
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [72, 97, 99, 107, 101, 100, 32, 99, 111, 108, 108, 101, 99, 116, 105, 111, 110, 58, 32], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [524287], len: Size { raw: 19 } }, size: Size { raw: 19 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 19 }) }
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [10], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [1], len: Size { raw: 1 } }, size: Size { raw: 1 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 1 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:6:14: 6:39
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [10], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [1], len: Size { raw: 1 } }, size: Size { raw: 1 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 1 }) }
+        _0 = &_1;                        // scope 0 at src/main.rs:6:14: 6:39
+        return;                          // scope 0 at src/main.rs:6:14: 6:39
+    }
+
+    bb1 (cleanup): {
+        resume;                          // scope 0 at src/main.rs:6:14: 6:39
+    }
+}

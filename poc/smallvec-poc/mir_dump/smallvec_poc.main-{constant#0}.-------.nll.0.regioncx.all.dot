@@ -1,0 +1,5 @@
+digraph RegionInferenceContext {
+    r0[label="\'_#0r"][shape="box"];
+    r1[label="\'_#1r"][shape="box"];
+    r2[label="\'_#2r"][shape="box"];
+}

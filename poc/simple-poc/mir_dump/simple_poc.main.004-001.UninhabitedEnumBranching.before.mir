@@ -1,0 +1,168 @@
+// MIR for `main` before UninhabitedEnumBranching
+
+fn main() -> () {
+    let mut _0: ();                      // return place in scope 0 at src/main.rs:1:11: 1:11
+    let mut _1: std::vec::Vec<i32>;      // in scope 0 at src/main.rs:2:9: 2:23
+    let mut _2: std::boxed::Box<[i32]>;  // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+    let mut _3: std::boxed::Box<[i32; 2]>; // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+    let mut _4: std::boxed::Box<[i32; 2]>; // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+    let _5: ();                          // in scope 0 at src/main.rs:3:5: 5:6
+    let _6: ();                          // in scope 0 at src/main.rs:4:9: 4:31
+    let mut _7: &mut std::vec::Vec<i32>; // in scope 0 at src/main.rs:4:9: 4:19
+    let _8: ();                          // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:94:23: 96:6
+    let _9: ();                          // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:9: 95:62
+    let mut _10: std::fmt::Arguments;    // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let mut _11: &[&str];                // in scope 0 at src/main.rs:6:14: 6:39
+    let mut _12: &[&str; 2];             // in scope 0 at src/main.rs:6:14: 6:39
+    let _13: &[&str; 2];                 // in scope 0 at src/main.rs:6:14: 6:39
+    let _14: [&str; 2];                  // in scope 0 at src/main.rs:6:14: 6:39
+    let mut _15: &[std::fmt::ArgumentV1]; // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let mut _16: &[std::fmt::ArgumentV1; 1]; // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let _17: &[std::fmt::ArgumentV1; 1]; // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let _18: [std::fmt::ArgumentV1; 1];  // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let mut _19: (&std::vec::Vec<i32>,); // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let mut _20: &std::vec::Vec<i32>;    // in scope 0 at src/main.rs:6:41: 6:51
+    let mut _22: std::fmt::ArgumentV1;   // in scope 0 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+    let mut _23: &std::vec::Vec<i32>;    // in scope 0 at src/main.rs:6:41: 6:51
+    let mut _24: for<'r, 's, 't0> fn(&'r std::vec::Vec<i32>, &'s mut std::fmt::Formatter<'t0>) -> std::result::Result<(), std::fmt::Error>; // in scope 0 at src/main.rs:6:41: 6:51
+    scope 1 {
+        debug collection => _1;          // in scope 1 at src/main.rs:2:9: 2:23
+        let _21: &std::vec::Vec<i32>;    // in scope 1 at src/main.rs:6:41: 6:51
+        let mut _25: &[&str; 2];         // in scope 1 at src/main.rs:6:14: 6:39
+        scope 2 {
+        }
+        scope 3 {
+            debug arg0 => _21;           // in scope 3 at src/main.rs:6:41: 6:51
+        }
+    }
+
+    bb0: {
+        StorageLive(_1);                 // scope 0 at src/main.rs:2:9: 2:23
+        StorageLive(_2);                 // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+        StorageLive(_3);                 // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+        StorageLive(_4);                 // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+        _4 = Box([i32; 2]);              // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+        (*_4) = [const 0_i32, const 1_i32]; // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:29: 45:38
+        _3 = move _4;                    // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+        _2 = move _3 as std::boxed::Box<[i32]> (Pointer(Unsize)); // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:25: 45:38
+        StorageDead(_4);                 // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:37: 45:38
+        StorageDead(_3);                 // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:37: 45:38
+        _1 = slice::<impl [i32]>::into_vec(move _2) -> [return: bb1, unwind: bb8]; // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:9: 45:39
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:9: 45:24
+                                         // + user_ty: UserType(0)
+                                         // + literal: Const { ty: fn(std::boxed::Box<[i32]>) -> std::vec::Vec<i32> {std::slice::<impl [i32]>::into_vec}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb1: {
+        StorageDead(_2);                 // scope 0 at /home/martin/projects/metasafe/trust/rust/library/alloc/src/macros.rs:45:38: 45:39
+        StorageLive(_5);                 // scope 1 at src/main.rs:3:5: 5:6
+        StorageLive(_6);                 // scope 2 at src/main.rs:4:9: 4:31
+        StorageLive(_7);                 // scope 2 at src/main.rs:4:9: 4:19
+        _7 = &mut _1;                    // scope 2 at src/main.rs:4:9: 4:19
+        _6 = Vec::<i32>::set_len(move _7, const 10_usize) -> [return: bb2, unwind: bb7]; // scope 2 at src/main.rs:4:9: 4:31
+                                         // mir::Constant
+                                         // + span: src/main.rs:4:20: 4:27
+                                         // + literal: Const { ty: for<'r> unsafe fn(&'r mut std::vec::Vec<i32>, usize) {std::vec::Vec::<i32>::set_len}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb2: {
+        StorageDead(_7);                 // scope 2 at src/main.rs:4:30: 4:31
+        StorageDead(_6);                 // scope 2 at src/main.rs:4:31: 4:32
+        _5 = const ();                   // scope 2 at src/main.rs:3:5: 5:6
+        StorageDead(_5);                 // scope 1 at src/main.rs:5:5: 5:6
+        StorageLive(_8);                 // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:94:23: 96:6
+        StorageLive(_9);                 // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:9: 95:62
+        StorageLive(_10);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_11);                // scope 1 at src/main.rs:6:14: 6:39
+        StorageLive(_12);                // scope 1 at src/main.rs:6:14: 6:39
+        StorageLive(_13);                // scope 1 at src/main.rs:6:14: 6:39
+        _25 = const main::promoted[0];   // scope 1 at src/main.rs:6:14: 6:39
+                                         // ty::Const
+                                         // + ty: &[&str; 2]
+                                         // + val: Unevaluated(WithOptConstParam { did: DefId(0:3 ~ simple_poc[78dc]::main), const_param_did: None }, [], Some(promoted[0]))
+                                         // mir::Constant
+                                         // + span: src/main.rs:6:14: 6:39
+                                         // + literal: Const { ty: &[&str; 2], val: Unevaluated(WithOptConstParam { did: DefId(0:3 ~ simple_poc[78dc]::main), const_param_did: None }, [], Some(promoted[0])) }
+        _13 = &(*_25);                   // scope 1 at src/main.rs:6:14: 6:39
+        _12 = &(*_13);                   // scope 1 at src/main.rs:6:14: 6:39
+        _11 = move _12 as &[&str] (Pointer(Unsize)); // scope 1 at src/main.rs:6:14: 6:39
+        StorageDead(_12);                // scope 1 at src/main.rs:6:38: 6:39
+        StorageLive(_15);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_16);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_17);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_18);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_19);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_20);                // scope 1 at src/main.rs:6:41: 6:51
+        _20 = &_1;                       // scope 1 at src/main.rs:6:41: 6:51
+        (_19.0: &std::vec::Vec<i32>) = move _20; // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageDead(_20);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        StorageLive(_21);                // scope 1 at src/main.rs:6:41: 6:51
+        _21 = (_19.0: &std::vec::Vec<i32>); // scope 1 at src/main.rs:6:41: 6:51
+        StorageLive(_22);                // scope 3 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageLive(_23);                // scope 3 at src/main.rs:6:41: 6:51
+        _23 = &(*_21);                   // scope 3 at src/main.rs:6:41: 6:51
+        StorageLive(_24);                // scope 3 at src/main.rs:6:41: 6:51
+        _24 = <Vec<i32> as Debug>::fmt as for<'r, 's, 't0> fn(&'r std::vec::Vec<i32>, &'s mut std::fmt::Formatter<'t0>) -> std::result::Result<(), std::fmt::Error> (Pointer(ReifyFnPointer)); // scope 3 at src/main.rs:6:41: 6:51
+                                         // mir::Constant
+                                         // + span: src/main.rs:6:41: 6:51
+                                         // + literal: Const { ty: for<'r, 's, 't0> fn(&'r std::vec::Vec<i32>, &'s mut std::fmt::Formatter<'t0>) -> std::result::Result<(), std::fmt::Error> {<std::vec::Vec<i32> as std::fmt::Debug>::fmt}, val: Value(Scalar(<ZST>)) }
+        _22 = ArgumentV1::new::<Vec<i32>>(move _23, move _24) -> [return: bb3, unwind: bb7]; // scope 3 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+                                         // + user_ty: UserType(2)
+                                         // + literal: Const { ty: for<'b> fn(&'b std::vec::Vec<i32>, for<'r, 's, 't0> fn(&'r std::vec::Vec<i32>, &'s mut std::fmt::Formatter<'t0>) -> std::result::Result<(), std::fmt::Error>) -> std::fmt::ArgumentV1<'b> {std::fmt::ArgumentV1::new::<std::vec::Vec<i32>>}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb3: {
+        StorageDead(_24);                // scope 3 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        StorageDead(_23);                // scope 3 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        _18 = [move _22];                // scope 3 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageDead(_22);                // scope 3 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        StorageDead(_21);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        _17 = &_18;                      // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        _16 = &(*_17);                   // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        _15 = move _16 as &[std::fmt::ArgumentV1] (Pointer(Unsize)); // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+        StorageDead(_16);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        _10 = Arguments::new_v1(move _11, move _15) -> [return: bb4, unwind: bb7]; // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:28: 95:61
+                                         // + user_ty: UserType(1)
+                                         // + literal: Const { ty: fn(&[&'static str], &[std::fmt::ArgumentV1]) -> std::fmt::Arguments {std::fmt::Arguments::new_v1}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb4: {
+        StorageDead(_15);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        StorageDead(_11);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:60: 95:61
+        _9 = _print(move _10) -> [return: bb5, unwind: bb7]; // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:9: 95:62
+                                         // mir::Constant
+                                         // + span: /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:9: 95:27
+                                         // + literal: Const { ty: for<'r> fn(std::fmt::Arguments<'r>) {std::io::_print}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb5: {
+        StorageDead(_10);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:61: 95:62
+        StorageDead(_19);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:62: 95:63
+        StorageDead(_18);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:62: 95:63
+        StorageDead(_17);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:62: 95:63
+        StorageDead(_13);                // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:62: 95:63
+        StorageDead(_9);                 // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:95:62: 95:63
+        _8 = const ();                   // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:94:23: 96:6
+        StorageDead(_8);                 // scope 1 at /home/martin/projects/metasafe/trust/rust/library/std/src/macros.rs:96:5: 96:6
+        _0 = const ();                   // scope 0 at src/main.rs:1:11: 7:2
+        drop(_1) -> [return: bb6, unwind: bb8]; // scope 0 at src/main.rs:7:1: 7:2
+    }
+
+    bb6: {
+        StorageDead(_1);                 // scope 0 at src/main.rs:7:1: 7:2
+        return;                          // scope 0 at src/main.rs:7:2: 7:2
+    }
+
+    bb7 (cleanup): {
+        drop(_1) -> bb8;                 // scope 0 at src/main.rs:7:1: 7:2
+    }
+
+    bb8 (cleanup): {
+        resume;                          // scope 0 at src/main.rs:1:1: 7:2
+    }
+}

@@ -1,0 +1,11 @@
+[package]
+name = "smallvec-poc"
+version = "0.1.0"
+authors = ["Martin Kayondo <kayondo@snu.ac.kr>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#smallvec = { git = "https://github.com/servo/rust-smallvec.git", rev = "0b2b4e5" }
+smallvec = { path = "../rust-smallvec/" }

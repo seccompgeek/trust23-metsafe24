@@ -1,0 +1,17 @@
+digraph RegionInferenceContext {
+    r0[label="ConstraintSccIndex(0) = [\'_#1r, \'_#6r]"][shape="box"];
+    r1[label="ConstraintSccIndex(1) = [\'_#5r]"][shape="box"];
+    r2[label="ConstraintSccIndex(2) = [\'_#8r]"][shape="box"];
+    r3[label="ConstraintSccIndex(3) = [\'_#2r, \'_#7r, \'_#9r]"][shape="box"];
+    r4[label="ConstraintSccIndex(4) = [\'_#3r]"][shape="box"];
+    r5[label="ConstraintSccIndex(5) = [\'_#4r]"][shape="box"];
+    r6[label="ConstraintSccIndex(6) = [\'_#0r]"][shape="box"];
+    r2 -> r1[label=""];
+    r3 -> r2[label=""];
+    r6 -> r0[label=""];
+    r6 -> r3[label=""];
+    r6 -> r4[label=""];
+    r6 -> r5[label=""];
+    r6 -> r1[label=""];
+    r6 -> r2[label=""];
+}

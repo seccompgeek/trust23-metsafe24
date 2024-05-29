@@ -106,15 +106,18 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
                     let callee = func.ty(&body.local_decls, tcx);
                     match callee.kind() {
                         ty::FnDef(def_id, _) => {
-
+                            let method_name = tcx.item_name(*def_id).to_string();
+                            info!("MetasafeAddValidator: function call ==> {}", &method_name);
                             let fn_sig = tcx.fn_sig(*def_id).skip_binder();
                             if let Some(impl_id) = tcx.impl_of_method(*def_id) {
                                 let impl_ty = tcx.type_of(impl_id);
-
+                                
+                                info!("MetasafeAddValidator: Impl Method: {} of {}", &method_name, impl_ty.to_string());
                                 if let Some(validator) = impl_ty
                                     .ty_adt_def()
                                     .and_then(|adt_def| calculate_validator(tcx, adt_def.did))
                                 {
+                                    info!("MetasafeAddValidator: Found validator for {} : {}",impl_ty.to_string(), tcx.item_name(validator).to_string());
                                     let unsafety = if let Some(trait_id) = tcx.trait_id_of_impl(impl_id) {
                                         let t = tcx.trait_def(trait_id);
                                         t.unsafety == Unsafety::Unsafe
@@ -124,24 +127,29 @@ impl<'tcx> MirPass<'tcx> for MetaSafeAddValidators {
                                     
                                     let mut arg_iter = args.iter();
                                     if let Some(first_arg) = arg_iter.next() {
-                                        if let Operand::Copy(place) = first_arg {
-                                            let arg_ty = place.ty(&body.local_decls, tcx).ty;
-                                            if arg_ty.peel_refs().ty_adt_def() == impl_ty.ty_adt_def() {
-                                                // Validator calls need to be inserted only on unsafe function calls
-                                                // Or unsafe traits.
-                                                if unsafety {
-                                                    validators.insert(
-                                                        idx,
-                                                        (
-                                                            first_arg.clone(),
-                                                            validator,
-                                                            destination.clone(),
-                                                            false
-                                                        ),
-                                                    );
+                                        match first_arg {
+                                            Operand::Copy(place) |
+                                            Operand::Move(place) => {
+                                                let arg_ty = place.ty(&body.local_decls, tcx).ty;
+                                                if arg_ty.peel_refs().ty_adt_def() == impl_ty.ty_adt_def() {
+                                                    // Validator calls need to be inserted only on unsafe function calls
+                                                    // Or unsafe traits.
+                                                    if unsafety {
+                                                        info!("MetasafeAddValidator: Considering Block : {} for insertion ", idx.as_usize());
+                                                        validators.insert(
+                                                            idx,
+                                                            (
+                                                                first_arg.clone(),
+                                                                validator,
+                                                                destination.clone(),
+                                                                false
+                                                            ),
+                                                        );
+                                                    }
+                                                    //inserted = true;
                                                 }
-                                                //inserted = true;
                                             }
+                                            _ => {}
                                         }
                                     }
                                     

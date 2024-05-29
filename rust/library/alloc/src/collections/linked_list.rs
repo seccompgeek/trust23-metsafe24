@@ -47,6 +47,9 @@ pub struct LinkedList<T> {
 impl<T> MetaUpdate for LinkedList<T> {
     fn synchronize(&self) {
         // synchronize linkedlist
+        if !self.head.is_some() && !self.tail.is_some() && self.len > 0 {
+            panic!("MetaSafe: List with no head or tail has length")
+        }
     }
 }
 

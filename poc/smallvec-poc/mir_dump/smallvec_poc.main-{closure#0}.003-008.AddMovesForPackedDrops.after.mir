@@ -1,0 +1,29 @@
+// MIR for `main::{closure#0}` after AddMovesForPackedDrops
+
+fn main::{closure#0}(_1: &mut [closure@src/main.rs:14:39: 14:53], _2: &u8) -> bool {
+    debug n => _2;                       // in scope 0 at src/main.rs:14:40: 14:41
+    let mut _0: bool;                    // return place in scope 0 at src/main.rs:14:43: 14:43
+    let mut _3: u8;                      // in scope 0 at src/main.rs:14:43: 14:48
+    let mut _4: &u8;                     // in scope 0 at src/main.rs:14:43: 14:44
+
+    bb0: {
+        StorageLive(_3);                 // scope 0 at src/main.rs:14:43: 14:48
+        StorageLive(_4);                 // scope 0 at src/main.rs:14:43: 14:44
+        _4 = _2;                         // scope 0 at src/main.rs:14:43: 14:44
+        _3 = <&u8 as Rem<u8>>::rem(move _4, const 2_u8) -> bb1; // scope 0 at src/main.rs:14:43: 14:48
+                                         // mir::Constant
+                                         // + span: src/main.rs:14:43: 14:48
+                                         // + literal: Const { ty: fn(&u8, u8) -> <&u8 as std::ops::Rem<u8>>::Output {<&u8 as std::ops::Rem<u8>>::rem}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb1: {
+        StorageDead(_4);                 // scope 0 at src/main.rs:14:47: 14:48
+        _0 = Eq(move _3, const 0_u8);    // scope 0 at src/main.rs:14:43: 14:53
+        StorageDead(_3);                 // scope 0 at src/main.rs:14:52: 14:53
+        return;                          // scope 0 at src/main.rs:14:53: 14:53
+    }
+
+    bb2 (cleanup): {
+        resume;                          // scope 0 at src/main.rs:14:39: 14:53
+    }
+}

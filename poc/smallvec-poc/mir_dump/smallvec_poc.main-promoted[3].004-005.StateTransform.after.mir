@@ -1,0 +1,28 @@
+// MIR for `main::promoted[3]` after StateTransform
+
+promoted[3] in main: &[&str; 2] = {
+    let mut _0: &[&str; 2];              // return place in scope 0 at src/main.rs:11:14: 11:18
+    let mut _1: [&str; 2];               // in scope 0 at src/main.rs:11:14: 11:18
+
+    bb0: {
+        _1 = [const "", const "\n"];     // scope 0 at src/main.rs:11:14: 11:18
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [], len: Size { raw: 0 } }, size: Size { raw: 0 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 0 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:11:14: 11:18
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [], len: Size { raw: 0 } }, size: Size { raw: 0 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 0 }) }
+                                         // ty::Const
+                                         // + ty: &str
+                                         // + val: Value(Slice { data: Allocation { bytes: [10], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [1], len: Size { raw: 1 } }, size: Size { raw: 1 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 1 })
+                                         // mir::Constant
+                                         // + span: src/main.rs:11:14: 11:18
+                                         // + literal: Const { ty: &str, val: Value(Slice { data: Allocation { bytes: [10], relocations: Relocations(SortedMap { data: [] }), init_mask: InitMask { blocks: [1], len: Size { raw: 1 } }, size: Size { raw: 1 }, align: Align { pow2: 0 }, mutability: Not, extra: () }, start: 0, end: 1 }) }
+        _0 = &_1;                        // scope 0 at src/main.rs:11:14: 11:18
+        return;                          // scope 0 at src/main.rs:11:14: 11:18
+    }
+
+    bb1 (cleanup): {
+        resume;                          // scope 0 at src/main.rs:11:14: 11:18
+    }
+}

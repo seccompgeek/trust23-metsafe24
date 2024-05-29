@@ -1,0 +1,63 @@
+// MIR for `main::{closure#0}` 0 nll
+
+| Free Region Mapping
+| '_#0r | Global | ['_#0r, '_#3r, '_#1r, '_#2r]
+| '_#1r | Local | ['_#3r, '_#1r]
+| '_#2r | Local | ['_#3r, '_#2r]
+| '_#3r | Local | ['_#3r]
+|
+| Inferred Region Values
+| '_#0r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#0r, '_#1r, '_#2r, '_#3r}
+| '_#1r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#1r}
+| '_#2r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#2r}
+| '_#3r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#3r}
+| '_#4r | U0 | {}
+| '_#5r | U0 | {bb0[3]}
+| '_#6r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#1r}
+| '_#7r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#2r}
+| '_#8r | U0 | {bb0[3]}
+| '_#9r | U0 | {bb0[0..=3], bb1[0..=3], bb2[0], '_#2r}
+|
+| Inference Constraints
+| '_#0r live at {bb0[0..=3], bb1[0..=3], bb2[0]}
+| '_#1r live at {bb0[0..=3], bb1[0..=3], bb2[0]}
+| '_#2r live at {bb0[0..=3], bb1[0..=3], bb2[0]}
+| '_#3r live at {bb0[0..=3], bb1[0..=3], bb2[0]}
+| '_#5r live at {bb0[3]}
+| '_#8r live at {bb0[3]}
+| '_#1r: '_#6r due to BoringNoLocation at All(src/main.rs:14:39: 14:53)
+| '_#2r: '_#7r due to BoringNoLocation at All(src/main.rs:14:40: 14:41)
+| '_#6r: '_#1r due to BoringNoLocation at All(src/main.rs:14:39: 14:53)
+| '_#7r: '_#2r due to BoringNoLocation at All(src/main.rs:14:40: 14:41)
+| '_#7r: '_#8r due to Boring at Single(bb0[2])
+| '_#7r: '_#9r due to BoringNoLocation at All(src/main.rs:14:40: 14:41)
+| '_#8r: '_#5r due to Boring at Single(bb0[3])
+| '_#9r: '_#7r due to BoringNoLocation at All(src/main.rs:14:40: 14:41)
+|
+fn main::{closure#0}(_1: &mut [closure@src/main.rs:14:39: 14:53], _2: &u8) -> bool {
+    debug n => _2;                       // in scope 0 at src/main.rs:14:40: 14:41
+    let mut _0: bool;                    // return place in scope 0 at src/main.rs:14:43: 14:43
+    let mut _3: u8;                      // in scope 0 at src/main.rs:14:43: 14:48
+    let mut _4: &u8;                     // in scope 0 at src/main.rs:14:43: 14:44
+
+    bb0: {
+        StorageLive(_3);                 // scope 0 at src/main.rs:14:43: 14:48
+        StorageLive(_4);                 // scope 0 at src/main.rs:14:43: 14:44
+        _4 = _2;                         // scope 0 at src/main.rs:14:43: 14:44
+        _3 = <&u8 as Rem<u8>>::rem(move _4, const 2_u8) -> [return: bb1, unwind: bb2]; // scope 0 at src/main.rs:14:43: 14:48
+                                         // mir::Constant
+                                         // + span: src/main.rs:14:43: 14:48
+                                         // + literal: Const { ty: fn(&u8, u8) -> <&u8 as std::ops::Rem<u8>>::Output {<&u8 as std::ops::Rem<u8>>::rem}, val: Value(Scalar(<ZST>)) }
+    }
+
+    bb1: {
+        StorageDead(_4);                 // scope 0 at src/main.rs:14:47: 14:48
+        _0 = Eq(move _3, const 0_u8);    // scope 0 at src/main.rs:14:43: 14:53
+        StorageDead(_3);                 // scope 0 at src/main.rs:14:52: 14:53
+        return;                          // scope 0 at src/main.rs:14:53: 14:53
+    }
+
+    bb2 (cleanup): {
+        resume;                          // scope 0 at src/main.rs:14:39: 14:53
+    }
+}
