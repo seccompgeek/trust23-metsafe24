@@ -30,6 +30,8 @@ cd rust
 rustup toolchain link trust ./build
 rustup default trust
 ```
+* You may experience some errors related to libssl. In that case, please install the appropriate libssl and point rust there.
+* Remember to set the the toolchain to trust.
 
 
 ## Build Mimalloc
@@ -121,8 +123,8 @@ LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./signal-9123367a9386d186 --benc
 ```
 
 ## Authors
-- Inyoung Bang (Seoul National University) <iybang@sor.snu.ac.kr>
 - Martin Kayondo (Seoul National University) <kymartin@sor.snu.ac.kr>
+- Inyoung Bang (Seoul National University) <iybang@sor.snu.ac.kr>
 - Hyungon Moon (UNIST) <hyungon@unist.ac.kr>
 - Yunheung Paek (Seoul National University) <ypaek@snu.ac.kr>
 
@@ -133,6 +135,19 @@ author      = {Inyoung Bang and Martin Kayondo and HyunGon Moon and Yunheung Pae
 title       = {{TRust}: A Compilation Framework for In-process Isolation to Protect Safe Rust against Untrusted Code},
 booktitle   = {32nd USENIX Security Symposium (USENIX Security 23)},
 year        = {2023},
+isbn        = {978-1-939133-37-3},
+address     = {Anaheim, CA},
+pages       = {6947--6964},
+url         = {https://www.usenix.org/conference/usenixsecurity23/presentation/bang},
+publisher   = {USENIX Association},
+month       = aug
+}
+
+@inproceedings {287352,
+author      = {Martin Kayondo and Inyoung Bang and Yeongjun Kwak and HyunGon Moon and Yunheung Paek},
+title       = {{METASAFE}: Compiling for Protecting Smart Pointer Metadata to Ensure Safe Rust Integrity},
+booktitle   = {33rd USENIX Security Symposium (USENIX Security 23)},
+year        = {2024},
 isbn        = {978-1-939133-37-3},
 address     = {Anaheim, CA},
 pages       = {6947--6964},
