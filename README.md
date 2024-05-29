@@ -1,8 +1,8 @@
-# trust-sec23
+# metasafe-2024 + trust-sec23
 
 ## Download Source Code
 ```sh
-git clone https://github.com/cssl-unist/trust-sec23.git
+git clone https://github.com/seccompgeek/trust23-metsafe24.git
 ```
 
 ## Dependencies
