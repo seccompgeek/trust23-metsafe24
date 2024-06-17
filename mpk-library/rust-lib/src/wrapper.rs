@@ -11,7 +11,7 @@ extern crate libc;
 
 use libc::c_void;
 
-use std::{arch::asm, intrinsics::size_of};
+use std::{asm, intrinsics::size_of};
 
 fn __wrpkru(pkru: u64) {
     let eax = pkru;

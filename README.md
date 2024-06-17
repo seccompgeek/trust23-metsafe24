@@ -104,6 +104,11 @@ cargo bench
 # Note that this will run using the system allocator. If you're interested in a strict comparison, you may want to use the mimalloc allocator -- of course without the TRust+METASAE related changes for fairness.
 ```
 hash of the executable may vary (the executable may not exactly be benchmarks-b37d04cee6b6da39)
+Note that in build-run-trust-metasafe.sh, command
+ ```sh 
+ ./final.sh
+ ```
+ compiles some object files produced by Rust after passing them through SVF and TRust/METASAFE llvm passes. If you get an error about this, we already print the appropriate commands during compilation through the print-link args. You can simply copy these commands and paste them in the final.sh file (replace existing ones). 
 
 ### Build and Run Regex
 ```sh

@@ -1,6 +1,7 @@
 #![allow(improper_ctypes)]
 #![feature(thread_local)]
 #![feature(core_intrinsics)]
+#![feature(asm)]
 
 pub mod wrapper;
 pub mod shadow_memory;
