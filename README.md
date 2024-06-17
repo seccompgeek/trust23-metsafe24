@@ -1,5 +1,14 @@
 # metasafe-2024 + trust-sec23
 
+## Already built and setup environment
+If you're mostly interested in already built environment, please use the Docker Image by pulling it using:
+```sh
+docker pull kayondo/metasafe
+docker run -it kayondo/metasafe
+```
+Inside the docker image navigate to the */metasafe* directory.
+From there you can run the benchmarks and PoCs as listed below.
+
 ## Download Source Code
 ```sh
 git clone https://github.com/seccompgeek/trust23-metsafe24.git metasafe
@@ -110,24 +119,13 @@ Note that in build-run-trust-metasafe.sh, command
  ```
  compiles some object files produced by Rust after passing them through SVF and TRust/METASAFE llvm passes. If you get an error about this, we already print the appropriate commands during compilation through the print-link args. You can simply copy these commands and paste them in the final.sh file (replace existing ones). 
 
-### Build and Run Regex
+### Build and Run Hyper
 ```sh
 cd $PRJHOME/benchmarks/regex/bench
 ./build.sh
 cd ../target/release/deps
 LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./benchmarks-b37d04cee6b6da39  --bench
 ```
-
-### Build and Run Vec, String, Linked-list, Vec-deque, Btree
-```sh
-cd $PRJHOME/benchmarks/std
-./build.sh
-cd target/release/deps
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./collectionsbenches-949558e15ed0a833 --bench -- vec
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./collectionsbenches-949558e15ed0a833 --bench -- string
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./collectionsbenches-949558e15ed0a833 --bench -- linked-list
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./collectionsbenches-949558e15ed0a833 --bench -- vec-deque
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./collectionsbenches-949558e15ed0a833 --bench -- btree
 
 ```
 hash of the executable may vary
@@ -154,6 +152,11 @@ LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./sync_rwlock-76771b161ead33bd -
 LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./sync_semaphore-0fc9b6fec82f8c59 --bench
 LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./signal-9123367a9386d186 --bench
 ```
+
+## Notable Changes on TRust:
+* External stack: We modify the external stack allocation, and provide this service from the mpk-library/rust-lib library.
+* Function Cloning: Rather than using function cloning, we use thread-local variables to pass along the unsafe/safe allocation flag among function calls.
+* External function wrapping: TRust modifies the function calls at the LLVM backend. We change this and use a wrapper call provided in mpk-library/rust-lib. This makes (dis)enabling MPK permissions easier (TRust struggles to recover registers used by MPK).
 
 ## Authors
 - Martin Kayondo (Seoul National University) <kymartin@sor.snu.ac.kr>
