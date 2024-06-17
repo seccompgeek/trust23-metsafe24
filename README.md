@@ -2,7 +2,7 @@
 
 ## Download Source Code
 ```sh
-git clone https://github.com/seccompgeek/trust23-metsafe24.git
+git clone https://github.com/seccompgeek/trust23-metsafe24.git metasafe
 ```
 
 ## Dependencies
@@ -21,14 +21,27 @@ Make sure you have installed the dependencies:
 * `cmake` 3.13.4 or later
 * `libstdc++-static` may be required on some Linux distributions such as Fedora
   and Ubuntu
+* `opensslv1.1.1` is required to work for the version of Rust used in this build. Please make sure this version is installed or install it manually in a custom folder.
+
+## Build OpenSSLv1.1.1 if you don't have it.
+```sh
+wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1w.tar.gz
+tar xvf openssl-1.1.1w.tar.gz
+mv openssl-1.1.1w.tar.gz $OPENSSL_HOME && cd $OPENSSL_HOME
+./config --prefix=$OPENSSL_HOME/build --openssldir=$OPENSSL_HOME/build
+make
+make install
+export OPENSSL_DIR=$OPENSSL_HOME/build
+export PRJHOME='where you put metasafe'
+```
 
 ## Build Rust
 ```sh
-cd TRust
-cd rust
+cd metasafe
 ./x.py build && ./x.py install
-rustup toolchain link trust ./build
-rustup default trust
+rustup toolchain link metasafe ./build
+rustup default metasafe
+export LD_LIBRARY_PATH=$OPENSSL_HOME/build/lib:$LD_LIBRARY_PATH
 ```
 * You may experience some errors related to libssl. In that case, please install the appropriate libssl and point rust there.
 * Remember to set the the toolchain to trust.
@@ -36,44 +49,59 @@ rustup default trust
 
 ## Build Mimalloc
 ```sh
-cd ../mpk-mimalloc
+cd metasafe/mpk-mimalloc
 ./build.sh
 ```
 
-## Set Environment Variables
+## Running the POCs:
 ```sh
-cd ../
-. ./setup.sh
-```
-Environment variables set-up is required for both building the framework and running benchmarks
+# Simple POC
+cd metasafe/poc/simple-poc
+cargo clean
+cargo run --release #runs fine but with an overflow.
+./run.sh #should crash because METASAFE doesn't allow wrongly overwriting metadata.
 
-## Build Dynamic Library
+# SmallVec POC as explained in the paper.
+cd metasafe/poc/smallvec-poc
+cargo clean
+cargo run --release #Runs fine with overflow or double free error. 
+./run.sh #should crash because METASAFE doesn't allow wrongly overwriting metadata.
+```
+
+## Build Dynamic Library and Rustlib which provides external stack
 ```sh
 cd $PRJHOME/mpk-library
 ./build.sh
-```
-
-## Build Demangler
-```sh
-cd $PRJHOME/mpk-rust-demangle
-cargo build --lib
-cargo build --lib --release
+cd rust-lib
+cargo build --release
 ```
 
 ## Build SVF
+Make sure you have enough RAM.
 ```sh
+# Ensure unzip is installed
+sudo apt-get install unzip # sudo may not be necessary if your are running as root.
 cd $PRJHOME/mpk-svf
-. ./build.sh
+./build.sh
+./setup.sh
+# Make sure SVF is using the Rust-based LLVM otherwise the build may fail.
 ```
 
 ## Build and Run Benchmarks
+Unlike in TRust, some benchmarks like Base64 won't build with METASAFE. This is not a METASAFE problem, not is it TRust's.
+The Compiler used by TRust is pretty old version and matching the dependencies is pretty hard.
+If you can spend more time to fix that, every thing should be fine. We tried our best to fix most of the benchmarks,
+and thus the builds here reflect the results presented in METASAFE.
 
-### Build and Run Base64, Bytes, Byteorder, Json,  Image, Regex
+### Build and Run Bytes, Byteorder, Json, Std-{vec, vec_deque, string, linked_list, btreemap},  Image, Regex
 ```sh
-cd $PRJHOME/benchmarks/base64
-./build.sh
-cd target/release/deps
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./benchmarks-b37d04cee6b6da39  --bench
+# For each benchmark, simply cd into the benchmark home. For example for Bytes, simply
+cd $PRJHOME/benchmarks/bytes
+# Then build and run the benchmarks with TRust+METASAFE.
+./build-run-trust-metasafe.sh
+# To run baselines, simply run:
+cargo bench
+# Note that this will run using the system allocator. If you're interested in a strict comparison, you may want to use the mimalloc allocator -- of course without the TRust+METASAE related changes for fairness.
 ```
 hash of the executable may vary (the executable may not exactly be benchmarks-b37d04cee6b6da39)
 

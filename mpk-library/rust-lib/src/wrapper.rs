@@ -11,7 +11,16 @@ extern crate libc;
 
 use libc::c_void;
 
-use std::intrinsics::size_of;
+use std::{arch::asm, intrinsics::size_of};
+
+fn __wrpkru(pkru: u64) {
+    let eax = pkru;
+    let ecx = 0;
+    let edx = 0;
+    unsafe {
+        asm!(".byte 0x0f, 0x01, 0xef\n\t",in("eax") eax, in("ecx") ecx, in("edx") edx);
+    }
+}
 
 #[no_mangle]
 pub fn __wrap_call(func: fn(*mut c_void), args: *mut c_void){
@@ -20,6 +29,10 @@ pub fn __wrap_call(func: fn(*mut c_void), args: *mut c_void){
         let stack_base = (*stack - PAGE_SIZE) & !(PAGE_SIZE-1);
         let stack_end = get_stack_limit();
         let stack_size = stack_base - stack_end;
+        // DUMMY: disable access to Safe region. 
+        // Assuming key 1 is already allocated and in use by TRust/METASAFE.
+        // With perfect static PTA in TRust, this needs to be changed to 1*2.
+        __wrpkru(0*2);
         let dyn_callback: &mut dyn FnMut() = &mut || {
             func(args)
         };
@@ -31,6 +44,7 @@ pub fn __wrap_call(func: fn(*mut c_void), args: *mut c_void){
         if let Some(p) = panic {
             std::panic::resume_unwind(p);
         }
+        __wrpkru(0); //enable access to Safe region.
     }
 }
 
@@ -103,8 +117,8 @@ pub fn __trust_more_stack(bytes: usize) -> *mut c_void {
                 panic!("Unable to allocate additional stack");
             }
 
-            let mut stack_top;
-            if(mapped as usize != (start as usize + reserved - DEFAULT_STACK)){
+            let stack_top;
+            if mapped as usize != (start as usize + reserved - DEFAULT_STACK) {
                 stack_top = mapped as usize + DEFAULT_STACK - size_of::<usize>();
             }else {
                 stack_top = start as usize + reserved - size_of::<usize>();

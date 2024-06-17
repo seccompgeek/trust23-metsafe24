@@ -17,6 +17,13 @@ __thread mi_heap_t* SAFE_HEAPS[MAX_HEAPS] = {
 __thread mi_heap_t* UNSAFE_HEAPS[MAX_HEAPS] = {NULL,};
 int INITIALIZING = 0;
 
+static inline void __wrpkru(uint32_t pkru) {
+    int eax = pkru;
+    int ecx = 0;
+    int edx = 0;
+    
+    asm volatile(".byte 0x0f,0x01,0xef\n\t" : : "a"(eax), "c"(ecx), "d"(edx)); 
+}
 
 void init_allocator_hooks(){
     INITIALIZING=1;
@@ -64,29 +71,40 @@ static mi_heap_t* get_alloc_heap(){
 }
 
 void *malloc(size_t size){
+    __wrpkru(0); //DUMMY: enable access to allocator pages.
     if(INITIALIZING)
         return TEMP_CALLOC;
     mi_heap_t* heap = get_alloc_heap();
-    return mi_heap_malloc(heap, size);
+    void* ptr = mi_heap_malloc(heap, size);
+    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    return ptr;
 }
 
 void free(void* addr){
+    __wrpkru(0); //DUMMY: enable access to allocator pages.
     if(addr==TEMP_CALLOC){
         memset(TEMP_CALLOC, 0, TEMP_CALLOC_SIZE);
     }else if(!addr){
         return;
     }
     mi_free(addr);
+    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
 }
 
 void* calloc(size_t num, size_t size){
+    __wrpkru(0); //DUMMY: enable access to allocator pages.
     if(INITIALIZING)
         return malloc(num*size);
     
     mi_heap_t* heap = get_alloc_heap();
-    return mi_heap_calloc(heap, num, size);
+    void* ptr = mi_heap_calloc(heap, num, size);
+    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    return ptr;
 }
 
 void* realloc(void* addr, size_t new_size){
-    return mi_expand(addr, new_size);
+    __wrpkru(0); //DUMMY: enable access to allocator pages.
+    void* ptr = mi_expand(addr, new_size);
+    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    return ptr;
 }

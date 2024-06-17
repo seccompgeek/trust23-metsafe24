@@ -565,6 +565,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
 
   size_t totalAllocas = 0;
   size_t totalUnsafeAllocas = 0;
+  std::map<Function*,Function*> wrapperFuncMap;
   for (auto &BB : F) {
     for (BasicBlock::iterator I = BB.begin(); I != BB.end(); ++I) {
       Instruction *currInst = &(*I);
@@ -604,7 +605,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
             errs()<<"Found unsafe store\n";
           }
         }
-      } else if(auto gepInst = llvm::dyn_cast<GetElementPtrInst>(currInst)){
+      }
         //metasafe shadows
         /*if(gepInst->getMetadata("MPK-SmartPointer-Shadow")){
           IRBuilder<> Builder(currContext);
@@ -616,8 +617,7 @@ bool MpkIsolationGatesPass::runOnFunction(Function &F) {
           }
           auto cast1 = Builder.CreateBitCast(gepInst)
         }*/
-        errs()<<"Found smart pointer shadow\n";
-      }
+
       /*else if(auto gepInst = dyn_cast<GetElementPtrInst>(currInst)){
         if(gepInst->getMetadata("POSSIBLE-Unsafe") != nullptr){
           applySFIGEPCheck(gepInst);
