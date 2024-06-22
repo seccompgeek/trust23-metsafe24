@@ -16,8 +16,8 @@
 extern crate rand;
 extern crate test;
 
-//mod btree;
+mod btree;
 mod linked_list;
-//mod string;
-//mod vec;
-//mod vec_deque;
+mod string;
+mod vec;
+mod vec_deque;

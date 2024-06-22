@@ -3,9 +3,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include <mimalloc.h>
-
-mi_decl_export mi_decl_thread u_int64_t METASAFE_TYPE_ID = 0;
+#include <mimalloc-override.h>
 
 int main() {
   mi_version();       // ensure mimalloc library is linked
@@ -27,6 +25,12 @@ int main() {
   //free(p1);
   //p2 = malloc(32);
   //mi_free(p2);
+  p1 = malloc(24);
+  p2 = reallocarray(p1, 16, 16);
+  free(p2);
+  p1 = malloc(24);
+  assert(reallocarr(&p1, 16, 16) == 0);
+  free(p1);
   mi_stats_print(NULL);
   return 0;
 }

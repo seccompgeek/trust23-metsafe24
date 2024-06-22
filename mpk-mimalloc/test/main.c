@@ -2,8 +2,6 @@
 #include <assert.h>
 #include <mimalloc.h>
 
-__thread __uint64_t METASAFE_TYPE_ID = 0;
-
 void test_heap(void* p_out) {
   mi_heap_t* heap = mi_heap_new();
   void* p1 = mi_heap_malloc(heap,32);

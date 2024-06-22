@@ -127,21 +127,24 @@ cd ../target/release/deps
 LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./benchmarks-b37d04cee6b6da39  --bench
 ```
 
-```
 hash of the executable may vary
 
 ### Build and Run Hyper
 ```sh
-cd $PRJHOME/benchmarks/hyper
-./build.sh
-cd target/release/deps
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./body-ecce9aa8ef6e888b --bench
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./connect-43bd2033fb0ad8f9 --bench
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./end_to_end-65c04f5871934fc8 --bench
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./pipeline-fc359c99b71e3a82 --bench
-LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./server-6050495059813025 --bench
+./build-run-trust-metasafe.sh
 ```
-hash of the executable may vary
+The command below will execute all the benchmarks at once. This way, it is hard to know which benchmark is being executed. To run one benchmark at a time, comment out the last Command in the build-run-trust-metasafe.sh.
+(You don't have to re-run the script because Hyper takes too much time on SVF)
+Simply run:
+```sh
+find ./target/x86_64-unknown-linux-gnu/release/deps/ -maxdepth 1 -perm -u+x -type f
+```
+This will output all the benchmark binaries, and from the binary names, you can tell which benchmark is executing.
+For each binary (say: server-{hash}), run:
+```sh
+./binary-{hash} --bench
+```
+Recall that the hash may vary, and thus, depending on the new hash, you may have to overwrite the final.sh file. The appropriate commands are printed out before SVF is executed, so if you watch carefully, it is easy to first kill the build procedure as soon as SVF starts, copy the commands to final.sh and rerun the script.
 
 ### Build and Run Tokio
 ```sh
