@@ -108,6 +108,8 @@ and thus the builds here reflect the results presented in METASAFE.
 cd $PRJHOME/benchmarks/bytes
 # Then build and run the benchmarks with TRust+METASAFE.
 ./build-run-trust-metasafe.sh
+# To run benchmarks with TRust only, simply execute
+./build-run-trust.sh
 # To run baselines, simply run:
 cargo bench
 # Note that this will run using the system allocator. If you're interested in a strict comparison, you may want to use the mimalloc allocator -- of course without the TRust+METASAE related changes for fairness.
