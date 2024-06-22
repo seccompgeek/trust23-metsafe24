@@ -9,6 +9,12 @@ docker run -it kayondo/metasafe
 Inside the docker image navigate to the */metasafe* directory.
 From there you can run the benchmarks and PoCs as listed below.
 
+## Install Rust Baseline and Rustup:
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# Install the standard version.
+```
+
 ## Download Source Code
 ```sh
 git clone https://github.com/seccompgeek/trust23-metsafe24.git metasafe
