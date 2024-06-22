@@ -135,6 +135,22 @@ cd ../target/release/deps
 LD_PRELOAD=$PRJHOME/mpk-library/build/libmpk.so ./benchmarks-b37d04cee6b6da39  --bench
 ```
 
+If you save the runtime output in a file, say by running:
+```sh
+cargo bench &> file.txt
+```
+You may copy the results file to $METASAFE\_HOME/results/results.txt using:
+```sh
+cp results_file.txt $METASAFE_HOME/results/results.txt
+```
+ And then:
+ ```sh
+ cd $METASAFE_HOME/results
+ cargo run
+ ```
+ This will analyze the results file and print the average of the runtime results.
+ 
+
 hash of the executable may vary
 
 ### Build and Run Hyper
