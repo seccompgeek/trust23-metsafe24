@@ -102,7 +102,7 @@ The Compiler used by TRust is pretty old version and matching the dependencies i
 If you can spend more time to fix that, every thing should be fine. We tried our best to fix most of the benchmarks,
 and thus the builds here reflect the results presented in METASAFE.
 
-### Build and Run Bytes, Byteorder, Json, Std-{vec, vec_deque, string, linked_list, btreemap},  Image, Regex
+### Build and Run Bytes, Byteorder, Json, Std-{vec, vec_deque, string, linked_list, btreemap}
 ```sh
 # For each benchmark, simply cd into the benchmark home. For example for Bytes, simply
 cd $PRJHOME/benchmarks/bytes
