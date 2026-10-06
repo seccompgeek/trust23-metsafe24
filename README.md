@@ -64,9 +64,35 @@ export LD_LIBRARY_PATH=$OPENSSL_HOME/build/lib:$LD_LIBRARY_PATH
 
 ## Build Mimalloc
 ```sh
-cd metasafe/mpk-mimalloc
+cd "$PRJHOME/mpk-mimalloc"
 ./build.sh
 ```
+
+## Build the runtime library and external-stack support
+```sh
+cd "$PRJHOME/mpk-library"
+./build.sh
+```
+The build is incremental. Rust artifacts are written under
+`mpk-library/build/rust-target` instead of into the source tree.
+It produces both `librustfuncs.a` for the CMake runtime and
+`librustfuncs.so` for instrumented Rust executables, avoiding a second bundled
+Rust standard library during final linking.
+
+PKRU enforcement remains disabled by default, matching the artifact's original
+behavior for programs where conservative metadata classification can otherwise
+produce false-positive `SIGSEGV`s. To enable real, nesting-safe PKRU transitions
+for protection key 1:
+
+```sh
+METASAFE_ENFORCE_PKEY=1 METASAFE_METADATA_PKEY=1 ./build.sh
+```
+
+The runtime write-disables only the selected key and restores the caller's
+complete prior PKRU value when each protected scope exits. The processor and
+operating system must support PKU/OSPKE when enforcement is enabled. The
+existing MetaSafe setup must also allocate that nonzero key and associate the
+metadata pages with it; this runtime switch does not retag mappings.
 
 ## Running the POCs:
 ```sh
@@ -81,14 +107,6 @@ cd metasafe/poc/smallvec-poc
 cargo clean
 cargo run --release #Runs fine with overflow or double free error. 
 ./run.sh #should crash because METASAFE doesn't allow wrongly overwriting metadata.
-```
-
-## Build Dynamic Library and Rustlib which provides external stack
-```sh
-cd $PRJHOME/mpk-library
-./build.sh
-cd rust-lib
-cargo build --release
 ```
 
 ## Build SVF
@@ -127,7 +145,7 @@ Note that in build-run-trust-metasafe.sh, command
  ```
  compiles some object files produced by Rust after passing them through SVF and TRust/METASAFE llvm passes. If you get an error about this, we already print the appropriate commands during compilation through the print-link args. You can simply copy these commands and paste them in the final.sh file (replace existing ones). 
 
-### Build and Run Hyper
+### Build and Run Regex
 ```sh
 cd $PRJHOME/benchmarks/regex/bench
 ./build.sh
@@ -139,13 +157,13 @@ If you save the runtime output in a file, say by running:
 ```sh
 cargo bench &> file.txt
 ```
-You may copy the results file to $METASAFE\_HOME/results/results.txt using:
+You may copy the results file to `$PRJHOME/results/results.txt` using:
 ```sh
-cp results_file.txt $METASAFE_HOME/results/results.txt
+cp results_file.txt "$PRJHOME/results/results.txt"
 ```
  And then:
  ```sh
- cd $METASAFE_HOME/results
+ cd "$PRJHOME/results"
  cargo run
  ```
  This will analyze the results file and print the average of the runtime results.
@@ -209,15 +227,15 @@ publisher   = {USENIX Association},
 month       = aug
 }
 
-@inproceedings {287352,
+@inproceedings {298096,
 author      = {Martin Kayondo and Inyoung Bang and Yeongjun Kwak and HyunGon Moon and Yunheung Paek},
 title       = {{METASAFE}: Compiling for Protecting Smart Pointer Metadata to Ensure Safe Rust Integrity},
-booktitle   = {33rd USENIX Security Symposium (USENIX Security 23)},
+booktitle   = {33rd USENIX Security Symposium (USENIX Security 24)},
 year        = {2024},
-isbn        = {978-1-939133-37-3},
-address     = {Anaheim, CA},
-pages       = {6947--6964},
-url         = {https://www.usenix.org/conference/usenixsecurity23/presentation/bang},
+isbn        = {978-1-939133-44-1},
+address     = {Philadelphia, PA},
+pages       = {3711--3728},
+url         = {https://www.usenix.org/conference/usenixsecurity24/presentation/kayondo},
 publisher   = {USENIX Association},
 month       = aug
 }

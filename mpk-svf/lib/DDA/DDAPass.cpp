@@ -13,11 +13,19 @@
 #include "DDA/ContextDDA.h"
 #include "DDA/DDAClient.h"
 #include "SVF-FE/PAGBuilder.h"
+#include "llvm/ADT/SmallPtrSet.h"
+#include "llvm/Analysis/ValueTracking.h"
+#include "llvm/IR/DataLayout.h"
+#include "llvm/IR/IntrinsicInst.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
+#include <algorithm>
+#include <cstdint>
+#include <map>
 #include <sstream>
 #include <limits.h>
 #include <utility>
+#include <vector>
 
 using namespace SVF;
 using namespace SVFUtil;
@@ -141,66 +149,321 @@ void traverseUnsafePointerStores(SVFModule* svfModule){
     }
 }
 
+static uint64_t getMetadataTypeId(const Instruction *instruction,
+                                  StringRef metadataName) {
+    MDNode *metadata = instruction->getMetadata(metadataName);
+    if(metadata == nullptr || metadata->getNumOperands() < 2){
+        return 0;
+    }
+    if(auto *constantMetadata = llvm::dyn_cast<llvm::ConstantAsMetadata>(
+           metadata->getOperand(1).get())){
+        if(auto *typeId = llvm::dyn_cast<llvm::ConstantInt>(
+               constantMetadata->getValue())){
+            return typeId->getZExtValue();
+        }
+    }
+    return 0;
+}
+
+
+static uint64_t getShadowTypeId(const Instruction *instruction) {
+    return getMetadataTypeId(instruction, "MPK-SmartPointer-Shadow");
+}
+
+static uint64_t getAllocaSize(const AllocaInst *alloca, const DataLayout &layout) {
+    if(!alloca->isStaticAlloca()){
+        return 0;
+    }
+    auto *arraySize = llvm::dyn_cast<llvm::ConstantInt>(alloca->getArraySize());
+    if(arraySize == nullptr){
+        return 0;
+    }
+    return layout.getTypeAllocSize(alloca->getAllocatedType()) * arraySize->getZExtValue();
+}
+
+static uint64_t getPointedObjectSize(const Value *pointer, const DataLayout &layout) {
+    if(pointer == nullptr || !pointer->getType()->isPointerTy()){
+        return 0;
+    }
+    Type *elementType = llvm::cast<llvm::PointerType>(pointer->getType())->getElementType();
+    return elementType->isSized() ? layout.getTypeAllocSize(elementType) : 0;
+}
+
+struct ShadowStackObject {
+    AllocaInst *original;
+    uint64_t size;
+    uint64_t alignment;
+    uint64_t offset;
+    uint64_t typeId;
+    Value *shadow;
+};
+
+static Instruction *getRuntimeInsertionPoint(Function &function) {
+    BasicBlock &entry = function.getEntryBlock();
+    auto iterator = entry.begin();
+    while(iterator != entry.end() && llvm::isa<llvm::AllocaInst>(&*iterator)){
+        ++iterator;
+    }
+    return iterator == entry.end() ? entry.getTerminator() : &*iterator;
+}
+
 void traverseSmartPointerShadows(SVFModule* svfModule){
     auto moduleSet = LLVMModuleSet::getLLVMModuleSet();
-    set<Instruction*> geps;
-    set<StoreInst*> unsafeStores;
+    set<Instruction*> shadowPointers;
+    vector<StoreInst*> aggregateStores;
+    vector<llvm::MemTransferInst*> memoryTransfers;
+    vector<llvm::MemSetInst*> memorySets;
+    map<Function*, map<AllocaInst*, ShadowStackObject>> stackObjects;
+
     for(int i=0; i<moduleSet->getModuleNum(); i++){
         auto& module = moduleSet->getModuleRef(i);
+        const DataLayout &layout = module.getDataLayout();
         for(auto &F: module){
-            int movableAllocas = 0;
             for(auto& BB: F){
                 for(auto &I: BB){
-                    if(GetElementPtrInst* gep = llvm::dyn_cast<GetElementPtrInst>(&I)){
-                        if(gep->hasMetadata("MPK-SmartPointer-Shadow")){
-                            geps.insert(&I);
+                    if(auto *alloca = llvm::dyn_cast<llvm::AllocaInst>(&I)){
+                        if(alloca->hasMetadata("MPK-SmartPointer-Container")){
+                            uint64_t size = getAllocaSize(alloca, layout);
+                            if(size != 0){
+                                uint64_t alignment = std::max<uint64_t>(
+                                    layout.getABITypeAlignment(alloca->getAllocatedType()),
+                                    std::max<unsigned>(alloca->getAlignment(), 1));
+                                auto &objects = stackObjects[&F];
+                                objects.insert(make_pair(
+                                    alloca,
+                                    ShadowStackObject{
+                                        alloca, size, alignment, 0,
+                                        getMetadataTypeId(
+                                            alloca, "MPK-SmartPointer-Container"),
+                                        nullptr}));
+                            }
                         }
-                    } else if(AllocaInst* alloca = llvm::dyn_cast<AllocaInst>(&I)){
-                        if(alloca->hasMetadata("MPK-Extern-Move")){
-                            movableAllocas ++;
+                    }
+                    if(I.getType()->isPointerTy()
+                       && I.hasMetadata("MPK-SmartPointer-Shadow")){
+                        shadowPointers.insert(&I);
+                        Value *base = llvm::getUnderlyingObject(&I, 32);
+                        if(auto *alloca = llvm::dyn_cast<llvm::AllocaInst>(base)){
+                            uint64_t size = getAllocaSize(alloca, layout);
+                            if(size != 0){
+                                uint64_t alignment = std::max<uint64_t>(
+                                    layout.getABITypeAlignment(alloca->getAllocatedType()),
+                                    std::max<unsigned>(alloca->getAlignment(), 1));
+                                auto &objects = stackObjects[&F];
+                                if(objects.find(alloca) == objects.end()){
+                                    objects.insert(make_pair(
+                                        alloca,
+                                        ShadowStackObject{alloca, size, alignment, 0,
+                                                          getShadowTypeId(&I), nullptr}));
+                                }
+                            }
                         }
+                    }
+                    if(auto *store = llvm::dyn_cast<llvm::StoreInst>(&I)){
+                        if(store->getValueOperand()->getType()->isAggregateType()){
+                            aggregateStores.push_back(store);
+                        }
+                    }else if(auto *transfer = llvm::dyn_cast<llvm::MemTransferInst>(&I)){
+                        memoryTransfers.push_back(transfer);
+                    }else if(auto *memorySet = llvm::dyn_cast<llvm::MemSetInst>(&I)){
+                        memorySets.push_back(memorySet);
                     }
                 }
             }
-            /*if(movableAllocas > 0){
-                //insert call to get stack pointer.
-                auto& context = F.getContext();
-                std::vector<llvm::Type*> argTypes = {llvm::Type::getInt64Ty(context)};
-                llvm::FunctionType* calleeType = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(context), argTypes, false);
-                FunctionCallee callee = module.getOrInsertFunction("__trust_more_stack", calleeType);
-                llvm::IRBuilder<> IRBuilder(context);
-                IRBuilder.SetInsertPoint(&*F.begin()->getFirstInsertionPt());
-
-                llvm::SmallVector<Value*, 4> args;
-                args.push_back(ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, 4096)));
-                IRBuilder.CreateCall(callee, args);
-            }*/
         }
     }
 
+    for(auto &functionEntry: stackObjects){
+        Function *function = functionEntry.first;
+        Module *module = function->getParent();
+        const DataLayout &layout = module->getDataLayout();
+        LLVMContext &context = module->getContext();
+        Type *bytePointerType = Type::getInt8PtrTy(context);
+        Type *sizeType = layout.getIntPtrType(context);
+        Type *int64Type = Type::getInt64Ty(context);
 
-    for(auto gep: geps){
-        //simulate shadow ptr
-        auto& context = gep->getContext();
+        uint64_t frameSize = 0;
+        uint64_t frameAlignment = 1;
+        for(auto &objectEntry: functionEntry.second){
+            ShadowStackObject &object = objectEntry.second;
+            frameAlignment = std::max(frameAlignment, object.alignment);
+            frameSize = (frameSize + object.alignment - 1) & ~(object.alignment - 1);
+            object.offset = frameSize;
+            frameSize += object.size;
+        }
+        frameSize = (frameSize + frameAlignment - 1) & ~(frameAlignment - 1);
+
+        llvm::IRBuilder<> builder(getRuntimeInsertionPoint(*function));
+        FunctionCallee enter = module->getOrInsertFunction(
+            "__metasafe_shadow_stack_enter",
+            FunctionType::get(bytePointerType, {sizeType, sizeType}, false));
+        FunctionCallee registerStack = module->getOrInsertFunction(
+            "__metasafe_shadow_register_stack",
+            FunctionType::get(Type::getVoidTy(context),
+                              {bytePointerType, bytePointerType, sizeType, int64Type}, false));
+        Value *frame = builder.CreateCall(
+            enter,
+            {ConstantInt::get(sizeType, frameSize),
+             ConstantInt::get(sizeType, frameAlignment)},
+            "metasafe.shadow.frame");
+        for(auto &objectEntry: functionEntry.second){
+            ShadowStackObject &object = objectEntry.second;
+            object.shadow = builder.CreateGEP(
+                Type::getInt8Ty(context), frame,
+                ConstantInt::get(sizeType, object.offset),
+                object.original->getName() + ".metasafe.shadow");
+            Value *original = builder.CreateBitCast(object.original, bytePointerType);
+            builder.CreateCall(
+                registerStack,
+                {original, object.shadow, ConstantInt::get(sizeType, object.size),
+                 ConstantInt::get(int64Type, object.typeId)});
+        }
+
+        vector<Instruction*> exits;
+        for(auto &block: *function){
+            if(llvm::isa<llvm::ReturnInst>(block.getTerminator())
+               || llvm::isa<llvm::ResumeInst>(block.getTerminator())){
+                exits.push_back(block.getTerminator());
+            }
+        }
+        FunctionCallee unregister = module->getOrInsertFunction(
+            "__metasafe_shadow_unregister",
+            FunctionType::get(Type::getVoidTy(context), {bytePointerType}, false));
+        FunctionCallee leave = module->getOrInsertFunction(
+            "__metasafe_shadow_stack_leave",
+            FunctionType::get(Type::getVoidTy(context), {bytePointerType}, false));
+        for(Instruction *exit: exits){
+            llvm::IRBuilder<> exitBuilder(exit);
+            for(auto &objectEntry: functionEntry.second){
+                Value *original = exitBuilder.CreateBitCast(
+                    objectEntry.second.original, bytePointerType);
+                exitBuilder.CreateCall(unregister, {original});
+            }
+            exitBuilder.CreateCall(leave, {frame});
+        }
+    }
+
+    for(auto pointer: shadowPointers){
+        auto& context = pointer->getContext();
+        Module *module = pointer->getModule();
+        const DataLayout &layout = module->getDataLayout();
         llvm::IRBuilder<> Builder(context);
-        Instruction* insertPoint = gep->getNextNode();
+        Instruction* insertPoint = pointer->getNextNode();
         if(!insertPoint){
-            Builder.SetInsertPoint(gep->getParent());
+            Builder.SetInsertPoint(pointer->getParent());
         }else{
             Builder.SetInsertPoint(insertPoint);
         }
 
-        auto cast1 = Builder.CreateBitCast(gep, llvm::Type::getInt8PtrTy(context));
-        auto Ptr2Int = Builder.CreatePtrToInt(cast1, llvm::Type::getInt64Ty(context));
-        auto And = Builder.CreateBinOp(llvm::Instruction::BinaryOps::And, Ptr2Int, ConstantInt::get(llvm::Type::getInt64Ty(context), llvm::APInt(64, -1)));
-        auto Int2Ptr = Builder.CreateIntToPtr(And, llvm::Type::getInt8PtrTy(context));
-        auto cast = Builder.CreatePointerCast(Int2Ptr, gep->getType());
-        gep->replaceUsesWithIf(cast, [=](Use& U){
-            if(cast1 != gep){
-                return U.getUser() != cast1;
+        Type *bytePointerType = Type::getInt8PtrTy(context);
+        Type *sizeType = layout.getIntPtrType(context);
+        Value *base = llvm::getUnderlyingObject(pointer, 32);
+        Value *fieldBytes = Builder.CreateBitCast(pointer, bytePointerType);
+        Value *shadowField = nullptr;
+        llvm::SmallPtrSet<llvm::User*, 16> translationUsers;
+        if(auto *instruction = llvm::dyn_cast<llvm::Instruction>(fieldBytes)){
+            translationUsers.insert(instruction);
+        }
+
+        auto functionIt = stackObjects.find(pointer->getFunction());
+        auto *alloca = llvm::dyn_cast<llvm::AllocaInst>(base);
+        if(alloca != nullptr && functionIt != stackObjects.end()
+           && functionIt->second.find(alloca) != functionIt->second.end()){
+            ShadowStackObject &object = functionIt->second.find(alloca)->second;
+            Value *baseBytes = Builder.CreateBitCast(base, bytePointerType);
+            Value *fieldAddress = Builder.CreatePtrToInt(fieldBytes, sizeType);
+            Value *baseAddress = Builder.CreatePtrToInt(baseBytes, sizeType);
+            Value *offset = Builder.CreateSub(fieldAddress, baseAddress);
+            shadowField = Builder.CreateGEP(Type::getInt8Ty(context), object.shadow, offset,
+                                            "metasafe.shadow.field");
+            Value *translationValues[] = {
+                baseBytes, fieldAddress, baseAddress, offset, shadowField
+            };
+            for(Value *value: translationValues){
+                if(auto *instruction = llvm::dyn_cast<llvm::Instruction>(value)){
+                    translationUsers.insert(instruction);
+                }
             }
-            return U.getUser() != Ptr2Int;
+        }else{
+            Value *baseBytes = Builder.CreateBitCast(base, bytePointerType);
+            uint64_t objectSize = getPointedObjectSize(base, layout);
+            uint64_t fieldSize = getPointedObjectSize(pointer, layout);
+            FunctionCallee resolve = module->getOrInsertFunction(
+                "__metasafe_shadow_resolve",
+                FunctionType::get(bytePointerType,
+                                  {bytePointerType, bytePointerType, sizeType, sizeType,
+                                   Type::getInt64Ty(context)}, false));
+            shadowField = Builder.CreateCall(
+                resolve,
+                {baseBytes, fieldBytes, ConstantInt::get(sizeType, objectSize),
+                 ConstantInt::get(sizeType, fieldSize),
+                 ConstantInt::get(Type::getInt64Ty(context), getShadowTypeId(pointer))},
+                "metasafe.shadow.field");
+            if(auto *instruction = llvm::dyn_cast<llvm::Instruction>(baseBytes)){
+                translationUsers.insert(instruction);
+            }
+            translationUsers.insert(llvm::cast<llvm::Instruction>(shadowField));
+        }
+
+        Value *cast = Builder.CreatePointerCast(shadowField, pointer->getType());
+        if(auto *instruction = llvm::dyn_cast<llvm::Instruction>(cast)){
+            translationUsers.insert(instruction);
+        }
+        pointer->replaceUsesWithIf(cast, [&](llvm::Use& use){
+            return translationUsers.find(use.getUser()) == translationUsers.end();
         });
+    }
+
+    for(StoreInst *store: aggregateStores){
+        Module *module = store->getModule();
+        const DataLayout &layout = module->getDataLayout();
+        LLVMContext &context = module->getContext();
+        llvm::IRBuilder<> builder(store->getNextNode());
+        Type *bytePointerType = Type::getInt8PtrTy(context);
+        Type *sizeType = layout.getIntPtrType(context);
+        FunctionCallee sync = module->getOrInsertFunction(
+            "__metasafe_shadow_sync",
+            FunctionType::get(Type::getVoidTy(context), {bytePointerType, sizeType}, false));
+        builder.CreateCall(
+            sync,
+            {builder.CreateBitCast(store->getPointerOperand(), bytePointerType),
+             ConstantInt::get(sizeType, layout.getTypeStoreSize(store->getValueOperand()->getType()))});
+    }
+
+    for(llvm::MemTransferInst *transfer: memoryTransfers){
+        Module *module = transfer->getModule();
+        const DataLayout &layout = module->getDataLayout();
+        LLVMContext &context = module->getContext();
+        llvm::IRBuilder<> builder(transfer->getNextNode());
+        Type *bytePointerType = Type::getInt8PtrTy(context);
+        Type *sizeType = layout.getIntPtrType(context);
+        Value *length = builder.CreateZExtOrTrunc(transfer->getLength(), sizeType);
+        FunctionCallee copy = module->getOrInsertFunction(
+            "__metasafe_shadow_memcpy",
+            FunctionType::get(Type::getVoidTy(context),
+                              {bytePointerType, bytePointerType, sizeType}, false));
+        builder.CreateCall(
+            copy,
+            {builder.CreateBitCast(transfer->getRawDest(), bytePointerType),
+             builder.CreateBitCast(transfer->getRawSource(), bytePointerType), length});
+    }
+
+    for(llvm::MemSetInst *memorySet: memorySets){
+        Module *module = memorySet->getModule();
+        const DataLayout &layout = module->getDataLayout();
+        LLVMContext &context = module->getContext();
+        llvm::IRBuilder<> builder(memorySet->getNextNode());
+        Type *bytePointerType = Type::getInt8PtrTy(context);
+        Type *sizeType = layout.getIntPtrType(context);
+        Value *length = builder.CreateZExtOrTrunc(memorySet->getLength(), sizeType);
+        Value *value = builder.CreateZExt(memorySet->getValue(), Type::getInt32Ty(context));
+        FunctionCallee set = module->getOrInsertFunction(
+            "__metasafe_shadow_memset",
+            FunctionType::get(Type::getVoidTy(context),
+                              {bytePointerType, Type::getInt32Ty(context), sizeType}, false));
+        builder.CreateCall(
+            set,
+            {builder.CreateBitCast(memorySet->getRawDest(), bytePointerType), value, length});
     }
 }
 /*map<Function*,Function*> ExternFunctionToWrapperMap;
@@ -634,7 +897,7 @@ bool DDAPass::runOnModule(Module& module)
 {
     SVFModule* svfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(module);
     runOnModule(svfModule);
-    return false;
+    return true;
 }
 
 /// select a client to initialize queries

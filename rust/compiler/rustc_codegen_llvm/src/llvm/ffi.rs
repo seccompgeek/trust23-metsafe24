@@ -967,7 +967,8 @@ extern "C" {
     pub fn LLVMSetMetadata(Val: &'a Value, KindID: c_uint, Node: &'a Value);
     pub fn LLVMSetInUnsafeMetadata(Val: &'a Value);
     pub fn LLVMSetSmartPointerMetadata(Val: &'a Value);
-    pub fn LLVMMarkSmartPointerShadow(Val: &'a Value);
+    pub fn LLVMMarkSmartPointerShadow(Val: &'a Value, TypeId: c_ulong);
+    pub fn LLVMMarkSmartPointerContainer(Val: &'a Value, TypeId: c_ulong);
     pub fn LLVMSetSmartPointerTypeId(M: &'a Module, Block: &'a BasicBlock, Val: c_ulong);
     pub fn LLVMMarkUnsafeStart(M: &'a Module, Builder: &Builder<'a>);
     pub fn LLVMMarkUnsafeEnd(M: &'a Module, Builder: &Builder<'a>);

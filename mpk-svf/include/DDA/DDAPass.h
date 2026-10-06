@@ -37,8 +37,7 @@ public:
     virtual inline void getAnalysisUsage(AnalysisUsage &au) const
     {
         // declare your dependencies here.
-        /// do not intend to change the IR in this pass,
-        au.setPreservesAll();
+        /// DDAPass adds MetaSafe shadow-address and synchronization calls.
     }
 
     virtual inline void* getAdjustedAnalysisPointer(AnalysisID)

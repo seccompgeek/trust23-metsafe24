@@ -8,7 +8,7 @@
  * know allocates memory in the safe region and won't be tampered with.
  */
 
-static unsigned TEMP_CALLOC[TEMP_CALLOC_SIZE];
+static _Alignas(max_align_t) unsigned char TEMP_CALLOC[TEMP_CALLOC_SIZE];
 
 __thread uint64_t METASAFE_UNSAFE_FLAG = 0;
 __thread uint64_t METASAFE_TYPE_ID = 0;
@@ -17,16 +17,10 @@ __thread mi_heap_t* SAFE_HEAPS[MAX_HEAPS] = {
 __thread mi_heap_t* UNSAFE_HEAPS[MAX_HEAPS] = {NULL,};
 int INITIALIZING = 0;
 
-static inline void __wrpkru(uint32_t pkru) {
-    int eax = pkru;
-    int ecx = 0;
-    int edx = 0;
-    
-    asm volatile(".byte 0x0f,0x01,0xef\n\t" : : "a"(eax), "c"(ecx), "d"(edx)); 
-}
-
-void init_allocator_hooks(){
-    INITIALIZING=1;
+void init_allocator_hooks(void){
+    INITIALIZING = 1;
+    mi_process_init();
+    INITIALIZING = 0;
 }
 
 static mi_heap_t* get_alloc_heap(){
@@ -49,7 +43,7 @@ static mi_heap_t* get_alloc_heap(){
         uint64_t type = METASAFE_TYPE_ID % MAX_HEAPS;
         while(type < 2)
         {
-            type = (type + 1) % METASAFE_TYPE_ID;
+            type = (type + 1) % MAX_HEAPS;
         }
 
         if(METASAFE_UNSAFE_FLAG) // this is an unsafe object
@@ -71,40 +65,58 @@ static mi_heap_t* get_alloc_heap(){
 }
 
 void *malloc(size_t size){
-    __wrpkru(0); //DUMMY: enable access to allocator pages.
-    if(INITIALIZING)
-        return TEMP_CALLOC;
+    uint32_t pkru = __metasafe_pkru_enter(METASAFE_PKEY_ALLOW_ACCESS);
+    if(INITIALIZING) {
+        void* ptr = size <= sizeof(TEMP_CALLOC) ? TEMP_CALLOC : NULL;
+        __metasafe_pkru_restore(pkru);
+        return ptr;
+    }
     mi_heap_t* heap = get_alloc_heap();
-    void* ptr = mi_heap_malloc(heap, size);
-    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    void* ptr = heap == NULL ? NULL : mi_heap_malloc(heap, size);
+    __metasafe_pkru_restore(pkru);
     return ptr;
 }
 
 void free(void* addr){
-    __wrpkru(0); //DUMMY: enable access to allocator pages.
+    uint32_t pkru = __metasafe_pkru_enter(METASAFE_PKEY_ALLOW_ACCESS);
     if(addr==TEMP_CALLOC){
-        memset(TEMP_CALLOC, 0, TEMP_CALLOC_SIZE);
+        memset(TEMP_CALLOC, 0, sizeof(TEMP_CALLOC));
+        __metasafe_pkru_restore(pkru);
+        return;
     }else if(!addr){
+        __metasafe_pkru_restore(pkru);
         return;
     }
     mi_free(addr);
-    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    __metasafe_pkru_restore(pkru);
 }
 
 void* calloc(size_t num, size_t size){
-    __wrpkru(0); //DUMMY: enable access to allocator pages.
-    if(INITIALIZING)
-        return malloc(num*size);
+    uint32_t pkru = __metasafe_pkru_enter(METASAFE_PKEY_ALLOW_ACCESS);
+    if (size != 0 && num > SIZE_MAX / size) {
+        __metasafe_pkru_restore(pkru);
+        return NULL;
+    }
+    if(INITIALIZING) {
+        void* ptr = malloc(num * size);
+        __metasafe_pkru_restore(pkru);
+        return ptr;
+    }
     
     mi_heap_t* heap = get_alloc_heap();
-    void* ptr = mi_heap_calloc(heap, num, size);
-    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    void* ptr = heap == NULL ? NULL : mi_heap_calloc(heap, num, size);
+    __metasafe_pkru_restore(pkru);
     return ptr;
 }
 
 void* realloc(void* addr, size_t new_size){
-    __wrpkru(0); //DUMMY: enable access to allocator pages.
-    void* ptr = mi_expand(addr, new_size);
-    if (METASAFE_TYPE_ID == 1) __wrpkru(0*2); //DUMMY: disable access to Safe region if running FFI. if TRust static analysis is perfect, then this should be changed to 1*2
+    uint32_t pkru = __metasafe_pkru_enter(METASAFE_PKEY_ALLOW_ACCESS);
+    if (addr == TEMP_CALLOC) {
+        void* ptr = new_size <= sizeof(TEMP_CALLOC) ? TEMP_CALLOC : NULL;
+        __metasafe_pkru_restore(pkru);
+        return ptr;
+    }
+    void* ptr = mi_realloc(addr, new_size);
+    __metasafe_pkru_restore(pkru);
     return ptr;
 }

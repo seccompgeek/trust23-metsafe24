@@ -12,8 +12,7 @@ use rustc_middle::hir::map::Map;
 use rustc_middle::ty::subst::{GenericArgKind, InternalSubsts};
 use rustc_middle::ty::util::IntTypeExt;
 use rustc_middle::ty::{self, DefIdTree, Ty, TyCtxt, TypeFoldable};
-use crate::LOCAL_CRATE;
-use rustc_span::symbol::Ident;
+use rustc_span::symbol::{sym, Ident};
 use rustc_span::{Span, DUMMY_SP};
 
 use super::ItemCtxt;
@@ -356,93 +355,77 @@ pub(super) fn is_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
     if !tcx.sess.opts.cg.metasafe {
         return false;
     }
-    let ty = ty.peel_refs();
 
     if ty.is_box() || ty.is_slice() {
         return true;
     }
-    if !ty.is_adt() && !ty.is_array() && !ty.is_slice() {
+    if !ty.is_adt() {
         return false;
     }
 
     match ty.kind() {
-        ty::Adt(def, args) => {
+        ty::Adt(def, _) => {
             if let Some(metaupdate_trait) = tcx.metaupdate_trait(()) {
                 if tcx.type_implements_trait((
                     metaupdate_trait,
                     ty,
-                    args.clone(),
-                    tcx.param_env(def.did))
-                ) {
-                    return true
+                    ty::List::empty(),
+                    tcx.param_env(def.did),
+                )) {
+                    return true;
                 }
             }
-        },
-        ty::Array(inner, _) |
-        ty::Slice(inner) => {
-            return stack::ensure_sufficient_stack(||{
-                tcx.is_smart_pointer(*inner) 
-            });
-        },
-        _ => {
         }
+        _ => {}
     }
-    
+
     false
 }
 
 pub(super) fn contains_smart_pointer<'tcx>(tcx: TyCtxt<'tcx>, ty: Ty<'tcx>) -> bool {
-
     if !tcx.sess.opts.cg.metasafe {
         return false;
     }
 
-    let ty = ty.peel_refs();
-
+    // This query describes inline containment. In particular, do not peel
+    // references: the pointee of `&T` is not part of the reference's layout.
     if tcx.is_smart_pointer(ty) {
-        return false;
-    }
-
-    if !ty.is_adt() && !ty.is_array() && !ty.is_slice() {
         return false;
     }
 
     match ty.kind() {
         ty::Adt(def, args) => {
-            if def.is_struct() {
-                for field in def.all_fields() {
-                    let field_ty = field.ty(tcx, args);
-                    let ret = stack::ensure_sufficient_stack(||{
-                        tcx.is_smart_pointer(field_ty) || tcx.contains_smart_pointer(field_ty)
-                    });
-                    if ret {
-                        return true;
-                    }
+            for field in def.all_fields() {
+                let field_ty = field.ty(tcx, args);
+                let ret = stack::ensure_sufficient_stack(|| {
+                    tcx.is_smart_pointer(field_ty) || tcx.contains_smart_pointer(field_ty)
+                });
+                if ret {
+                    return true;
                 }
             }
-        },
-        ty::Array(inner, _)|
-        ty::Slice(inner) => {
-            return stack::ensure_sufficient_stack(||{
-                tcx.contains_smart_pointer(*inner)
-            });
-        },
-        _ => {
-
         }
+        ty::Array(inner, _) | ty::Slice(inner) => {
+            return stack::ensure_sufficient_stack(|| {
+                tcx.is_smart_pointer(*inner) || tcx.contains_smart_pointer(*inner)
+            });
+        }
+        ty::Tuple(fields) => {
+            return fields.iter().any(|field| {
+                let field_ty = field.expect_ty();
+                stack::ensure_sufficient_stack(|| {
+                    tcx.is_smart_pointer(field_ty) || tcx.contains_smart_pointer(field_ty)
+                })
+            });
+        }
+        _ => {}
     }
 
     return false;
 }
 
 pub(super) fn metaupdate_trait<'tcx>(tcx: TyCtxt<'tcx>, _key: ()) -> Option<DefId> {
-    let traits = tcx.all_traits(LOCAL_CRATE);
-    for t in traits {
-        if tcx.item_name(*t).to_string().eq("MetaUpdate") {
-            return Some(*t);
-        }
-    }
-    None
+    tcx.get_diagnostic_item(sym::metaupdate_trait)
 }
 
 fn find_opaque_ty_constraints(tcx: TyCtxt<'_>, def_id: LocalDefId) -> Ty<'_> {

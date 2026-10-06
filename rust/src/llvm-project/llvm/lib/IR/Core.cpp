@@ -900,15 +900,39 @@ void LLVMMarkUnsafeEnd(LLVMModuleRef Module, LLVMBuilderRef Builder) {
 }
 
 void LLVMSetSmartPointerMetadata(LLVMValueRef Inst) {
-  LLVMContext &C = unwrap<Instruction>(Inst)->getContext();
+  auto *I = dyn_cast<Instruction>(unwrap(Inst));
+  // IRBuilder may fold no-op casts to arguments or constants, neither of which
+  // can carry instruction metadata.
+  if (!I)
+    return;
+  LLVMContext &C = I->getContext();
   MDNode *N = MDNode::get(C, MDString::get(C, "Is smart pointer"));
-  unwrap<Instruction>(Inst)->setMetadata("MPK-SmartPointer", N);
+  I->setMetadata("MPK-SmartPointer", N);
 }
 
-void LLVMMarkSmartPointerShadow(LLVMValueRef Val){
-  LLVMContext &C = unwrap<Instruction>(Val)->getContext();
-  MDNode *N = MDNode::get(C, MDString::get(C, "Is shadow field"));
-  unwrap<Instruction>(Val)->setMetadata("MPK-SmartPointer-Shadow", N);
+void LLVMMarkSmartPointerShadow(LLVMValueRef Val, unsigned long TypeId) {
+  auto *I = dyn_cast<Instruction>(unwrap(Val));
+  // Shadow-producing codegen emits a dedicated GEP for this metadata. Keep the
+  // C API defensive for other callers whose values were constant-folded.
+  if (!I)
+    return;
+  LLVMContext &C = I->getContext();
+  Metadata *Values[] = {
+      MDString::get(C, "Is shadow field"),
+      ConstantAsMetadata::get(ConstantInt::get(Type::getInt64Ty(C), TypeId))};
+  MDNode *N = MDNode::get(C, Values);
+  I->setMetadata("MPK-SmartPointer-Shadow", N);
+}
+
+void LLVMMarkSmartPointerContainer(LLVMValueRef Val, unsigned long TypeId) {
+  auto *I = dyn_cast<Instruction>(unwrap(Val));
+  if (!I)
+    return;
+  LLVMContext &C = I->getContext();
+  Metadata *Values[] = {
+      MDString::get(C, "Contains an inline smart pointer"),
+      ConstantAsMetadata::get(ConstantInt::get(Type::getInt64Ty(C), TypeId))};
+  I->setMetadata("MPK-SmartPointer-Container", MDNode::get(C, Values));
 }
 
 void LLVMSetSmartPointerTypeId(LLVMModuleRef M, LLVMBasicBlockRef Block, unsigned long ID){

@@ -16,6 +16,43 @@ terms of the MIT license. A copy of the license can be found in the file
 #include <string.h>      // memset, strlen (for mi_strdup)
 #include <stdlib.h>      // malloc, abort
 
+#if defined(__GNUC__) || defined(__clang__)
+extern void __metasafe_shadow_unregister(void* p) __attribute__((weak));
+extern void __metasafe_shadow_resize(void* p, size_t new_size) __attribute__((weak));
+extern void __metasafe_shadow_move(void* oldp, void* newp, size_t copied_size,
+                                   size_t new_size) __attribute__((weak));
+
+static inline void mi_metasafe_shadow_unregister(void* p) {
+  if (__metasafe_shadow_unregister != NULL) {
+    __metasafe_shadow_unregister(p);
+  }
+}
+
+static inline void mi_metasafe_shadow_resize(void* p, size_t new_size) {
+  if (__metasafe_shadow_resize != NULL) {
+    __metasafe_shadow_resize(p, new_size);
+  }
+}
+
+static inline void mi_metasafe_shadow_move(void* oldp, void* newp,
+                                           size_t copied_size,
+                                           size_t new_size) {
+  if (__metasafe_shadow_move != NULL) {
+    __metasafe_shadow_move(oldp, newp, copied_size, new_size);
+  }
+}
+#else
+static inline void mi_metasafe_shadow_unregister(void* p) { MI_UNUSED(p); }
+static inline void mi_metasafe_shadow_resize(void* p, size_t new_size) {
+  MI_UNUSED(p); MI_UNUSED(new_size);
+}
+static inline void mi_metasafe_shadow_move(void* oldp, void* newp,
+                                           size_t copied_size,
+                                           size_t new_size) {
+  MI_UNUSED(oldp); MI_UNUSED(newp); MI_UNUSED(copied_size); MI_UNUSED(new_size);
+}
+#endif
+
 #define MI_IN_ALLOC_C
 #include "alloc-override.c"
 #undef MI_IN_ALLOC_C
@@ -573,6 +610,7 @@ static inline mi_segment_t* mi_checked_ptr_segment(const void* p, const char* ms
 void mi_free(void* p) mi_attr_noexcept
 {
   if mi_unlikely(p == NULL) return;
+  mi_metasafe_shadow_unregister(p);
   mi_segment_t* const segment = mi_checked_ptr_segment(p,"mi_free");
   const bool          is_local= (_mi_prim_thread_id() == mi_atomic_load_relaxed(&segment->thread_id));
   mi_page_t* const    page    = _mi_segment_page_of(segment, p);
@@ -725,6 +763,7 @@ void* _mi_heap_realloc_zero(mi_heap_t* heap, void* p, size_t newsize, bool zero)
     // todo: do not track as the usable size is still the same in the free; adjust potential padding?
     // mi_track_resize(p,size,newsize)
     // if (newsize < size) { mi_track_mem_noaccess((uint8_t*)p + newsize, size - newsize); }
+    mi_metasafe_shadow_resize(p, newsize);
     return p;  // reallocation still fits and not more than 50% waste
   }
   void* newp = mi_heap_malloc(heap,newsize);
@@ -741,6 +780,7 @@ void* _mi_heap_realloc_zero(mi_heap_t* heap, void* p, size_t newsize, bool zero)
       const size_t copysize = (newsize > size ? size : newsize);
       mi_track_mem_defined(p,copysize);  // _mi_useable_size may be too large for byte precise memory tracking..
       _mi_memcpy(newp, p, copysize);
+      mi_metasafe_shadow_move(p, newp, copysize, newsize);
       mi_free(p); // only free the original pointer if successful
     }
   }

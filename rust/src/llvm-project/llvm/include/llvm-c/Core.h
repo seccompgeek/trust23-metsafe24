@@ -3094,7 +3094,8 @@ void LLVMSetSmartPointerMetadata(LLVMValueRef Inst);
 ///MPK-Set smart pointer type-id
 void LLVMSetSmartPointerTypeId(LLVMModuleRef M, LLVMBasicBlockRef Block, unsigned long ID);
 /// Mark a shadow of field in a struct that contains a smart pointer
-void LLVMMarkSmartPointerShadow(LLVMValueRef Val);
+void LLVMMarkSmartPointerShadow(LLVMValueRef Val, unsigned long TypeId);
+void LLVMMarkSmartPointerContainer(LLVMValueRef Val, unsigned long TypeId);
 /**
  * Returns the metadata associated with an instruction value, but filters out
  * all the debug locations.

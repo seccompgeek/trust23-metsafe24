@@ -171,7 +171,7 @@ mi_threadid_t _mi_thread_id(void) mi_attr_noexcept {
 mi_decl_thread mi_heap_t *_mi_heap_default = (mi_heap_t *)&_mi_heap_empty;
 
 
-mi_decl_thread mi_heap_t *SAFE_HEAPS[MAX_HEAPS] = {&_mi_heap_empty, &_mi_heap_empty, &_mi_heap_empty, &_mi_heap_empty};
+mi_decl_thread mi_heap_t *SAFE_HEAPS[MAX_HEAPS] = {NULL, NULL, NULL, NULL};
 mi_decl_export mi_decl_thread uint64_t METASAFE_TYPE_ID = 0;
 mi_decl_export mi_decl_thread uint64_t METASAFE_UNSAFE_FLAG = 0;
 mi_decl_export uint64_t METASAFE_UNSAFE_START = 0;

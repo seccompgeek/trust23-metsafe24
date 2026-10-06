@@ -689,6 +689,7 @@ symbols! {
         metasafe_type_id,
         metasafe_unsafe_end,
         metasafe_unsafe_start,
+        metaupdate_trait,
         min_align_of,
         min_align_of_val,
         min_const_fn,

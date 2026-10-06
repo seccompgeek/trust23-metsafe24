@@ -26,12 +26,23 @@ pub struct PlaceRef<'tcx, V> {
 
     /// The alignment we know for this place.
     pub align: Align,
+
+    /// The type of the allocation reached before applying field/index
+    /// projections. MetaSafe uses this to keep every shadow field of one
+    /// allocation in the same type-paired shadow pool.
+    pub metasafe_root_ty: Ty<'tcx>,
 }
 
 impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
     pub fn new_sized(llval: V, layout: TyAndLayout<'tcx>) -> PlaceRef<'tcx, V> {
         assert!(!layout.is_unsized());
-        PlaceRef { llval, llextra: None, layout, align: layout.align.abi }
+        PlaceRef {
+            llval,
+            llextra: None,
+            layout,
+            align: layout.align.abi,
+            metasafe_root_ty: layout.ty,
+        }
     }
 
     pub fn new_sized_aligned(
@@ -40,7 +51,7 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         align: Align,
     ) -> PlaceRef<'tcx, V> {
         assert!(!layout.is_unsized());
-        PlaceRef { llval, llextra: None, layout, align }
+        PlaceRef { llval, llextra: None, layout, align, metasafe_root_ty: layout.ty }
     }
 
     // FIXME(eddyb) pass something else for the name so no work is done
@@ -52,6 +63,9 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         assert!(!layout.is_unsized(), "tried to statically allocate unsized place");
         let is_smart_pointer = bx.cx().tcx().is_smart_pointer(layout.ty);
         let tmp = bx.alloca(bx.cx().backend_type(layout), layout.align.abi, is_smart_pointer);
+        if bx.cx().tcx().contains_smart_pointer(layout.ty) {
+            bx.mark_smart_pointer_container(tmp, bx.tcx().type_id_hash(layout.ty));
+        }
         Self::new_sized(tmp, layout)
     }
 
@@ -92,8 +106,9 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         let field = self.layout.field(bx.cx(), ix);
         let offset = self.layout.fields.offset(ix);
         let effective_field_align = self.align.restrict_for_offset(offset);
-        let is_smart = bx.cx().tcx().is_smart_pointer(field.ty) || bx.cx().tcx().contains_smart_pointer(field.ty);
-        let contains_smart_pointer = bx.tcx().contains_smart_pointer(self.layout.ty);
+        let field_is_smart_pointer = bx.cx().tcx().is_smart_pointer(field.ty);
+        let field_contains_smart_pointer = bx.cx().tcx().contains_smart_pointer(field.ty);
+        let parent_contains_smart_pointer = bx.tcx().contains_smart_pointer(self.layout.ty);
 
         let mut simple = || {
             let llval = match self.layout.abi {
@@ -124,17 +139,27 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
                 }
                 _ => bx.struct_gep(self.llval, bx.cx().backend_field_index(self.layout, ix)),
             };
-            let llval = if is_smart {
+            let llval = if field_is_smart_pointer || field_contains_smart_pointer {
                 bx.mark_smart_pointer(llval);
                 let temp = bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)));
+                let temp = if field_is_smart_pointer && parent_contains_smart_pointer {
+                    // Even offset-zero fields need an instruction on which LLVM
+                    // can retain the shadow marker; a pointer cast may be folded
+                    // back to the base argument.
+                    bx.gep(temp, &[bx.cx().const_usize(0)])
+                } else {
+                    temp
+                };
                 bx.mark_smart_pointer(temp);
-                temp
-            } else {
-                let temp = bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)));
-                if contains_smart_pointer {
-                    bx.mark_smart_pointer_shadow(temp);
+                if field_is_smart_pointer && parent_contains_smart_pointer {
+                    bx.mark_smart_pointer_shadow(
+                        temp,
+                        bx.tcx().type_id_hash(self.metasafe_root_ty),
+                    );
                 }
                 temp
+            } else {
+                bx.pointercast(llval, bx.cx().type_ptr_to(bx.cx().backend_type(field)))
             };
 
             PlaceRef {
@@ -143,6 +168,7 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
                 llextra: if bx.cx().type_has_metadata(field.ty) { self.llextra } else { None },
                 layout: field,
                 align: effective_field_align,
+                metasafe_root_ty: self.metasafe_root_ty,
             }
         };
 
@@ -214,17 +240,22 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
         // Finally, cast back to the type expected.
         let ll_fty = bx.cx().backend_type(field);
         debug!("struct_field_ptr: Field type is {:?}", ll_fty);
-        let llval = if is_smart {
+        let llval = if field_is_smart_pointer || field_contains_smart_pointer {
             bx.mark_smart_pointer(byte_ptr);
             let temp = bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty));
+            let temp = if field_is_smart_pointer && parent_contains_smart_pointer {
+                // Keep the shadow marker on a real pointer-producing instruction.
+                bx.gep(temp, &[bx.cx().const_usize(0)])
+            } else {
+                temp
+            };
             bx.mark_smart_pointer(temp);
-            temp
-        } else {
-            let temp = bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty));
-            if contains_smart_pointer {
-                bx.mark_smart_pointer_shadow(temp);
+            if field_is_smart_pointer && parent_contains_smart_pointer {
+                bx.mark_smart_pointer_shadow(temp, bx.tcx().type_id_hash(self.metasafe_root_ty));
             }
             temp
+        } else {
+            bx.pointercast(byte_ptr, bx.cx().type_ptr_to(ll_fty))
         };
 
         PlaceRef {
@@ -232,6 +263,7 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
             llextra: self.llextra,
             layout: field,
             align: effective_field_align,
+            metasafe_root_ty: self.metasafe_root_ty,
         }
     }
 
@@ -415,20 +447,25 @@ impl<'a, 'tcx, V: CodegenObject> PlaceRef<'tcx, V> {
             layout.size
         };
 
-        let is_smart = bx.tcx().is_smart_pointer(layout.ty) || bx.tcx().contains_smart_pointer(layout.ty);
-        let llval = if is_smart {
+        let element_is_smart_pointer = bx.tcx().is_smart_pointer(layout.ty);
+        let element_contains_smart_pointer = bx.tcx().contains_smart_pointer(layout.ty);
+        let llval = if element_is_smart_pointer || element_contains_smart_pointer {
             let temp = bx.inbounds_gep(self.llval, &[bx.cx().const_usize(0), llindex]);
             bx.mark_smart_pointer(temp);
+            if element_is_smart_pointer {
+                bx.mark_smart_pointer_shadow(temp, bx.tcx().type_id_hash(self.metasafe_root_ty));
+            }
             temp
         } else {
             bx.inbounds_gep(self.llval, &[bx.cx().const_usize(0), llindex])
         };
 
         PlaceRef {
-            llval, 
+            llval,
             llextra: None,
             layout,
             align: self.align.restrict_for_offset(offset),
+            metasafe_root_ty: self.metasafe_root_ty,
         }
     }
 

@@ -11,6 +11,35 @@ terms of the MIT license. A copy of the license can be found in the file
 
 #include <string.h>     // memset
 
+#if defined(__GNUC__) || defined(__clang__)
+extern void __metasafe_shadow_resize(void* p, size_t new_size) __attribute__((weak));
+extern void __metasafe_shadow_move(void* oldp, void* newp, size_t copied_size,
+                                   size_t new_size) __attribute__((weak));
+
+static inline void mi_metasafe_aligned_shadow_resize(void* p, size_t new_size) {
+  if (__metasafe_shadow_resize != NULL) {
+    __metasafe_shadow_resize(p, new_size);
+  }
+}
+
+static inline void mi_metasafe_aligned_shadow_move(void* oldp, void* newp,
+                                                   size_t copied_size,
+                                                   size_t new_size) {
+  if (__metasafe_shadow_move != NULL) {
+    __metasafe_shadow_move(oldp, newp, copied_size, new_size);
+  }
+}
+#else
+static inline void mi_metasafe_aligned_shadow_resize(void* p, size_t new_size) {
+  MI_UNUSED(p); MI_UNUSED(new_size);
+}
+static inline void mi_metasafe_aligned_shadow_move(void* oldp, void* newp,
+                                                   size_t copied_size,
+                                                   size_t new_size) {
+  MI_UNUSED(oldp); MI_UNUSED(newp); MI_UNUSED(copied_size); MI_UNUSED(new_size);
+}
+#endif
+
 // ------------------------------------------------------
 // Aligned Allocation
 // ------------------------------------------------------
@@ -220,6 +249,7 @@ static void* mi_heap_realloc_zero_aligned_at(mi_heap_t* heap, void* p, size_t ne
   size_t size = mi_usable_size(p);
   if (newsize <= size && newsize >= (size - (size / 2))
       && (((uintptr_t)p + offset) % alignment) == 0) {
+    mi_metasafe_aligned_shadow_resize(p, newsize);
     return p;  // reallocation still fits, is aligned and not more than 50% waste
   }
   else {
@@ -231,7 +261,9 @@ static void* mi_heap_realloc_zero_aligned_at(mi_heap_t* heap, void* p, size_t ne
         size_t start = (size >= sizeof(intptr_t) ? size - sizeof(intptr_t) : 0);
         _mi_memzero((uint8_t*)newp + start, newsize - start);
       }
-      _mi_memcpy_aligned(newp, p, (newsize > size ? size : newsize));
+      const size_t copysize = (newsize > size ? size : newsize);
+      _mi_memcpy_aligned(newp, p, copysize);
+      mi_metasafe_aligned_shadow_move(p, newp, copysize, newsize);
       mi_free(p); // only free if successful
     }
     return newp;

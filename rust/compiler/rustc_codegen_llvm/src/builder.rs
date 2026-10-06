@@ -171,9 +171,15 @@ impl BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         }
     }
 
-    fn mark_smart_pointer_shadow(&self, v: Self::Value) {
+    fn mark_smart_pointer_shadow(&self, v: Self::Value, type_id: u64) {
         unsafe {
-            llvm::LLVMMarkSmartPointerShadow(v);
+            llvm::LLVMMarkSmartPointerShadow(v, type_id as c_ulong);
+        }
+    }
+
+    fn mark_smart_pointer_container(&self, v: Self::Value, type_id: u64) {
+        unsafe {
+            llvm::LLVMMarkSmartPointerContainer(v, type_id as c_ulong);
         }
     }
 

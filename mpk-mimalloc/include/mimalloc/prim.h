@@ -151,7 +151,7 @@ extern bool _mi_process_is_initialized;
 static inline mi_heap_t *_metasafe_get_alloc_heap(void) {
   if(!METASAFE_INITIALIZED){
     for(int i=0; i<MAX_HEAPS; i++){
-      SAFE_HEAPS[i] = &_mi_heap_empty;
+      SAFE_HEAPS[i] = NULL;
     }
     METASAFE_INITIALIZED = 1;
   }
@@ -162,7 +162,7 @@ static inline mi_heap_t *_metasafe_get_alloc_heap(void) {
     METASAFE_BEEN_HERE = 1;
     if (METASAFE_TYPE_ID == 1) { // smart pointer
       heap = SAFE_HEAPS[1];
-      if (heap == &_mi_heap_empty || heap == NULL) {
+      if (heap == NULL) {
         heap = SAFE_HEAPS[1] = mi_heap_new();
       }
     } else {
@@ -171,7 +171,7 @@ static inline mi_heap_t *_metasafe_get_alloc_heap(void) {
         type = (type + 1) % MAX_HEAPS;
       }
       heap = SAFE_HEAPS[type];
-      if (heap == &_mi_heap_empty || heap == NULL) {
+      if (heap == NULL) {
         heap = SAFE_HEAPS[type] = mi_heap_new();
       }
     }

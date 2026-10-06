@@ -1,6 +1,7 @@
 //! Implementation of MetaSafe to merge with TRust
 
 /// The MetaUpdate trait used to identify smart pointers.
+#[cfg_attr(not(test), rustc_diagnostic_item = "metaupdate_trait")]
 pub trait MetaUpdate {
     /// Used to synchronized to metadata of a given smart pointer.
     fn synchronize(&self);
@@ -8,7 +9,7 @@ pub trait MetaUpdate {
 
 #[no_mangle]
 /// Marks the beginning of an unsafe region for TRust
-/// Calls to this function are inserted during LLVM lowering and 
+/// Calls to this function are inserted during LLVM lowering and
 /// removed after SVF analysis for performance reasons.
 #[inline(never)]
 pub fn __trust_mark_unsafe_start() {
