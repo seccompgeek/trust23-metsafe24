@@ -8,6 +8,7 @@ docker run -it kayondo/metasafe
 ```
 Inside the docker image navigate to the */metasafe* directory.
 From there you can run the benchmarks and PoCs as listed below.
+Please note the current docker images are not up to date with the current artifact version.
 
 ## Install Rust Baseline and Rustup:
 ```sh
